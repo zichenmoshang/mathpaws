@@ -1,5 +1,8 @@
-import type { RouteId } from './router'
+import { lazy, Suspense } from 'react'
+
+import { LoadingOverlay } from './LoadingOverlay'
 import { Placeholder } from './Placeholder'
+import type { RouteId } from './router'
 
 /**
  * 路由 → 页面分发。
@@ -23,6 +26,8 @@ export function RouteView({
       return <LazyPaperDoll />
     case 'paperdoll-rt':
       return <LazyPaperDollRt />
+    case 'dev-home':
+      return <LazyDevHome />
     case 'home':
       return <HomeLazy onNavigate={onNavigate} />
     case 'plaza':
@@ -56,11 +61,6 @@ export function RouteView({
   }
 }
 
-import { lazy } from 'react'
-import { Suspense } from 'react'
-
-import { LoadingOverlay } from './LoadingOverlay'
-
 const LazyPlazaRaw = lazy(() =>
   import('../scenes/PlazaScene').then(m => ({ default: m.PlazaScene })),
 )
@@ -71,6 +71,9 @@ const LazyPaperDollRaw = import.meta.env.DEV
   : null
 const LazyPaperDollRtRaw = import.meta.env.DEV
   ? lazy(() => import('../scenes/dev/PaperDollCompositeDev').then(m => ({ default: m.PaperDollCompositeDev })))
+  : null
+const LazyDevHomeRaw = import.meta.env.DEV
+  ? lazy(() => import('../scenes/dev/DevHomeScene').then(m => ({ default: m.DevHomeScene })))
   : null
 const LazyHomeRaw = lazy(() =>
   import('../scenes/HomeScene').then(m => ({ default: m.HomeScene })),
@@ -168,6 +171,14 @@ function LazyPaperDollRt() {
   return (
     <Suspense fallback={<LoadingOverlay />}>
       <LazyPaperDollRtRaw />
+    </Suspense>
+  )
+}
+function LazyDevHome() {
+  if (!LazyDevHomeRaw) return null // 生产构建：dev 路由不可达（hash 未注册）
+  return (
+    <Suspense fallback={<LoadingOverlay />}>
+      <LazyDevHomeRaw />
     </Suspense>
   )
 }

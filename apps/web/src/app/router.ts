@@ -21,9 +21,11 @@ export type RouteId =
   | 'settings' // P13
   | 'paperdoll' // dev：换装验证
   | 'paperdoll-rt' // dev：换装运行时合成回归页（常驻）
+  | 'dev-home' // dev：测试台（#dev）
 
 /** dev 场景 hash（仅开发构建注册；生产构建 import.meta.env.DEV=false，整块被裁剪） */
 const DEV_HASH_MAP: Record<string, RouteId> = {
+  dev: 'dev-home',
   paperdoll: 'paperdoll',
   'paperdoll-rt': 'paperdoll-rt',
 }

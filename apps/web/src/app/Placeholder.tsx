@@ -19,6 +19,7 @@ const PAGE_CN: Record<RouteId, string> = {
   settings: 'P13 设置页',
   paperdoll: 'PaperDoll 验证',
   'paperdoll-rt': 'PaperDoll 运行时合成回归（dev）',
+  'dev-home': '开发测试台（dev）',
 }
 
 /**
