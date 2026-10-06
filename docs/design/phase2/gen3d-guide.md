@@ -1,10 +1,12 @@
 # 图生3D（Image-to-3D）操作手册
 
+> **【冻结 · 二期档案】2026-10-04 拍板：广场实时 3D 整体转二期，本文随之留档**；二期开工时直接续用。
+>
 > 用途：把我们用 Seedream 5.0 Pro 生成的干净单物体图，转成可在 Three.js 里用的带骨骼 GLB。
 >
 > 工具归属（2026-09 更新）：云端 Tripo / Meshy **免费版只能在线预览、拿不到文件**，当前主线已改为 **AutoDL 自租 GPU + 开源 Hunyuan3D-2.1**（出几何 + PBR 贴图，绑骨在 Blender / Mixamo）；要省事可付费走 fal.ai 按量。下文方式 A/B/C 为云端路线（留档），**方式 D 才是当前实际执行路线**。
 >
-> 资产状态以 `docs/design/asset-manifest.md` 为准。
+> 资产状态以 `docs/design/phase2/asset-manifest.md` 为准。
 
 ---
 

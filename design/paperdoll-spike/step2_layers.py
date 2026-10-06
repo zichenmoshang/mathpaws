@@ -310,15 +310,15 @@ OUTFITS = {
     },
 }
 
-# rembg session shared for all downloaded / local sources (same model family
-# as step1; default birefnet-general-lite since 2026-10-03, u2net via argv)
+# rembg session shared for all downloaded / local sources (same model as
+# step1: birefnet-general-lite since 2026-10-03)
 _SESSION = None
 
 
-def rembg_session(model="birefnet-general-lite"):
+def rembg_session():
     global _SESSION
     if _SESSION is None:
-        _SESSION = new_session(model)
+        _SESSION = new_session("birefnet-general-lite")
     return _SESSION
 
 
@@ -557,7 +557,7 @@ def _rembg_image(im):
 
 
 def fetch_cutout(url):
-    """Download a white-bg source URL, run rembg (u2net) and return an RGBA
+    """Download a white-bg source URL, run rembg and return an RGBA
     cutout so cuts never carry the white background rectangle."""
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=60) as r:

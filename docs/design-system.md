@@ -1,7 +1,7 @@
 # mathpaws 设计系统（Design System）
 
-> 版本：一期定稿　|　最后更新：2026-09-28
-> 本文档是**视觉 / 质感 / 配色 / 字体 / 组件规范**的唯一事实来源；产品逻辑 / 数值以 [./PRD.md](./PRD.md) 为准，页面资产跟踪见 [./design/asset-checklist.md](./design/asset-checklist.md)，3D 台账见 [./design/asset-manifest.md](./design/asset-manifest.md)。
+> 版本：一期定稿　|　最后更新：2026-10-06（组件↔资产映射并入 §7.3、尺寸表收口 §10；广场实时 3D 转二期）
+> 本文档是**视觉 / 质感 / 配色 / 字体 / 组件规范**的唯一事实来源；产品逻辑 / 数值以 [./PRD.md](./PRD.md) 为准，组件 ↔ 位图资产映射见 §7.3，AI 生图生产规范见 §10；广场实时 3D（二期）档案见 [./design/phase2/](./design/phase2/)（方案 / 3D 台账 / 建模手册）。
 > Token 的**代码权威**是 `packages/ui/src/tokens.ts`（`@mathpaws/ui`），本文档与之一致；新增 / 修改 token 先改代码、本文档同步。
 
 ---
@@ -10,14 +10,14 @@
 
 mathpaws 是面向 8–9 岁孩子的平板横屏游戏，整体为 **Q 版糖果卡通风**（参考洪恩、斑马、Khan Kids），但按渲染方式分两套、必须质感统一：
 
-| | A. 实时 3D（仅广场） | B. 2D 页面（除广场外全部） |
+| | A. 实时 3D（二期；仅广场） | B. 2D 页面（一期全部页面） |
 |---|---|---|
 | 质感关键词 | **搪胶软糖 / vinyl toy**：圆润饱满、哑光软表面、柔和环境光、软接触阴影、表面细微绒面 | **平面糖果卡通**：厚圆角、描边、糖果立体底边、柔和投影、明快平涂 |
 | 实现 | Three.js PBR（roughness 偏高、metalness≈0、软阴影、程序化 IBL、克制 Bloom） | 位图（AI 生图 / 切图）+ CSS + `@mathpaws/ui` 组件 |
 | 色板 | 共用同一套品牌色（见 §3） | 共用同一套品牌色 |
 | 质感锚（靶子） | 现有 `design/high-fi/plaza/plaza.png` 的质感（**不重出**，只做 Look Dev 对齐 + 返工） | 各页对应高保真 |
 
-**核心原则：2D 页面要"看起来像同一世界观的 3D 玩具"，但不嵌实时 3D。** 通过角色 / 宠物 2D 立绘（core-ip 位图，带柔和投影、轻微高光、厚描边）+ 糖果 UI 容器实现"伪 3D"。
+**核心原则：2D 页面要"看起来像同一世界观的 3D 玩具"，但不嵌实时 3D。** 通过角色 / 宠物 2D 立绘（core-ip 位图，带柔和投影、轻微高光、厚描边）+ 糖果 UI 容器实现"伪 3D"。一期广场为 2D 静态页；A 列 3D 口径随广场实时 3D 整体转二期（见 [phase2/plaza-3d.md](./design/phase2/plaza-3d.md)），本节保留作为二期质感基准。
 
 ---
 
@@ -57,6 +57,7 @@ mathpaws 是面向 8–9 岁孩子的平板横屏游戏，整体为 **Q 版糖�
 
 ### 3.3 品质色（抽卡 / 装扮）
 普通 = 蓝（skyDeep 边框）、稀有 = 紫（purpleDeep）、传说 = 金（sunDeep + 光晕）。
+- 品质框釉面"亮部 / 主体 / 暗部"三色：主体与暗部锚主色 token，**亮部允许取主色浅阶衍生**——已登记在用：普通 sky `#4FC3F7`（亮 `#81D4FA`）/ skyDeep、稀有 purple `#B39DDB`（亮 `#D1C4E9`）/ purpleDeep、传说金 `#FFC107`（亮 `#FFE082`，与 sun 同族、M1 既成事实登记）/ sunDeep。
 
 ### 3.4 货币色
 贝壳 = 暖黄 / 奶白（sun 系）；花朵币 = 粉橙（pink/orange）；宠物食物 = 橙棕（宠物食品色）。一期**无水滴、无体力**，UI 不出现这两个资源。
@@ -105,11 +106,11 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 ### 6.1 B 类：2D UI token（已落地 `packages/ui/src/tokens.ts`）
 色板 `C`、学科 `SUBJECT`、字体 `FONT`、圆角 `R`、间距 `SPACE`、`edge()`、`SHADOW`、`strokeText()`、按钮 `VARIANT`（sun/sky/grass/red/purple/pink/ghost）。
 
-### 6.2 A 类：3D 材质 / 渲染 token（广场 Look Dev 固化，落在 `three/ClayMaterial.tsx` + `SceneRig.tsx` + `Effects.tsx`）
+### 6.2 A 类：3D 材质 / 渲染 token（二期；广场 Look Dev 固化，落在 `three/ClayMaterial.tsx` + `SceneRig.tsx` + `Effects.tsx`）
 - **Clay / vinyl PBR**：**roughness 约 0.4–0.6 起调（润的搪胶 / vinyl，非哑光陶土；现状 ClayMaterial 的 0.88 偏哑、需下调）**、metalness ≈ 0、clearcoat 轻微（搪胶釉感，可选）、SSS 感用暖色次表面近似 / fresnel 边缘柔光；最终值在 Look Dev 以 plaza.png 校准固化。
 - 毛绒角色：albedo 烘焙短绒 + normal 细微绒面 + **fresnel sheen 边缘柔光**模拟绒感（不做真 fur，Pad 性能 / 绑骨不允许）。
 - 光照：暖色主方向光（软阴影 2048）+ 半球补光 + 程序化 IBL（drei Lightformer，无需 HDRI 文件）。
-- 后处理（完整链见 [plaza-3d.md](./design/plaza-3d.md) §7，按设备分级、低端自动降 / 关）：**ACES Filmic 色调映射**、**SSAO 环境光遮蔽（接触阴影 / 缝隙立体感）**、克制 Bloom（仅宝箱 / 奖励发光）、**轻 DOF 景深（道具 / 远景，低端可关）**、SMAA 抗锯齿、轻微 Vignette、糖果色色彩分级 LUT；曝光 1.0，避免过曝发白。
+- 后处理（完整链见 [plaza-3d.md](./design/phase2/plaza-3d.md) §7，按设备分级、低端自动降 / 关）：**ACES Filmic 色调映射**、**SSAO 环境光遮蔽（接触阴影 / 缝隙立体感）**、克制 Bloom（仅宝箱 / 奖励发光）、**轻 DOF 景深（道具 / 远景，低端可关）**、SMAA 抗锯齿、轻微 Vignette、糖果色色彩分级 LUT；曝光 1.0，避免过曝发白。
 - 色板与 B 类共用（天空 skyBg、草地 ground、建筑用品牌色）。
 - **Look Dev 流程**：先在 `#lookdev` 小样把材质 / 光照 / 后处理调到与 plaza.png 质感一致并**固化为预设**，再批量做资产；后续每个 GLB / 2D 立绘都回流到该预设下对比验收。
 
@@ -128,7 +129,42 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 - 答题：`HandwritingCanvas`（MNIST 手写）、`QuizHud`、`ResultPanel`、`PlacementTest`（开学小测）。
 - 养成 / 经营：`PaperDoll`（中性 2D 换装）、`EvolutionTrack`、`PetGrid`、`ChestPanel`（首页 / 广场共用打卡）、`GachaReveal`、`DressUpPanel`、`CropPlot`、`SeedBagPanel`、`WarehousePanel`。
 
-> 组件 ↔ 位图资产的映射、每页用到哪些组件，见 [asset-checklist.md](./design/asset-checklist.md)。
+> 组件 ↔ 位图资产的映射见 §7.3。
+
+### 7.3 组件 ↔ 图片资产映射
+
+| 组件 | 用到的位图 / SVG / 纹理 | 备注 |
+|---|---|---|
+| Btn / RoundBtn / Chip | — | 纯 CSS（渐变 + 描边 + 软阴影） |
+| Switch / ProgressBar / CountdownRing / StarTrack | — | 纯 CSS / SVG |
+| Tabs / OptionButton / Toast | — | 纯 CSS + 文字 |
+| Modal / Sheet / ConfirmDialog | 可选 deco-star | 底板纯 CSS 9-slice |
+| Icon | G1 全套 SVG（含 gacha/backpack/pet） | 颜色 CSS 可控 |
+| TopBar / ResourcePill | i-shell、i-flower、avatar-frame、gear、streak | 食物不进顶部、无教材切换 |
+| BackBtn | i-back | SVG |
+| TopNavEntries | icon-gacha、icon-backpack、icon-pet | 顶部居中三入口 |
+| PetBubble | i-food、icon-pet、pet-rabbit 小图 | 一键喂食 / 进面板 |
+| ItemGrid / ItemCell | seed-* / fruit-* / dress-* / pet 缩略、i-lock、frame 三色 | 按场景传 |
+| RewardBadge / RewardRow | i-shell、i-flower、i-food | — |
+| Tag / LockTag | i-lock、稀有度 frame | — |
+| Carousel | card-streak / card-challenge / card-wrongbook + 题型 icon | 首页 3 卡、手动滑动 |
+| EmptyState | mascot-bird-pose（待机 / 难过） | — |
+| LoadingBar / LoadingOverlay / SceneTransition | bg-loading、mascot-bird-pose / hero-pose | 新增 |
+| CloudInput | deco-cloud（优先 CSS） | 起名 |
+| PaperDoll / DressUpPanel | paperdoll-body + paperdoll-default + dress-* | 透明 WebP 图层叠加、无 hair/face/skin 多选 |
+| PlacementTest | 复用 QuizHud / 答题页位图 | 不单独出整页 |
+| EvolutionTrack | pet-rabbit-s1/2/3、i-lock | 未解锁灰度 + 锁 |
+| ChestPanel | chest 开/关、deco-confetti、StarTrack(CSS) | 首页 / 广场共用 |
+| FloatingQuestionBubble | i-food / i-shell（奖励标注）、CountdownRing | 三选一、底板纯 CSS |
+| PetGrid | pet-rabbit-s*、pet-locked | 一期仅兔拥有 |
+| GachaReveal | gacha-box、card-back、glow 三色、dress-* | — |
+| CropPlot | plot-empty/tilled + crop-{6}×{4 阶段} | 24 张作物 |
+| SeedBagPanel | frame-ribbon、seed-*、i-lock | 价格 / 等级锁 / 持有数 |
+| QuizHud | notebook、ring-gold、chest-progress、pet-rabbit-pose | 手写区 canvas |
+| ResultPanel | mascot-bird 欢呼、banner-great、confetti、RewardBadge | "太棒啦"代码叠字 |
+| Joystick | 底座 / 手柄（SVG 或 CSS） | — |
+| Plaza 场景（二期） | G3 GLB（主角一套、兔、3 座建筑、环境、chest）+ skybox + billboard + TEX | 实时 3D、无学盒建筑 |
+| fx-evolution 进化仪式 | 光柱 / 彩带 / 星星（粒子 / CSS 或少量序列帧） | — |
 
 ---
 
@@ -149,7 +185,7 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 - 3D 广场相机按宽高比自适应，HUD 走安全框。
 
 ### 8.3 性能与渲染
-- 3D：DPR ≤2、场景总 tris 目标 <300k、GLB Draco / Meshopt 压缩（预算见 asset-manifest）。
+- 3D（二期）：DPR ≤2、场景总 tris 目标 <300k、GLB Draco / Meshopt 压缩（预算见 [phase2/asset-manifest.md](./design/phase2/asset-manifest.md)）。
 - tfjs 手写识别走 **WASM 后端**（CPU），不与 three.js 争抢 WebGL（见 architecture）。
 
 ---
@@ -163,16 +199,29 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 
 ---
 
-## 10. AI 生图与资产生产规范（概要）
+## 10. AI 生图与资产生产规范
 
-> 完整尺寸 / 工序 / 命名见 [asset-checklist.md](./design/asset-checklist.md)（§2）；生图走 `doubao-creative-design`，3D 建模走 Hunyuan3D（见 [asset-manifest](./design/asset-manifest.md)）。
+> 生图走 `doubao-creative-design`；prompt 存档与人工确认门禁见 [design/asset-prompts](../design/asset-prompts/README.md)；3D 建模（二期）走 Hunyuan3D（见 [phase2/asset-manifest.md](./design/phase2/asset-manifest.md)）。
 
-1. **先定 core-ip 再衍生（brand-ip 门禁）**：中性主角、白雏鸟、雪球兔各先生成 1 张**核心形象 core-ip** 并确认；之后所有衍生（立绘、表情、装扮、场景）一律基于同一 core-ip 做图生图（image_edit），**禁止每张独立文生图导致"多张脸"**。
+1. **先定 core-ip 再衍生（brand-ip 门禁）**：中性主角、白雏鸟、雪球兔各先生成 1 张**核心形象 core-ip** 并确认；之后所有衍生（立绘、表情、装扮、场景）一律基于同一 core-ip 做图生图（image_edit），**禁止每张独立文生图导致"多张脸"**。整页高保真走文生图时角色位置留占位、用定稿立绘填，不让 AI 在页面里画角色。
 2. **画风统一**：圆润搪胶 / 软糖、哑光、马卡龙品牌色、厚描边、软阴影；中性、无强性别符号。
-3. **预设尺寸 / 比例**：页面背景按横屏（4:3 安全框 + bleed，建议出图 ≥2048×1536）；角色 / 宠物立绘用 **1:1 透明底（STAND 1024²）**，多姿态 / 表情套图用 **4:3（POSE 2048×1536）**；图标 1:1；组件状态图按需（无 3:4 竖规格，详见 asset-checklist §2）。生图前先定尺寸与安全区。
-4. **元素可直接使用**：角色 / 宠物立绘可直接当位图贴图 / `<img>`；图标用 SVG；装饰元素透明底 PNG，可直接进 CSS。
+3. **预设尺寸 / 比例（唯一事实源）**：生图前先定尺寸与安全区；逻辑基准 1024×768 / 4:3 安全框，位图 @2x；目标设备横屏，**无 3:4 竖规格**；运行时会变化的数字一律 Web 字体（§4.3），不切图。
+
+   | 规格 | 用途 | 比例 | 出图 | 背景 |
+   |---|---|---|---|---|
+   | PAGE | 整页高保真 | 4:3 | 2048×1536 | 满版 |
+   | STAND | 角色 / 宠物 core、3 阶段立绘 | 1:1 | 1024² | 透明 |
+   | POSE | 多姿态 / 表情套图 | 4:3 | 2048×1536 网格 | 透明 / 浅底 |
+   | ICON | UI 图标 | 1:1 | 512² | 透明 |
+   | ITEM | 作物 / 道具 / 装扮部件 | 1:1 | 512² | 透明 |
+   | BG | 天空 / 农场背景 | 4:3 | 2048×1536 | 满版 / 可平铺 |
+   | TEX | PBR / 地面纹理 | 1:1 | 1024/2048 | 无缝 tile |
+   | REF | GLB 建模输入（正 / 侧） | 1:1 | 1024² | 纯白底、中性光、A-pose |
+   | PANEL | 底板 / 横幅（仅 CSS 画不出时） | 按组件 | 9-slice | 透明 |
+
+4. **"直接可用"固化工序**：元素单独出图、不拼在场景里；纯底生成 → rembg 抠透明底；图标矢量化 SVG、复杂质感用 WebP(alpha,@2x)；立绘 / 纸娃娃统一画布与锚点（脚底基线对齐、居中、留白一致）；地面 / 草地无缝 tile。角色 / 宠物立绘可直接当位图贴图 / `<img>`，装饰元素透明底 PNG 可直接进 CSS。
 5. **文字不进图**：AI 不负责渲染中文正文 / 数字（易乱码），文字一律前端用 **Web 字体渲染**（仅 logo / 启动页 / 活动标题等固定装饰大字可用切图，运行时变化数字不切图，见 §4.3）；图内只保留 logo 等极少数固定字。
-6. **命名与目录**：按 asset-checklist 的资产 ID 命名（如 `char-hero`、`pet-rabbit-s3`、`icon-gacha`），位图入 `apps/web/src/assets/img/`，3D 入 `src/assets/models/`。
+6. **命名与目录**：命名 `类别-名称-状态-视角@倍率.格式`（如 `pet-rabbit-stage1-front@2x.webp`、`icon-shell.svg`、`crop-corn-stage3.webp`）；位图入 `apps/web/src/assets/img/`，3D 入 `src/assets/models/`；每件登记 manifest（id / 中文名 / 用途 / 尺寸 / 格式 / 透明 / 生成方式 / 参考 core-ip / prompt 全文 / 消费组件·页面 / 切片状态）。
 7. **定稿即固化**：高保真不是 Figma、没有图层；每页高保真确认后立即按元素切图 / 出图并登记台账，避免后续混乱。
 
 ---
@@ -195,4 +244,4 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 5. MatePad TGR-W10 横屏实机无黑边、关键内容不裁切、触控区足够；
 6. 交互态（按压 / 禁用 / 加载 / 空 / 锁）齐全。
 
-3D 广场的质感验收以 Look Dev 预设 + plaza.png 为靶子（见 plaza-3d.md）。
+3D 广场（二期）的质感验收以 Look Dev 预设 + plaza.png 为靶子（见 [phase2/plaza-3d.md](./design/phase2/plaza-3d.md)）。

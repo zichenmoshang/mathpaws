@@ -1,7 +1,7 @@
 # mathpaws 技术方案文档（Architecture）
 
 > 版本：一期定稿　|　最后更新：2026-09-28
-> 产品范围 / 数值见 [../PRD.md](../PRD.md)，视觉规范见 [../design-system.md](../design-system.md)，广场 3D 细节见 [plaza-3d.md](./plaza-3d.md)，3D 资产见 [asset-manifest.md](./asset-manifest.md)。
+> 产品范围 / 数值见 [../PRD.md](../PRD.md)，视觉规范见 [../design-system.md](../design-system.md)，广场 3D（二期）细节见 [plaza-3d.md](./phase2/plaza-3d.md)，3D 资产见 [asset-manifest.md](./phase2/asset-manifest.md)。
 > 本文档描述**一期定稿目标架构**；与当前代码不一致处显式标注 `【现状】` / `【待重构】`，不虚构已完成能力。
 
 ---
@@ -103,7 +103,7 @@ mathpaws/
 - 已有档案 → P1 → **P4 首页**。
 - 首页"益智乐园"→ 广场；广场农场建筑 → P8 农场（返回到广场）；顶部学盒 / 背包 / 宠物 → P10 / P16 / P9；首页 / 广场宝箱 → ChestPanel；首页卡片 → P6 答题 / P11 错题本；答题中返回需 ConfirmDialog 二次确认。
 
-## 5. 广场 3D 方案（概要，详见 plaza-3d.md）
+## 5. 广场 3D 方案（二期；概要，详见 [plaza-3d.md](./phase2/plaza-3d.md)）
 
 - **单例 renderer + 场景状态机**：离开广场回 2D 时 dispose 几何 / 材质 / 纹理、释放 WebGL 上下文（最近 GLB 可留缓存），避免与长会话叠加显存。
 - **渲染参数**：DPR 钳制 ≤2；贴图 ≤1024（特写 2K）；场景总 tris <300k；GLB Draco/Meshopt；后处理按设备分级（低端降 / 关 Bloom / DOF），帧率监控掉帧自动降质。

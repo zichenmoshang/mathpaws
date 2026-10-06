@@ -1,7 +1,8 @@
 # 3D 广场实现方案（Plaza）
 
+> **【冻结 · 二期档案】2026-10-04 拍板：广场实时 3D 整体转二期**（一期广场为 2D 静态页整页背景 + 热点，见 [../../PRD.md](../../PRD.md) §6）；本文留档，二期开工时直接续用。
 > 版本：一期定稿　|　最后更新：2026-09-28
-> 广场是 mathpaws **唯一的实时 3D 场景**与"游玩 / 探索枢纽"；其余页面全 2D。产品规则见 [../PRD.md](../PRD.md) §6，资产需求见 [asset-checklist.md](./asset-checklist.md)，3D 台账 / 建模管线见 [asset-manifest.md](./asset-manifest.md) 与 [gen3d-guide.md](./gen3d-guide.md)。
+> 广场是 mathpaws **唯一的实时 3D 场景**与"游玩 / 探索枢纽"；其余页面全 2D。产品规则见 [../../PRD.md](../../PRD.md) §6，资产需求见 [../../design-system.md](../../design-system.md) §7.3，3D 台账 / 建模管线见 [asset-manifest.md](./asset-manifest.md) 与 [gen3d-guide.md](./gen3d-guide.md)。
 > 视觉质感靶子 = `design/high-fi/plaza/plaza.png`（**不重出**，只做 Look Dev 对齐 + 局部返工）。
 
 ---
@@ -70,7 +71,7 @@
 ## 7. 渲染、质感与性能
 
 ### 7.1 Look Dev 质感锚（先立靶子再做资产）
-- 在 `#lookdev`（`scenes/LookDev.tsx`）以 plaza.png 为靶子，调 `three/ClayMaterial.tsx`（Clay/vinyl PBR：**roughness 约 0.4–0.6 起调（润的搪胶，非哑光陶土；现状 0.88 偏哑需下调）**、metalness≈0、毛绒 fresnel sheen）、`SceneRig.tsx`（暖色主光软阴影 2048 + 半球补光 + 程序化 IBL）、`Effects.tsx`（**ACES Filmic 色调映射 + SSAO 接触阴影 / 环境光遮蔽 + 克制 Bloom（仅发光物）+ 轻 DOF 景深（远景 / 道具）+ 糖果色色彩分级 + SMAA + 轻 Vignette**），**固化为预设**；后处理按设备分级、低端自动降 / 关 DOF 与 SSAO；曝光 1.0 防过曝。后续每个 GLB / 材质回流到该预设下对比验收（视觉口径同 [design-system.md](../design-system.md) §6.2）。
+- 在 `#lookdev`（`scenes/LookDev.tsx`）以 plaza.png 为靶子，调 `three/ClayMaterial.tsx`（Clay/vinyl PBR：**roughness 约 0.4–0.6 起调（润的搪胶，非哑光陶土；现状 0.88 偏哑需下调）**、metalness≈0、毛绒 fresnel sheen）、`SceneRig.tsx`（暖色主光软阴影 2048 + 半球补光 + 程序化 IBL）、`Effects.tsx`（**ACES Filmic 色调映射 + SSAO 接触阴影 / 环境光遮蔽 + 克制 Bloom（仅发光物）+ 轻 DOF 景深（远景 / 道具）+ 糖果色色彩分级 + SMAA + 轻 Vignette**），**固化为预设**；后处理按设备分级、低端自动降 / 关 DOF 与 SSAO；曝光 1.0 防过曝。后续每个 GLB / 材质回流到该预设下对比验收（视觉口径同 [design-system.md](../../design-system.md) §6.2）。
 - 概念图是 Seedream 生成的理想单帧、无真实 3D 结构，实时 3D 会比原画差一档；目标是"质感神似、任意角度无穿帮"，而非逐像素 1:1。
 
 ### 7.2 性能预算（MatePad 集成 GPU，从严）

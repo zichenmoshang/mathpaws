@@ -4,7 +4,7 @@
 - **所属页面/批次**：全局 / M1-AST-02 图标库批次2
 - **类型**：ICON（功能图标）+ ITEM（种子/果实）+ PANEL（品质框边框）
 - **比例与像素**：每图标单独生成 1024×1024；交付 **1024×1024 透明 WebP `<id>@2x.webp`**（统一 1024 透明画布、居中、边距一致）
-- **生成方式**：每图标 1 次 T2I（seedream_5.0_pro）→ rembg u2net 去白底；品质框额外挖空中心；统一 1024 方形画布
+- **生成方式**：每图标 1 次 T2I（seedream_5.0_pro）→ rembg birefnet-general-lite 去白底；品质框额外挖空中心；统一 1024 方形画布
 - **参考图 / core-ip**：
   - **风格锁定锚点**：金色贝壳 i-shell（立体厚涂游戏图标风）
   - 高保真参照：[gacha.png](../../high-fi/gacha.png)
@@ -162,7 +162,7 @@ frame-legendary：
 
 ## 四、后处理 / 固化
 
-1. 每图去白底（rembg u2net 或去白阈值）→ 透明 PNG/WebP；视觉占比不足 70% 的按 alpha bbox 重裁并 pad
+1. 每图去白底（rembg birefnet-general-lite 或去白阈值）→ 透明 PNG/WebP；视觉占比不足 70% 的按 alpha bbox 重裁并 pad
 2. 等比缩放到 512²，命名 `<id>@2x.webp`，落点：
    - 通用/功能/装饰/品质框 → `apps/web/src/assets/img/icons/`
    - 种子/果实 → `apps/web/src/assets/img/farm/`

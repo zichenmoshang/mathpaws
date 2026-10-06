@@ -1,15 +1,10 @@
 # 纸娃娃 2D 换装系统规范与生产 SOP（PaperDoll · 整身 + 帽 / 鞋）
 
-> **⚠️ 2026-10-04 起系统已升级到 v5（N+M 运行时合成），本文 §1–§13 仍为 v4 历史记录**，保留切层算法细节与踩坑档案；当前事实以以下两份为准：
-> - **新角色 / 新头饰生图契约（新增素材先读）**：[character-generation-spec.md](./character-generation-spec.md)
-> - v5 资产结构：staging `design/paperdoll-spike/_step4_export/`（step4 导出，gitignored）→ QC 后由 step6 发布 `apps/web/src/assets/paperdoll/manifest.json`（schema `paperdoll-manifest-v5-runtime`，瘦身版）；运行时实现：`packages/ui/src/paperdoll-compose.ts`；回归页：`#paperdoll-rt`。
->
-> v5 关键变更速览：① 抠图默认模型 u2net → **birefnet-general-lite**；② 生产资产从 46 份 N×M 烘焙层瘦身到 **14 份**（6 bodies + 3 heads + 2 hats + 2 masks + 1 shoe），forhat/per-body 变体只保留在 `_truth/` 供回归；③ 运行时完成 item 帽挖洞、整头颈缝合成、wizard 动态 hair gate + 颈色 relit；④ **wizard 帽已修复鼓包并重新上架**；⑤ 新角色只需 1 张光脚 body 母图。
-
-> 版本：v4（整身为主 + 帽 / 鞋弱耦合，3 槽；帽区改为颜色驱动分割）　|　最后更新：2026-09-30（v5 指针 2026-10-04）
-> 本文档是**人物 2D 换装（纸娃娃）分层、资产生产、抠图、切层、锚点、遮罩、导出、命名与验收**的事实来源之一，包含一套已跑通、可复现、可批量的端到端 SOP。
-> 视觉 / 色板 / 字体以 [../design-system.md](../design-system.md) 为准；图片 prompt 门禁见 [`../../design/asset-prompts/`](../../design/asset-prompts/)。
-> v4 已通过离线 step1–4 + 运行时 `#paperdoll` 多尺寸验收。v2 的「素体 + 上衣 / 下装 / 饰品 4 槽」方案因 1px 缝隙与望远镜 × 普通衣的怪异混搭被取代（见 §13）。
+> 版本：v5（生产资产 14 份：6 bodies + 3 heads + 2 hats + 2 masks + 1 shoe；item 帽挖洞 / 整头颈缝 / wizard 动态配对均在运行时合成）　|　最后更新：2026-10-06
+> 本文档是**人物 2D 换装（纸娃娃）分层、生产、抠图、切层、遮罩、导出、命名与验收**的事实来源与端到端 SOP（已跑通、可复现、可批量）。
+> **新角色 / 新头饰生图契约（新增素材先读）**：[character-generation-spec.md](./character-generation-spec.md)；视觉 / 色板 / 字体以 [../design-system.md](../design-system.md) 为准；prompt 门禁见 [`../../design/asset-prompts/`](../../design/asset-prompts/)。
+> 资产链路：staging `design/paperdoll-spike/_step4_export/`（gitignored）→ QC 后 step6 发布 `apps/web/src/assets/paperdoll/manifest.json`（schema `paperdoll-manifest-v5-runtime`）；运行时 `packages/paperdoll/src/{compose.ts,react.tsx}`；回归页 `#paperdoll-rt`。
+> v4→v5 变更与 v2–v4 演进 / 踩坑作为档案保留在 §13（要点：birefnet-general-lite、46→14 层瘦身、wizard 修复鼓包重新上架、新角色只需 1 张光脚 body 母图）。
 
 ---
 
@@ -18,7 +13,7 @@
 - **一期换装只在 2D**：学盒（P10）抽卡揭示、背包 / 换装（P16）纸娃娃穿戴、首页（P4）左列立绘同步穿戴。
 - **广场 3D 主角一期固定显示默认着装**，不做实时换装；3D 实时换装列入二期（见 §12）。
 - 主角**唯一、中性、不捏脸**：脸、肤色、发型一期固定。
-- **核心架构（v4）**：OUTFIT 是**一整张全身图**，只有 HAT / SHOE 两个弱耦合独立槽。运行时最多叠 3 层，z-order：`outfit → shoe → hat`。
+- **核心架构（v5）**：OUTFIT 是**一整张全身图**（每套仅 1 份 `body`，不按帽烘焙 forhat 变体进生产），只有 HAT / SHOE 两个弱耦合独立槽；z-order 与 item / head 两种 gear 形态见 §3。挖洞 / 接缝 / relit 全部发生在 2048 离屏画布上，合成单图后一次缩放显示。
 - 为什么放弃"上衣 / 下装自由分层"：① 硬切层各自缩放，帽 / 脸、脸 / 身之间出现 1px 缝；② 胸挂件（望远镜）与特定上衣强耦合，跨件混搭必然怪异。整身图从根本上消除内部接缝，只在帽 / 鞋两处边缘小范围耦合。业界（Spine `skins`：成套组合 + 少量独立附件）也是此口径。
 - **生产方式**：AI 只负责"画"（整身套装图、补画被遮挡像素）；抠图 / 切层 / 对齐 / 导出全部走**确定性脚本**（rembg + HSV 颜色分割 / 已验证固定切常量 + Pillow/scipy），不用扩散模型做抠图（见 §9）。
 - **v4 相对 v3 的关键变化**：帽区不再靠手绘椭圆遮罩 R 硬切（框不准 → 缺口 / 光环 / 切耳），改为**从戴帽源图自身提取帽区**（颜色分割或整头替换，见 §7.1），帽层与 forhat 洞同形构造，内部缺口恒为 0。
@@ -29,8 +24,8 @@
 
 | 槽位 | id | 一期内容 | 约束 |
 |---|---|---|---|
-| 套装 | `outfit` | 一整套：上衣 + 下装 + 四肢，整身一张图（一期 6 套） | 含 `nohat`，每顶在架头饰一个 `forhat` 版本 |
-| 头饰 | `hat` | 一期在架 4 顶：探险家帽 / 科学家护目镜 / 青蛙帽 / 精灵帽；可跨套装搭配 | **只换帽，不换发型**；wizard 巫师帽暂下线；换发型二期 |
+| 套装 | `outfit` | 一整套：上衣 + 下装 + 四肢，整身一张图（一期 6 套） | 每套仅 1 份 `body`（nohat）；item 帽洞由运行时 mask 实时挖，forhat 烘焙层仅 wizard 组留 `_truth` 回归 |
+| 头饰 | `hat` | 在架 5 顶：探险家帽 / 科学家护目镜（item）+ 青蛙帽 / 精灵帽 / 巫师帽（head 整头）；可跨套装搭配 | **只换帽，不换发型**；wizard 帽 v5 已修复鼓包重新上架；换发型二期 |
 | 鞋 | `shoe` | 默认暖白软底鞋；可光脚 | 新鞋必须贴现有脚型、脚底基线不变，不做高靴 |
 
 固定不变（不参与抽取）：**脸 / 五官 / 肤色 / 体型 / 发型**（可可棕对称蓬松短发 + 呆毛，来自 core-ip）。
@@ -43,15 +38,15 @@
 
 | 层 | 文件 | 内容 | 来源 |
 |---|---|---|---|
-| L1 套装 | `outfits/outfit-<id>-nohat@2x.webp` | 完整整身（不戴帽时用） | 光脚母图 rembg |
-| L1′ 套装 | `outfits/outfit-<id>-forhat-<hat>@2x.webp` | 同整身，按该帽的洞 mask 挖空（戴帽时用，每帽一份） | nohat 版 cut_hole |
-| L2 鞋 | `shoes/shoe-<id>@2x.webp` | 鞋 + 8px 包踝带；鞋头向裸脚贴合 | core-ip 原图 rembg + 水平切 |
-| L3 帽（通用） | `hats/hat-<hat>@2x.webp` | 帽 + 源图自带发际（color/ellipse/head 通用帽） | 戴帽源图 rembg + 对应 cut_mode |
-| L3′ 帽（配对） | `hats/hat-wizard-on-<outfit>@2x.webp` | wizard 帽的每套装变体（颈肤按套装重亮） | 配对 cut，见 §7.1 |
+| L1 身体 | `bodies/body-<id>@2x.webp` | 完整整身 nohat（每套 1 份，生产唯一身体层） | 光脚母图 rembg |
+| L2 鞋 | `shoes/shoe-default@2x.webp` | 鞋 + 8px 包踝带；鞋头向裸脚贴合 | 穿鞋母图 rembg + 水平切 |
+| L3 gear·item 帽 | `hats/hat-<hat>@2x.webp` + `masks/hole-<hat>@2x.webp` | explorer / scientist：运行时先 `eraseByMask(body, hole)` 再盖帽 | 戴帽源图 color / ellipse |
+| L3 gear·head 整头 | `heads/head-<hat>@2x.webp` | frog / elf / wizard：运行时按 seam 颈缝合成盖头 | head cut_mode |
+| 回归真值（非生产） | `_truth/outfits/outfit-<id>-forhat-wizard@2x.webp`、`_truth/hats/hat-wizard-on-<id>@2x.webp` | wizard 组 per-body 烘焙变体（N×M 矩阵只发布 wizard 组），供 PaperDollCompositeDev 回归 | step4 导出 |
 
-- 不戴帽：`outfit-nohat`（可叠加 `shoe`）。
-- 戴帽：`outfit-forhat-<hat>` + 对应帽层（帽层覆盖洞），可叠加 `shoe`。
-- 每套整身都必须产出 `nohat`；`forhat` 按**在架头饰**逐顶产出——即使该套装主题本身含帽（如探险家），也要有"摘帽版"整身作为 `nohat`（见 §6）。
+- 生产层共 **14 份**：6 bodies + 3 heads + 2 hats + 2 masks + 1 shoe；z-order `body → shoe → gear`。
+- 合成规则：不戴帽 = `body`（可叠 `shoe`）；item 帽 = 运行时 hole mask 挖洞（`alpha = min(body, 255 − mask)`）→ 叠 `shoe` → 盖帽；head 整头 = 按 seam 颈缝带合成（frog / elf 直接盖；wizard 先动态构建配对头），可叠 `shoe`。
+- 每套整身只产出 1 份 `body`（nohat）；含帽套装仍需"摘帽版"母图作为 nohat（见 §6）。
 
 ## 4. 标准姿势、画布、坐标与锚点
 
@@ -81,15 +76,13 @@
 | `.venv-art`（Python 3.12） | `design\.venv-art\Scripts\python.exe` | **step1 / step2 / step3 / step4**：凡经 `import step2_layers` 的脚本都间接依赖 rembg（rembg 2.0.x + **单独安装** onnxruntime） |
 | 全局 `python`（3.14） | 系统 Python | 仅 **step5**（纯 Pillow 回读，不 import step2）；3.14 无 onnxruntime wheel，勿装 |
 
-- step2 仅在需要时联网：explorer 帽源与首次切鞋走 CDN（本地缺 cutout 时）；scientist/frog/elf/wizard 帽源均为本地 master 对应的 cutout，已切出的鞋层自动复用。须在能联网的 `.venv-art` 环境运行（至少留好 CDN 兜底）。
-- **u2net 模型**：首次自动下载易撞 GitHub SSL。用 `download_model.py`（镜像兜底）手动下载到 `%USERPROFILE%\.rembg\models\u2net\u2net.onnx`（约 176MB；rembg 2.0.x 路径是 `.rembg\models\u2net\`）。
+- 管线全离线可跑（2026-10-06 起）：explorer 戴帽源与穿鞋 core-ip 母图均已归档本地 masters，不再依赖 CDN（见 §13）；仅 rembg 模型权重首次下载需联网。
 
 ### 5.3 脚本清单（按执行顺序，均在 paperdoll-spike/）
 
 | 脚本 | 作用 |
 |---|---|
-| `download_model.py` | 镜像下载 u2net.onnx，一次性 |
-| `step1.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `_step1_export/*-rmbg.png`、`_step1_export/grid/*-grid.png`、`_step1_export/qc/contact-rmbg.png` |
+| `step1_rembg.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `_step1_export/*-rmbg.png`、`_step1_export/grid/*-grid.png`、`_step1_export/qc/contact-rmbg.png` |
 | `step2_layers.py` | **核心**：先从戴帽源图按各帽 `cut_mode`（color/ellipse/head，wizard 配对）切帽层；再从光脚 cutout 产出整身 nohat 与每帽 forhat（洞与帽层同形）；鞋层水平切 + 向裸脚贴合（已产出则复用）；写 `_step2_export/{outfits,hats,heads,masks,shoes}/*.png` 与 `_step2_export/qc/contact-compose.png`；HSV 带 / 切常量在此文件 |
 | `step3_zoomqc.py` | 接缝放大质检：鞋踝 + 每帽帽发（含配对帽），写 `_step3_export/zoom-qc.png` |
 | `step4_export.py` | 从 step2 常量导出全画布 WebP@2x、512 图标、全量 `manifest.json` 到 `_step4_export/` staging |
@@ -104,7 +97,7 @@
    - 默认套装：`dress-default-barefoot`；
    - **含帽套装（如探险家）需生成"摘帽版"** `dress-job-explorer-barefoot-nohat`——一次 image_edit 同时完成：摘帽补全帽下头发 + 光脚补脚 + 眼部锚定 core-ip（无睫毛圆眼）。这张是真正的 `nohat` 整身。
    - 眼部 / 脸部易在单参考编辑时漂移（探险家曾被改成带睫毛眼型）；含帽或易漂移场景用**双参考**：编辑对象 [img0] + core-ip [img1]，prompt 明确"无睫毛圆眼、严格锚定 [img1]"。
-2. **抠图 + 网格**：`.venv-art` 跑 `step1.py`（自动发现 masters 全部母图），得透明 `_step1_export/*-rmbg.png`。
+2. **抠图 + 网格**：`.venv-art` 跑 `step1_rembg.py`（自动发现 masters 全部母图），得透明 `_step1_export/*-rmbg.png`。
 3. **切层**：`.venv-art` 跑 `step2_layers.py`：
    - 整身 nohat 直接来自光脚 cutout；每帽 forhat = cut_hole(该帽洞 mask)；
    - 帽层从戴帽源图按其 `cut_mode` 切（颜色分割 / 椭圆 / 整头，见 §7.1）；鞋层水平切并向裸脚贴合（见 §7.2，已产出自动复用）。
@@ -125,10 +118,10 @@
 | `color`（默认） | scientist | ① HSV 排除皮肤+头发（标定带见下），其余为帽像素；② 从椭圆内部侵蚀 24px 的种子出发，只沿强 alpha（>120）帽像素**区域生长**（rembg 软光晕无法桥接杂点），受 R 外扩 140px 硬边界约束；③ 闭运算 + 填洞 + alpha 门控 12px 包边（可压源自身头发，棕替棕）。洞 = 帽形侵蚀 4px + 羽化 |
 | `ellipse` | explorer | 卡其帽冠（H30/S0.26/V0.85）与皮肤 HSV 几乎不可分，颜色法不适用；保留**已验证紧椭圆 R**，洞 = R ∩ 源 alpha（自动修掉椭圆比真帽缘多出的 1–3px 细条） |
 | `head` | frog / elf | 源图接管**整个头部**：切点（颈部最窄处的已验证常量，frog 920 / elf 985）以上整行替换（任何帽形外头发鼓包无法存活）；切点前 40px **过渡带只沿源 alpha 列**切（身体宽衣领两侧保留）；源颈肤下延 12px overlap 包接缝；垂直方向 1D 羽化（2D 羽化会溢入源图封闭空气口袋） |
-| `head` + 配对 | wizard（已下线） | 在 head 基础上**每套装切一份帽层**：源皮肤不直接用（源颈处在长袍衣领阴影里偏暗），按 `0.28×源 + 0.72×身体自身亮颈肤色`重亮；源头发只在身体皮肤/头发区通过，不覆盖衣服/空气。6 个 `hat-wizard-on-<outfit>` 变体仍在导出目录，应用侧 `catalog.ts` 暂时不挂选项 |
+| `head` + 配对 | wizard（v5 已重新上架） | 在 head 基础上按身体配对：**v5 起配对头由运行时动态构建**，不再逐套烘焙发布——hair gate = 源皮肤 OR（源头发 AND 身体肤/发区），源皮肤按 `0.28×源 + 0.72×身体颈色` relit（源颈在长袍阴影里偏暗；颈色由运行时对 body 采样，见 §8.3）。烘焙的 6 个 `hat-wizard-on-<outfit>` 变体转为 `_truth` 回归真值 |
 
 - HSV 排除带（针对当前素材采样标定）：皮肤 `H 3–32, S 0.18–0.48, V≥0.62`；头发 `H 4–45, S≥0.32, V≤0.72`；新增帽色若落入这些带，需要单独选模式或收紧带子。
-- 戴帽组合**必须**用对应 forhat；不戴帽用 nohat。
+- 生产侧每套装仅 1 份 nohat body：item 帽洞由运行时 hole mask 实时挖（`hole-<hat>` mask 与 forhat 同形构造、随包发布），head 整头由运行时按 seam 合成；forhat 烘焙层只剩 wizard 组在 `_truth` 供回归。
 
 ### 7.2 鞋：水平切 + 鞋头向裸脚贴合
 
@@ -146,21 +139,22 @@
 ### 8.2 离线组合验收（矩阵，每次切层全过）
 
 1. **6 套装 nohat + 光脚** 各一张；
-2. **在架 4 头饰（explorer/scientist/frog/elf）× 6 套装全部组合**：无缺块 / 重影 / 白边 / 光环，颈部接缝自然，帽与眼睛对齐；
+2. **在架 5 头饰（explorer/scientist/frog/elf/wizard）× 6 套装全部组合**：无缺块 / 重影 / 白边 / 光环，颈部接缝自然，帽与眼睛对齐；wizard 另对照 `_truth` 烘焙真值回归；
 3. **摘帽切换**：含帽套装（explorer）nohat 头顶无帽痕、发型饱满；
 4. **+ 鞋** 各组合鞋踝正常。
 
-通过标准：脸一致、锚点重合、合成无损、透明干净、质感统一；`step3` 放大图与 `step5` WebP 回读图都要看。wizard 帽不参与（已下线），其管线产物单独留档。
+通过标准：脸一致、锚点重合、合成无损、透明干净、质感统一；`step3` 放大图与 `step5` WebP 回读图都要看。
 
 ### 8.3 运行时：PaperDoll 组件与 `#paperdoll` LookDev
 
-- **`packages/ui/src/paperdoll.tsx`**（导出 `PaperDoll` / `PaperDollLayers` / `PaperDollBackground`）：
-  - **离屏 canvas 先合成再整体缩放**：先在固定 2048 离屏画布按 `outfit → shoe → hat` drawImage 成单图，再把这张合成图一次性高质量缩放到显示画布。各层只在原生分辨率叠加、边界吻合，整体只经历一次缩放——根除"每层独立缩小 → 边界采样 → 1px 缝"。
-  - 纯展示，只吃解析好的图层 URL；传 `hat` 即自动改用 `outfitForHat`，传 `shoe` 即穿鞋。
-  - **ResizeObserver**：容器尺寸变化时 rAF 节流重绘并更新 backing（canvas.width = clientWidth × DPR，DPR 封顶 3），拖拽窗口清晰度实时跟随，无需换装 / 刷新。
+- **`packages/paperdoll/`（`@mathpaws/paperdoll`，2026-10-06 从 `packages/ui` 迁出）**：组件 `src/react.tsx`（导出 `PaperDoll` 等），合成算法 `src/compose.ts`（`composeLook`）。
+  - **离屏 canvas 先合成再整体缩放**：先在固定 2048 离屏画布按 `body → shoe → gear` 合成单图（挖洞 / 颈缝 / relit 都在这一步完成），再一次性高质量缩放到显示画布。各层只在原生分辨率叠加、边界吻合，整体只经历一次缩放——根除"每层独立缩小 → 边界采样 → 1px 缝"。
+  - **item 帽挖洞**：`eraseByMask` 逐像素 `body.alpha = min(body.alpha, 255 − mask.alpha)`，只在 mask 的 alpha bbox 内处理，随后叠鞋盖帽。
+  - **head 整头颈缝**：`applyHeadHole` 硬头区整行擦、接缝带沿源 alpha 软挖（严格不到 cut 以下，保护衣领）；wizard 额外先 `buildPairHead` 动态构建配对头——hair gate = 源皮肤 OR（源头发 AND 身体肤/发区），gate 过渡带纵向 1D 高斯羽化，源皮肤按 `0.28×源 + 0.72×颈色` relit，颈色由 `sampleNeckColor` 对 body 做 HSV 肤色分类取 RGB 中位数（seam 参数与 relit 权重全部来自发布版 manifest，不手抄）。
+  - 纯展示，只吃解析好的图层 / seam / mask；**ResizeObserver**：容器尺寸变化时 rAF 节流重绘并更新 backing（canvas.width = clientWidth × DPR，DPR 封顶 3），拖拽窗口清晰度实时跟随。
   - `background: 'transparent' | 'checker' | 'white' | 'sky'`；图片加载失败显示错误提示，不静默白屏。
-- **资产目录 `apps/web/src/assets/paperdoll/`**：`layers/{bodies,heads,hats,masks,shoes}`、`icons/`、`manifest.json`（step6 发布的瘦身版）、`_truth/`（dev 回归子集）。
-- **映射 `apps/web/src/paperdoll/catalog.ts`**：`OUTFIT_OPTIONS`（6 套）/ `HAT_OPTIONS`（在架 4 头饰 + 无）/ `SHOE_OPTIONS`、`DEFAULT_SELECTION`（默认套装、光脚、不戴帽）、`buildLayers(sel)`（帽层按当前套装解析，支持单图层或 layer 变体表）、`randomSelection()`、`optionLabel()`。wizard 帽选项在文件中注释保留，恢复时加回即可。
+- **资产目录 `apps/web/src/assets/paperdoll/`**：`layers/{bodies,heads,hats,masks,shoes}`、`icons/`、`manifest.json`（step6 发布的瘦身版）、`_truth/`（wizard 组回归真值，仅 PaperDollCompositeDev 引用）。
+- **映射 `apps/web/src/paperdoll/catalog.ts`**：`OUTFIT_OPTIONS`（6 套）/ `HAT_OPTIONS`（在架 5 头饰 + 无，含 wizard）/ `SHOE_OPTIONS`、`DEFAULT_SELECTION`（默认套装、光脚、不戴帽）、`buildLayers(sel)`、`randomSelection()`、`optionLabel()`；seam 几何经 `seamOf()` 从发布版 manifest 读取（step6 瘦身，源自 step2 常量）。
 - **常驻场景 `apps/web/src/scenes/PaperDollLookDev.tsx`**，hash 直达 `#paperdoll`（React.lazy 独立 chunk）。
 
 **运行时验收（每套在 `#paperdoll` 逐组合点一遍）**：
@@ -171,13 +165,13 @@
 4. 穿鞋 / 光脚切换：鞋帮包踝自然、鞋外侧不露裸脚边；
 5. 跨套装戴帽对齐；拖拽改尺寸时 ResizeObserver 实时重绘。
 
-**v4 已验结论（2026-09-30）**：在架 4 头饰 × 6 套装组合与多尺寸通过（轻微瑕疵经确认可接受）；`tsc` 零错误。wizard 帽下线待重做。
+**已验结论**：v4（2026-09-30）在架 4 头饰 × 6 套装组合与多尺寸通过，`tsc` 零错误；v5（2026-10-04）wizard 帽修复鼓包（动态 hair gate + 颈色 relit）重新上架，生产资产瘦身至 14 份，在架 5 头饰 × 6 套装。
 
 **P16 背包边界**：直接复用 `PaperDoll` + `catalog`，只剩业务外壳——`DressUpPanel` / `ItemGrid`、穿戴与库存 store、IndexedDB `cosmetics` 持久化、P10 获得→可穿戴、P4 立绘同步。
 
 ## 9. 工具边界：抠图用分割模型，补画才用生成模型
 
-- **删背景 / 分离已画好的像素 → rembg（u2net 分割）**：只算 alpha、主体一个像素不改、确定性可复现、给真透明与羽化、可批量、零额度。多层 / 多件要逐像素对齐，这是硬要求。
+- **删背景 / 分离已画好的像素 → rembg（birefnet-general-lite 分割）**：只算 alpha、主体一个像素不改、确定性可复现、给真透明与羽化、可批量、零额度。多层 / 多件要逐像素对齐，这是硬要求。
 - **补画原图不存在的像素（inpaint）→ Seedream（image_edit）**：光脚母图里被鞋挡住的脚、摘帽版里被帽压住的头发，分割无法凭空生成，必须生成模型补。
 - **不要让 Seedream / 扩散模型做抠图**：去背景本质是"重画整图"，会漂移颜色 / 边缘 / 比例，且常返回白底或棋盘假透明、无可靠 alpha。
 - **`layer_decomposition` 不能用于换装**：它只把现有像素按语义分堆（最多 16 个透明 PNG），不补"被遮住的部分"——拿走某层下面是洞，无法交叉替换；且拆分粒度不可指定、不可复现。它是"多对象合成图的素材提取器"，不是角色绑定 / 换装系统。
@@ -192,28 +186,29 @@
 ## 11. 命名与 manifest
 
 - 整身母图（留档）：`dress-default-barefoot.png`、`dress-job-explorer-barefoot-nohat.png`。
-- 整身层：`layers/outfits/outfit-<id>-{nohat,forhat-<hat>}@2x.webp`；帽：`layers/hats/hat-<hat>@2x.webp`（配对帽 `hat-wizard-on-<outfit>@2x.webp`）；鞋：`layers/shoes/shoe-<id>@2x.webp`。
+- 生产层：身体 `layers/bodies/body-<id>@2x.webp`；整头 `layers/heads/head-<hat>@2x.webp`（frog/elf/wizard）；item 帽 `layers/hats/hat-<hat>@2x.webp` + 挖洞 mask `layers/masks/hole-<hat>@2x.webp`（explorer/scientist）；鞋 `layers/shoes/shoe-default@2x.webp`。回归真值：`_truth/{outfits,hats}/`（仅 wizard 组）。
 - 图标：`icons/<outfit|hat|shoe>-<id>-icon.webp`（512²）。
 - series = `job` / `animal` / `fantasy` / `festival`；id：`default` / `explorer` / `scientist` / `frog` / `elf` / `wizard`。
-- `manifest.json`（schema `paperdoll-manifest-v4`）：按 `outfits / hats / shoes` 组织，含 id / cn_name / icon / layer 或 layer_variants / master_image / prompt_doc；`default_look = { outfit:'default', hat:null, shoe:null }`。rarity 未定时留备注，不臆造。
+- `manifest.json`（schema `paperdoll-manifest-v5-runtime`）：按 `bodies / gear / shoes` 组织；gear 含 `kind`（`item` 带 `mask` / `head` 带 `seam`），seam 字段 `y0 / cut / overlap / sigma / skin_sample_rows_above_cut`（wizard 另含 `relit: [0.28, 0.72]`）；顶层 `slots = [body, gear, shoe]`、`z_order = [body, shoe, gear]`。staging 全量版另含 prompt_doc / master_image / default_look 等溯源与运行时字段，step6 发布时剔除。rarity 未定时留备注，不臆造。
 
 ## 12. 批量生产（批次 4）与 3D 预留
 
 - 批次 4 已生产 **6 套中性装扮**（default/explorer/scientist/frog/elf/wizard），每套走 §6 全流程；含帽套装出"摘帽版"母图。
-- 状态：4 头饰在架；wizard 帽（含 v2 重出版与每套装变体）待问题根治后恢复上架；wizard 法袍服装本身在架。
+- 状态：5 头饰在架（含 wizard，v5 已修复鼓包重新上架）；6 套装均在架。
 - 批量生图受 §10 门禁：先逐套提交 prompt 经确认再 image_edit，不擅自批量。
 - **3D 预留（本期不实现）**：广场 char-hero 只显示默认着装；建模按标准 humanoid 骨架命名，二期做成挂同一骨架的 skinned mesh，与 2D 槽位口径一致。
 
 ## 13. 已验证死路 / 踩坑（勿重复）
 
+> v4→v5 关键变更（2026-10-04）：抠图模型 u2net → **birefnet-general-lite**；生产资产 46 份 N×M 烘焙层 → **14 份**（forhat 变体退 `_truth/`）；运行时完成 item 挖洞 / 整头颈缝 / wizard 动态配对 + relit；**wizard 帽修复鼓包重新上架**；新角色只需 1 张光脚 body 母图。此前：v2「素体 + 4 槽」→ v3 整身 → v4 源图取帽区；v4 于 2026-09-30 通过离线 step1–4 + `#paperdoll` 多尺寸验收。
+
 - **v2 上衣 / 下装硬切分层** → 帽 / 脸、脸 / 身 1px 缝；望远镜 × 普通衣混搭怪异 → v3 整身 + 帽 / 鞋。
-- **扩散模型抠图 / layer_decomposition 做换装** → 重画漂移 / 无遮挡补全，不可用（§9）。
+- **扩散模型抠图 / layer_decomposition 做换装** → 重画漂移 / 无遮挡补全，不可用（§9）；floodfill 处理不了封闭白区与近白阴影。
 - **单参考编辑脸部漂移**：探险家被改成带睫毛眼型 → 双参考（+ core-ip）+ prompt 强锚定无睫毛圆眼。
-- **把戴帽母图当 nohat**：整身含帽无法靠切割得到摘帽版（帽下发际不存在） → 单独生成"摘帽版"母图。
+- **把戴帽母图当 nohat**：帽下发际不存在，切割得不到摘帽版 → 单独生成"摘帽版"母图。
 - **裸脚比鞋宽**：鞋底外侧露裸脚边 → `fit_shoe_to_foot` 只在鞋头沿裸脚外扩。
-- **Vite 预构建陈旧导致画布空白**：`@mathpaws/ui` 是指向 TS 源码的 workspace 链接包，被 `optimizeDeps.include` 预构建后，源码改动不触发缓存失效，浏览器一直加载旧 PaperDoll（空 img、控制台无报错）。解法：vite.config 中 `optimizeDeps.exclude: ['@mathpaws/ui']`（让 Vite 直接按需编译源码），改动即时生效；必要时停唯一实例后 `vite --force`。
-- **手绘椭圆 R 硬切帽区（v3 做法）的三类问题**：框比帽小 → 切缺（scientist 镜框顶部 V 缺口）；框比帽大 / 切到轮廓外头发 → 光环、切耳。→ v4 改为从源图自身取帽区（§7.1）。
-- **一顶帽的轮廓罩不住 6 套不同大小的发穹**：wizard v1/v2（帽檐加宽、帽锥仍窄）跨套时身体头发在帽锥两侧、后上方鼓出；单纯重出一张图、颜色分割、配对重亮都无法同时满足全部套装 → 该帽暂时下线。后续要么以"统一发穹"重新生成全部素材，要么接受每套装专用帽层方案的视觉效果后再上架。
-- **缺口指标只数"源覆盖行内部"**：把按设计删除的轮廓外头发当缺口会得到误导性大数字；视觉验收（contact/zoom）才是最终判据。
-- **CDN 单点依赖已解除（2026-10-06）**：鞋层源（shod core-ip）与 explorer 戴帽源已归档本地 masters（`dress-default-shod.png` / `dress-job-explorer-full.png`），step2 全离线可跑，不再依赖短链。
-- floodfill 处理不了封闭白区与近白阴影；Python 3.14 装不了 onnxruntime；rembg 2.x 需单装 onnxruntime、模型路径变为 `.rembg\models\u2net\`。
+- **Vite 预构建陈旧导致画布空白**：`@mathpaws/ui` / `@mathpaws/paperdoll` 是指向 TS 源码的 workspace 链接包，被 `optimizeDeps.include` 预构建后源码改动不触发缓存失效（空 img、控制台无报错）。解法：vite.config `optimizeDeps.exclude` 这两个包，必要时 `vite --force`。
+- **手绘椭圆 R 硬切帽区（v3）**：框小 → 切缺（scientist 镜框 V 缺口）；框大 / 切到轮廓外头发 → 光环、切耳 → v4 改为从源图自身取帽区（§7.1）。
+- **wizard 帽轮廓罩不住 6 套发穹（v1/v2 曾下线）**：**v5 已解**——配对头运行时动态构建（hair gate 按身体肤/发区门控 + 颈色 relit），烘焙变体退 `_truth` 回归真值（§7.1 / §8.3）。
+- **缺口指标只数"源覆盖行内部"**，按设计删除的轮廓外头发不算缺口；视觉验收（contact/zoom）才是最终判据。
+- **环境**：Python 3.14 装不了 onnxruntime；rembg 2.x 需单装 onnxruntime，模型缓存 `%USERPROFILE%\.rembg\models\`；鞋层源 / explorer 戴帽源已归档本地 masters，step2 全离线可跑（2026-10-06 解除 CDN 依赖）。

@@ -74,12 +74,10 @@ export function RoundBtn({
 }
 
 // ---------- 资源胶囊（顶栏） ----------
-type ChipTone = 'shell' | 'flower' | 'heart' | 'water' | 'food'
+type ChipTone = 'shell' | 'flower' | 'food'
 const CHIP_TONE: Record<ChipTone, { bg: string; fg: string }> = {
   shell: { bg: 'linear-gradient(180deg,#ffffff,#eef3f8)', fg: C.ink },
   flower: { bg: 'linear-gradient(180deg,#fff8e1,#ffecb3)', fg: '#ad6800' },
-  heart: { bg: 'linear-gradient(180deg,#fce4ec,#f8bbd0)', fg: C.pinkDeep },
-  water: { bg: 'linear-gradient(180deg,#e1f5fe,#b3e5fc)', fg: '#0277bd' },
   food: { bg: 'linear-gradient(180deg,#efebe9,#d7ccc8)', fg: '#5d4037' },
 }
 export function Chip({ icon, value, tone = 'shell', suffix }: {

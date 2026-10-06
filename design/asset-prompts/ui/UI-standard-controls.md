@@ -13,7 +13,7 @@
 ## 统一后处理
 
 - 每个控件单独生成在纯浅蓝背景上；
-- rembg（u2net）抠透明 → PIL 自动 tight-crop 到不透明像素边界 → 导出透明 WebP；
+- rembg（birefnet-general-lite）抠透明 → PIL 自动 tight-crop 到不透明像素边界 → 导出透明 WebP；
 - 按钮类 prompt 一律「无投影」，保证 crop 边界 = 控件本体，可直接做 9-slice 拉伸；
 - 主按钮 / Tab 用 9-slice（圆角与厚度边固定、中间拉伸）；返回钮 / 艺术字按原始比例直接摆放。
 

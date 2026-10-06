@@ -45,7 +45,7 @@
 
 ## 2. 广场实时 3D
 
-> 技术方案见 [plaza-3d.md](./design/plaza-3d.md)（留档）。
+> 技术方案见 [plaza-3d.md](./design/phase2/plaza-3d.md)（留档）。
 
 - GLB 建筑 / 角色 / 宠物跟随 / 碰撞 / 自由相机；3D 发光宝箱（弹 ChestPanel，与首页连学卡同一面板）。
 - 广场固定宠物位 + PetBubble（组件已备）：点击跟随宠物气泡进宠物面板 / 一键喂食。

@@ -8,11 +8,7 @@
 
 ## 0. 为什么需要这份规范
 
-v5 运行时模型：**N 个角色身体 + M 件头饰，组合在浏览器实时合成**（body → shoe → gear；巫师类头部按所穿身体动态 gate + 颈色 relit，见 paperdoll-system.md §7）。
-
-生产资产只有：每角色 1 张 `body-<id>`、每件头饰 1 个 `head/hat (+mask)`、鞋全角色共用 1 双。新角色**不再需要**为每顶帽子生成 N×M 份 forhat 文件。
-
-代价是：能这样复用，前提是所有母图共享一套严格的几何契约。**契约不满足，运行时接缝就会破**（典型症状：帽后头发鼓包、黑脸、接缝弧色差——均在 2026-10-03/04 踩过并修复，见 §6）。
+v5 运行时 = **N 个身体 × M 件头饰实时合成**（机制见 paperdoll-system.md §1 / §7）；生产只要求每角色 1 张 body、每头饰 1 个 head/hat(+mask)、鞋共用 1 双。能这样复用的前提是**所有母图共享同一套几何契约**——契约不满足，运行时接缝就破（帽后鼓包、黑脸、接缝弧色差，均在 2026-10-03/04 踩过并修复，见 §6）。
 
 ## 1. 画布与机位（所有母图，硬性）
 
@@ -90,7 +86,7 @@ v5 运行时模型：**N 个角色身体 + M 件头饰，组合在浏览器实�
 1. prompt 过 §6 检查单 → 用户确认 → Seedream 生成光脚白底母图；
 2. 母图存 `design/paperdoll-spike/masters/<系列>/dress-<id>-barefoot-nohat.png`；
 3. 在 `step2_layers.py` 的 `OUTFITS` 注册一行（id / cn / series / cutout stem / prompt_doc）；
-4. 跑 `step1.py` → `step2_layers.py` → `step3_zoomqc.py` → `step4_export.py` → `step5_verify_export.py`（QC）；
+4. 跑 `step1_rembg.py` → `step2_layers.py` → `step3_zoomqc.py` → `step4_export.py` → `step5_verify_export.py`（QC）；
 5. QC 验收后跑 `step6_publish.py` 发布到 `apps/web/src/assets/paperdoll/`；
 6. `catalog.ts` 的 `OUTFIT_OPTIONS` 加 1 项（body URL + 图标）；
 7. **回归门禁**：

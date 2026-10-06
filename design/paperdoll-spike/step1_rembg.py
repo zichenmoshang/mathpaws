@@ -12,15 +12,15 @@ flood-fill cutout could not reach enclosed white pockets and could not separate
 the white shirt from the shadow, so it was removed; only its coordinate-grid
 idea is kept here (drawn over the clean cutout).
 
-Default model is birefnet-general-lite (2026-10-03 A/B on the barefoot master:
+Model is fixed to birefnet-general-lite (2026-10-03 A/B on the barefoot master:
 contour 1-3px more faithful than u2net, no dark under-feet rim, same rembg API;
-comparison sheets since discarded). u2net stays available for fallback: pass it as argv[1].
+comparison sheets since discarded). The u2net fallback was removed 2026-10-06;
+see docs/topics/cutout-model-comparison.md for the full comparison.
 
 Run with the Python 3.12 asset venv (.venv-art) that has rembg + onnxruntime.
-Usage: <venv-art python> step1.py [model]   (default birefnet-general-lite)
+Usage: <venv-art python> step1_rembg.py
 """
 import os
-import sys
 from PIL import Image, ImageDraw
 from rembg import remove, new_session
 
@@ -75,9 +75,8 @@ def grid_overlay(rgba):
 
 
 def main():
-    model = sys.argv[1] if len(sys.argv) > 1 else "birefnet-general-lite"
-    print(f"loading session {model} (first run downloads weights)...")
-    session = new_session(model)
+    print("loading session birefnet-general-lite (first run downloads weights)...")
+    session = new_session("birefnet-general-lite")
     cell = 470
     per_row = 2
     n_rows = max(1, (len(FILES) + per_row - 1) // per_row)
