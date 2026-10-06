@@ -1,13 +1,14 @@
 // 域 store：玩家档案（设备游客身份、主角名、引导 / 小测状态）
 import { create } from 'zustand'
 
+import { PLAYER_NAME_MAX } from '../config/player'
 import { getDB } from '../db'
 import { defaultProfile } from '../db/migration'
 import type { ProfileRecord } from '../db/types'
 import { MAIN_KEY } from '../db/types'
 
 interface PlayerState extends ProfileRecord {
-  /** 设置主角名（≤6 字；为空回退"小朋友"） */
+  /** 设置主角名（≤PLAYER_NAME_MAX 字；为空回退"小朋友"） */
   setHeroName: (name: string) => void
   markOnboardingDone: () => void
   markGuideDone: () => void
@@ -17,7 +18,7 @@ interface PlayerState extends ProfileRecord {
 export const usePlayerStore = create<PlayerState>((set) => ({
   ...defaultProfile(),
   setHeroName: (name) =>
-    set({ heroName: name.trim().slice(0, 6) || '小朋友' }),
+    set({ heroName: name.trim().slice(0, PLAYER_NAME_MAX) || '小朋友' }),
   markOnboardingDone: () => set({ onboardingDone: true }),
   markGuideDone: () => set({ guideDone: true }),
   markPlacementDone: () => set({ placementDone: true }),

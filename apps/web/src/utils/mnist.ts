@@ -195,12 +195,14 @@ export async function recognizeDigit(source: HTMLCanvasElement): Promise<number>
   return top[0].digit
 }
 
-/** 空白检查：无墨迹返回 true */
+/** 空白检查：无墨迹返回 true（与 recognizeRegion 同口径：RGB 任一通道低于阈值即有墨迹） */
 export function isCanvasBlank(source: HTMLCanvasElement): boolean {
   const ctx = source.getContext('2d')!
   const d = ctx.getImageData(0, 0, source.width, source.height).data
   for (let i = 0; i < d.length; i += 4) {
-    if (d[i] < INK_THRESHOLD) return false
+    if (d[i] < INK_THRESHOLD || d[i + 1] < INK_THRESHOLD || d[i + 2] < INK_THRESHOLD) {
+      return false
+    }
   }
   return true
 }

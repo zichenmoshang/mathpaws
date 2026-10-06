@@ -31,7 +31,7 @@ let dbPromise: Promise<IDBPDatabase<MathpawsDB>> | null = null
 
 export function getDB(): Promise<IDBPDatabase<MathpawsDB>> {
   if (dbPromise) return dbPromise
-  dbPromise = openDB<MathpawsDB>(DB_NAME, DB_VERSION, {
+  const p = openDB<MathpawsDB>(DB_NAME, DB_VERSION, {
     upgrade(d, oldVersion, _newVersion, transaction) {
       // v1 旧库：state store 已存在（由旧版本创建），不重复创建。
       if (oldVersion < 2) {
@@ -48,7 +48,12 @@ export function getDB(): Promise<IDBPDatabase<MathpawsDB>> {
       }
     },
   })
-  return dbPromise
+  dbPromise = p
+  // 打开失败不缓存 rejected Promise：清空缓存，允许下次调用重试
+  p.catch(() => {
+    if (dbPromise === p) dbPromise = null
+  })
+  return p
 }
 
 /** 通用读 / 写（单主键表） */
