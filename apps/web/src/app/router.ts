@@ -52,31 +52,44 @@ function routeFromHash(): RouteId | null {
 
 interface RouterState {
   route: RouteId
-  /** 上一路由（用于返回"从哪来回哪去"） */
+  /** 上一路由（"从哪来回哪去"的一步前路由，供场景读取） */
   previous: RouteId | null
+  /** 导航历史栈（不含当前路由），back 逐级回退 */
+  history: RouteId[]
   go: (id: RouteId) => void
   back: () => void
   /** 应用启动：以 hash 优先，否则默认页（一期首页为学习枢纽入口） */
   init: (fallback: RouteId) => void
-  /** 回到广场时清 dev hash */
+  /** 清地址栏 hash（回到广场 / 深链被消费后调用） */
   clearHash: () => void
 }
 
 export const useRouter = create<RouterState>((set, get) => ({
   route: 'home',
   previous: null,
+  history: [],
 
   go: (id) =>
-    set(s => (s.route === id ? s : { route: id, previous: s.route })),
+    set(s =>
+      s.route === id
+        ? s
+        : { route: id, previous: s.route, history: [...s.history, s.route] },
+    ),
 
   back: () => {
     const s = get()
-    if (s.previous) set({ route: s.previous, previous: null })
+    const target = s.history[s.history.length - 1]
+    if (!target) return
+    const rest = s.history.slice(0, -1)
+    set({ route: target, previous: rest[rest.length - 1] ?? null, history: rest })
   },
 
   init: (fallback) => {
     const fromHash = routeFromHash()
-    set({ route: fromHash ?? fallback, previous: null })
+    set({ route: fromHash ?? fallback, previous: null, history: [] })
+    // 口径：深链 hash（#quiz 等）仅作一次性直达入口，消费后立即清理，
+    // 避免后续刷新又跳回深链页；后续运行期 hashchange 直达不受影响。
+    if (fromHash) get().clearHash()
   },
 
   clearHash: () => {

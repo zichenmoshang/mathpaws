@@ -1,6 +1,15 @@
 /* 应用脚手架：加载过渡 / 错误边界 / 兼容性兜底（M0-ENG-01）
    仅承载启动期与异常态的全屏遮罩，业务页面样式不在此文件。 */
 
+/* safe-area 变量（配合 index.html viewport-fit=cover）：
+   供 viewport 适配层与 Phase 2 场景样式统一引用，缺省 0px。 */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+}
+
 .mp-overlay {
   position: fixed;
   inset: 0;

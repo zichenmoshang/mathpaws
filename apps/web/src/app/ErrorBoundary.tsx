@@ -53,8 +53,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   private reload = () => window.location.reload()
 
-  // 清掉调试 hash 后整页重载，干净地回到默认广场。
-  private backToPlaza = () => {
+  // 清掉地址栏 hash 后整页重载：回到 Splash，由其按 onboarding 状态分流落地页。
+  private resetToEntry = () => {
     window.history.replaceState(
       null,
       '',
@@ -86,7 +86,7 @@ export class ErrorBoundary extends Component<Props, State> {
               刷新页面
             </button>
             {!chunk && (
-              <button className="mp-btn mp-btn-ghost" onClick={this.backToPlaza}>
+              <button className="mp-btn mp-btn-ghost" onClick={this.resetToEntry}>
                 回到广场
               </button>
             )}
