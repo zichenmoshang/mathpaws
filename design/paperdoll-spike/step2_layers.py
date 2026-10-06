@@ -42,7 +42,7 @@ Independent layers:
   * hat  : from the hatted source. scientist uses color extraction; explorer
            uses the validated tight ellipse R (khaki colour inseparable from
            skin in HSV); frog/elf/wizard v2 use the full head cut. Explorer
-           source is fetched from CDN; themed hats come from local masters;
+           and shoe sources are local masters (archived from CDN 2026-10-06);
   * shoe : horizontal cut from the (shod) core-ip master; the layer keeps the
            native alpha and starts SHOE_OVERLAP px above the cut so its collar
            wraps the ankle.
@@ -51,7 +51,7 @@ The script is registry-driven (OUTFITS / HATS) and SKIPS any outfit or hat
 whose inputs are not present yet, so it stays runnable while batch assets are
 still being produced. All coordinates are ORIGINAL 2048-space.
 
-Run AFTER step1 (needs cutouts/<barefoot-stem>-rmbg.png).
+Run AFTER step1 (needs _step1_export/<barefoot-stem>-rmbg.png).
 """
 import os
 import io
@@ -63,8 +63,8 @@ from rembg import remove, new_session
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 MDIR = os.path.join(BASE, "masters")
-CDIR = os.path.join(BASE, "cutouts")                       # rembg RGBA (step1 out)
-LDIR = os.path.join(BASE, "layers")                        # cut full-canvas layers
+CDIR = os.path.join(BASE, "_step1_export")                 # rembg RGBA (step1 out)
+LDIR = os.path.join(BASE, "_step2_export")                 # cut full-canvas layers
 QDIR = os.path.join(BASE, "_tmp", "qc")                    # disposable QC sheets
 ODIR = os.path.join(LDIR, "outfits")
 HDIR = os.path.join(LDIR, "hats")
@@ -85,8 +85,10 @@ for _d in (ODIR, HDIR, SDIR, HHDIR, MASKDIR, QDIR):
 W = H = 2048
 
 # ---- sources (non-barefoot originals) ----
-CORE_URL = "https://aka.doubaocdn.com/s/mrlfo0WwGM"        # shod default -> shoe
-EXPLORER_FULL_URL = "https://aka.doubaocdn.com/s/CTss4TXJgU"  # hatted -> explorer hat
+# sources are archived local masters (CDN single-point dependency removed
+# 2026-10-06); ("cdn", url) remains a supported source type for future hats.
+CORE_SHOD_MASTER = "dress-default-shod.png"           # shod default -> shoe
+EXPLORER_FULL_MASTER = "dress-job-explorer-full.png"  # hatted -> explorer hat
 
 # ---- shoe horizontal split (validated) ----
 SHOE_CUT = 1780         # body has no shoes below this y; ankle skin ends ~1776
@@ -180,7 +182,7 @@ HATS = {
             "side_l":  [515, 330, 908, 578],
             "side_r":  [1142, 330, 1535, 578],
         },
-        "source": ("cdn", EXPLORER_FULL_URL),
+        "source": ("master", EXPLORER_FULL_MASTER),
         "prompt_doc": "dress-job-explorer-barefoot-nohat.md",
     },
     "scientist": {
@@ -272,19 +274,19 @@ HATS = {
 
 # ============================================================================
 # OUTFIT registry
-#   cutout : barefoot NO-HAT cutout stem (step1 output cutouts/<stem>-rmbg.png).
+#   cutout : barefoot NO-HAT cutout stem (step1 output _step1_export/<stem>-rmbg.png).
 # ============================================================================
 OUTFITS = {
     "default": {
         "cn": "默认套装", "series": "job",
         "cutout": "dress-default-barefoot",
-        "prompt_doc": "dress-default-barefoot.md", "master_url": CORE_URL,
+        "prompt_doc": "dress-default-barefoot.md", "master_url": CORE_SHOD_MASTER,
     },
     "explorer": {
         "cn": "探险家套装", "series": "job",
         "cutout": "dress-job-explorer-barefoot-nohat",
         "prompt_doc": "dress-job-explorer-barefoot-nohat.md",
-        "master_url": EXPLORER_FULL_URL,
+        "master_url": EXPLORER_FULL_MASTER,
     },
     "scientist": {
         "cn": "小科学家套装", "series": "job",
@@ -564,6 +566,16 @@ def fetch_cutout(url):
     return _rembg_image(im)
 
 
+def master_cutout(filename):
+    """Local masters/ white-bg source -> RGBA cutout (reuses the step1 cutout
+    when present so rembg runs only once)."""
+    stem = os.path.splitext(os.path.basename(filename))[0]
+    pre = os.path.join(CDIR, stem + "-rmbg.png")
+    if os.path.exists(pre):
+        return Image.open(pre).convert("RGBA")
+    return _rembg_image(Image.open(os.path.join(MDIR, filename)).convert("RGB"))
+
+
 def hat_source_cutout(hat_id):
     """Return the hatted RGBA source for a hat, or None if unavailable.
 
@@ -769,7 +781,7 @@ def main():
     if os.path.exists(shoe_p):
         shoe = Image.open(shoe_p).convert("RGBA")
     else:
-        shoe = cut_horizontal(fetch_cutout(CORE_URL),
+        shoe = cut_horizontal(master_cutout(CORE_SHOD_MASTER),
                               y_min=SHOE_CUT - SHOE_OVERLAP)
         if available:
             shoe = fit_shoe_to_foot(shoe, available[0][1])

@@ -1,7 +1,7 @@
 """Step 6: publish QC-passed staging assets to the app.
 
 Run ONLY AFTER step5_verify_export.py output has been reviewed and accepted.
-Copies from staging (design/paperdoll-spike/_export/) into
+Copies from staging (design/paperdoll-spike/_step4_export/) into
 apps/web/src/assets/paperdoll/:
 
   layers/                        full mirror (wiped + copied)
@@ -22,7 +22,7 @@ import os
 import shutil
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-STAGING = os.path.join(BASE, "_export")
+STAGING = os.path.join(BASE, "_step4_export")
 APP = os.path.abspath(os.path.join(
     BASE, "..", "..", "apps", "web", "src", "assets", "paperdoll"))
 

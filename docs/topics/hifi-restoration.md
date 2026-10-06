@@ -142,5 +142,5 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 - 运行时回贴示例：`apps/web/src/components/ChestPanel.tsx`
 - 纸娃娃系统规范与 SOP：`docs/design/paperdoll-system.md`
 - 纸娃娃切层流水线（step1–6）：`design/paperdoll-spike/README.md`
-- 纸娃娃管线与资产：staging `design/paperdoll-spike/_export/`（全量 manifest）；发布版 `apps/web/src/assets/paperdoll/`（瘦身 manifest + layers/icons）
+- 纸娃娃管线与资产：staging `design/paperdoll-spike/_step4_export/`（全量 manifest）；发布版 `apps/web/src/assets/paperdoll/`（瘦身 manifest + layers/icons）
 - 运行时合成实现：`packages/paperdoll/src/compose.ts`

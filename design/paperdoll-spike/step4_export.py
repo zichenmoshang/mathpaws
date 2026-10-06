@@ -4,7 +4,7 @@ Runs AFTER step2_layers.py (which writes layers/{outfits,hats,heads,masks,shoes}
 
 v5 runtime N+M layout (2026-10-03): the app composes body + shoe + ONE gear
 layer at runtime, so the N outfits x M hats forhat matrix is no longer shipped
-to production. Outputs (design/paperdoll-spike/_export/, gitignored staging):
+to production. Outputs (design/paperdoll-spike/_step4_export/, gitignored staging):
 
   layers/bodies/body-<o>@2x.webp            one per character (nohat)
   layers/heads/head-<h>@2x.webp             head-cut gear (frog/elf/wizard)
@@ -36,7 +36,7 @@ from PIL import Image
 import step2_layers as s2
 
 SPIKE = s2.BASE
-OUT = os.path.join(SPIKE, "_export")
+OUT = os.path.join(SPIKE, "_step4_export")
 LDIR_OUT = os.path.join(OUT, "layers")
 TRUTH_OUT = os.path.join(OUT, "_truth")
 IDIR_OUT = os.path.join(OUT, "icons")
@@ -219,7 +219,7 @@ def main():
             "cn_name": "暖白软底小鞋",
             "icon_file": "icons/shoe-default-icon.webp",
             "layer": "layers/shoes/shoe-default@2x.webp",
-            "master_image": s2.CORE_URL,
+            "master_image": s2.CORE_SHOD_MASTER,
             "prompt_doc": "dress-default-barefoot.md",
         })
 

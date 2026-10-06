@@ -1,7 +1,7 @@
 """Step 1: rembg cutout + coordinate grids -- the only first-stage tool.
 
 Reads the AI white-bg master images from masters/ and for each master writes:
-  cutouts/<name>-rmbg.png    full-res RGBA cutout, input to step2/step3/measure
+  _step1_export/<name>-rmbg.png    full-res RGBA cutout, input to step2/step3/measure
   _tmp/grid/<name>-grid.png  checkerboard-backed 1024 grid labelled in ORIGINAL
                              2048-pixel coordinates, for measuring masks/anchors
 Also writes a 2x2 checkerboard contact sheet at _tmp/qc/contact-rmbg.png.
@@ -26,7 +26,7 @@ from rembg import remove, new_session
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 MDIR = os.path.join(BASE, "masters")
-CDIR = os.path.join(BASE, "cutouts")
+CDIR = os.path.join(BASE, "_step1_export")
 QDIR = os.path.join(BASE, "_tmp", "qc")
 GDIR = os.path.join(BASE, "_tmp", "grid")
 for _d in (CDIR, QDIR, GDIR):

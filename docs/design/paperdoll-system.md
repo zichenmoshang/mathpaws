@@ -2,7 +2,7 @@
 
 > **⚠️ 2026-10-04 起系统已升级到 v5（N+M 运行时合成），本文 §1–§13 仍为 v4 历史记录**，保留切层算法细节与踩坑档案；当前事实以以下两份为准：
 > - **新角色 / 新头饰生图契约（新增素材先读）**：[character-generation-spec.md](./character-generation-spec.md)
-> - v5 资产结构：staging `design/paperdoll-spike/_export/`（step4 导出，gitignored）→ QC 后由 step6 发布 `apps/web/src/assets/paperdoll/manifest.json`（schema `paperdoll-manifest-v5-runtime`，瘦身版）；运行时实现：`packages/ui/src/paperdoll-compose.ts`；回归页：`#paperdoll-rt`。
+> - v5 资产结构：staging `design/paperdoll-spike/_step4_export/`（step4 导出，gitignored）→ QC 后由 step6 发布 `apps/web/src/assets/paperdoll/manifest.json`（schema `paperdoll-manifest-v5-runtime`，瘦身版）；运行时实现：`packages/ui/src/paperdoll-compose.ts`；回归页：`#paperdoll-rt`。
 >
 > v5 关键变更速览：① 抠图默认模型 u2net → **birefnet-general-lite**；② 生产资产从 46 份 N×M 烘焙层瘦身到 **14 份**（6 bodies + 3 heads + 2 hats + 2 masks + 1 shoe），forhat/per-body 变体只保留在 `_truth/` 供回归；③ 运行时完成 item 帽挖洞、整头颈缝合成、wizard 动态 hair gate + 颈色 relit；④ **wizard 帽已修复鼓包并重新上架**；⑤ 新角色只需 1 张光脚 body 母图。
 
@@ -67,11 +67,11 @@
 
 - 工作区 `design/paperdoll-spike/`：
   - `masters/`：**输入**，AI 白底母图（2048²，勿手改）；
-  - `cutouts/`：step1 rembg 抠图 `*-rmbg.png`（可重生成）；
-  - `layers/outfits|hats|shoes/`：step2 切出的全画布透明 PNG（可重生成）；
+  - `_step1_export/`：step1 rembg 抠图 `*-rmbg.png`（不入库、可重生成）；
+  - `_step2_export/outfits|hats|heads|masks|shoes/`：step2 切出的全画布透明 PNG（不入库、可重生成）；
   - `_tmp/qc/`、`_tmp/grid/`：**可整体删除**的临时质检图与坐标网格；
   - 根目录为生产脚本。
-- **staging `design/paperdoll-spike/_export/`**（gitignored）：`manifest.json`（全量含溯源字段）、`layers/{bodies,heads,hats,masks,shoes}/*.webp`、`icons/*.webp`、`_truth/`（回归真值矩阵）。
+- **staging `design/paperdoll-spike/_step4_export/`**（gitignored）：`manifest.json`（全量含溯源字段）、`layers/{bodies,heads,hats,masks,shoes}/*.webp`、`icons/*.webp`、`_truth/`（回归真值矩阵）。
 - 母图 prompt 存档：`design/asset-prompts/`（门禁见 §10）。
 - **正式接入**：step5 QC 验收后跑 `step6_publish.py`，把 layers/icons、瘦身 manifest（去 prompt_doc/master_image 等溯源字段）与 `_truth` 子集（仅 wizard 组）发布进 `apps/web/src/assets/paperdoll/`，由 `PaperDoll` 组件消费。改资产后重跑 step4 → step5 → step6。
 
@@ -90,10 +90,10 @@
 | 脚本 | 作用 |
 |---|---|
 | `download_model.py` | 镜像下载 u2net.onnx，一次性 |
-| `step1.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `cutouts/*-rmbg.png`、`_tmp/grid/*-grid.png`、`_tmp/qc/contact-rmbg.png` |
-| `step2_layers.py` | **核心**：先从戴帽源图按各帽 `cut_mode`（color/ellipse/head，wizard 配对）切帽层；再从光脚 cutout 产出整身 nohat 与每帽 forhat（洞与帽层同形）；鞋层水平切 + 向裸脚贴合（已产出则复用）；写 `layers/{outfits,hats,shoes}/*.png` 与 `_tmp/qc/contact-compose.png`；HSV 带 / 切常量在此文件 |
+| `step1.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `_step1_export/*-rmbg.png`、`_tmp/grid/*-grid.png`、`_tmp/qc/contact-rmbg.png` |
+| `step2_layers.py` | **核心**：先从戴帽源图按各帽 `cut_mode`（color/ellipse/head，wizard 配对）切帽层；再从光脚 cutout 产出整身 nohat 与每帽 forhat（洞与帽层同形）；鞋层水平切 + 向裸脚贴合（已产出则复用）；写 `_step2_export/{outfits,hats,heads,masks,shoes}/*.png` 与 `_tmp/qc/contact-compose.png`；HSV 带 / 切常量在此文件 |
 | `step3_zoomqc.py` | 接缝放大质检：鞋踝 + 每帽帽发（含配对帽），写 `_tmp/qc/zoom-qc.png` |
-| `step4_export.py` | 从 step2 常量导出全画布 WebP@2x、512 图标、全量 `manifest.json` 到 `_export/` staging |
+| `step4_export.py` | 从 step2 常量导出全画布 WebP@2x、512 图标、全量 `manifest.json` 到 `_step4_export/` staging |
 | `step5_verify_export.py` | **用导出的 WebP 异路径回读**重新合成 + 图标拼图，写 `_tmp/qc/export-verify.png` |
 | `step6_publish.py` | QC 验收后发布：layers/icons 镜像 + `_truth` 子集（wizard 组）+ 瘦身 manifest → `apps/web/src/assets/paperdoll/` |
 
@@ -105,13 +105,13 @@
    - 默认套装：`dress-default-barefoot`；
    - **含帽套装（如探险家）需生成"摘帽版"** `dress-job-explorer-barefoot-nohat`——一次 image_edit 同时完成：摘帽补全帽下头发 + 光脚补脚 + 眼部锚定 core-ip（无睫毛圆眼）。这张是真正的 `nohat` 整身。
    - 眼部 / 脸部易在单参考编辑时漂移（探险家曾被改成带睫毛眼型）；含帽或易漂移场景用**双参考**：编辑对象 [img0] + core-ip [img1]，prompt 明确"无睫毛圆眼、严格锚定 [img1]"。
-2. **抠图 + 网格**：`.venv-art` 跑 `step1.py`（自动发现 masters 全部母图），得透明 `cutouts/*-rmbg.png`。
+2. **抠图 + 网格**：`.venv-art` 跑 `step1.py`（自动发现 masters 全部母图），得透明 `_step1_export/*-rmbg.png`。
 3. **切层**：`.venv-art` 跑 `step2_layers.py`：
    - 整身 nohat 直接来自光脚 cutout；每帽 forhat = cut_hole(该帽洞 mask)；
    - 帽层从戴帽源图按其 `cut_mode` 切（颜色分割 / 椭圆 / 整头，见 §7.1）；鞋层水平切并向裸脚贴合（见 §7.2，已产出自动复用）。
 4. **放大质检**：`step3_zoomqc.py` 查帽发 / 鞋踝 / 帽跨套。
 5. **混搭对照**：`step2` 自动出多组合 `contact-compose.png`，逐组人工核对。
-6. **导出**：`step4_export.py` 输出 staging（WebP@2x + 512 图标 + 全量 manifest）到 `_export/`。
+6. **导出**：`step4_export.py` 输出 staging（WebP@2x + 512 图标 + 全量 manifest）到 `_step4_export/`。
 7. **异路径回读**：`step5_verify_export.py` 用导出 WebP 重新合成验证。
 8. **发布 / 登记**：QC 验收后跑 `step6_publish.py` 发布进 `apps/web/src/assets/paperdoll/`，回填 asset-prompts 状态。
 
@@ -216,5 +216,5 @@
 - **手绘椭圆 R 硬切帽区（v3 做法）的三类问题**：框比帽小 → 切缺（scientist 镜框顶部 V 缺口）；框比帽大 / 切到轮廓外头发 → 光环、切耳。→ v4 改为从源图自身取帽区（§7.1）。
 - **一顶帽的轮廓罩不住 6 套不同大小的发穹**：wizard v1/v2（帽檐加宽、帽锥仍窄）跨套时身体头发在帽锥两侧、后上方鼓出；单纯重出一张图、颜色分割、配对重亮都无法同时满足全部套装 → 该帽暂时下线。后续要么以"统一发穹"重新生成全部素材，要么接受每套装专用帽层方案的视觉效果后再上架。
 - **缺口指标只数"源覆盖行内部"**：把按设计删除的轮廓外头发当缺口会得到误导性大数字；视觉验收（contact/zoom）才是最终判据。
-- **core-ip 短链会失效（404/超时）**：step2 鞋层与改帽无关，已产出时直接复用 `layers/shoes/`，不要为重切帽层强依赖该链接。
+- **CDN 单点依赖已解除（2026-10-06）**：鞋层源（shod core-ip）与 explorer 戴帽源已归档本地 masters（`dress-default-shod.png` / `dress-job-explorer-full.png`），step2 全离线可跑，不再依赖短链。
 - floodfill 处理不了封闭白区与近白阴影；Python 3.14 装不了 onnxruntime；rembg 2.x 需单装 onnxruntime、模型路径变为 `.rembg\models\u2net\`。

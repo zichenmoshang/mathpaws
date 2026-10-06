@@ -15,20 +15,21 @@ paperdoll-spike/
 │   ├── dress-default-barefoot.png
 │   ├── dress-job-explorer-barefoot-nohat.png   # 探险家摘帽版（真正的 nohat）
 │   └── dress-*-full(-v2).png                   # 各帽的戴帽源图（帽层输入）
-├── cutouts/                 # 【中间】step1 的 rembg 抠图，step2 输入（自动对应 masters）
-├── layers/                  # 【中间】step2 切出的全画布透明层
+├── _step1_export/           # 【中间·不入库】step1 的 rembg 抠图，step2 输入（自动对应 masters）
+├── _step2_export/           # 【中间·不入库】step2 切出的全画布透明层
 │   ├── outfits/             #   outfit-<id>-{nohat,forhat-<hat>}.png
 │   ├── hats/                #   hat-<hat>.png（配对帽 hat-wizard-on-<outfit>.png）
 │   └── shoes/               #   shoe-<id>.png
+├── _step4_export/           # 【中间·不入库】step4 staging（manifest/layers/icons/_truth），step6 发布源
 ├── _tmp/                    # 【可整体删除】临时产物，重跑会再生成（当前已清空）
 │   ├── qc/                  #   contact-rmbg / contact-compose / zoom-qc / export-verify
 │   └── grid/                #   step1 的坐标网格（排查坐标用，标注 2048 原坐标）
 └── step*.py / *.py          # 生产脚本（见下表）
 ```
 
-- 可随时整个删 `_tmp/`；`cutouts/`、`layers/` 也可重生成。
-- `masters/` 是唯一长期保留的输入（也能从 `design/asset-prompts/` 记录的结果重新生成）。
-- **staging** 在 `_export/`（gitignored：`manifest.json`、`layers/`、`icons/`、`_truth/`）；QC 验收后由 `step6_publish.py` 发布进 `apps/web/src/assets/paperdoll/`。
+- 可随时整个删 `_tmp/`；`_stepN_export/` 系列（step1/2/4 中间产物）同样可重生成，统一 `_stepN_export` 命名且全部 gitignored。
+- `masters/` 是唯一长期保留的输入（也能从 `design/asset-prompts/` 记录的结果重新生成）；explorer 戴帽与穿鞋 core-ip 母图已于 2026-10-06 归档本地，step2 全离线可跑。
+- **staging** 在 `_step4_export/`（gitignored：`manifest.json`、`layers/`、`icons/`、`_truth/`）；QC 验收后由 `step6_publish.py` 发布进 `apps/web/src/assets/paperdoll/`。
 
 ## Python 环境（重要）
 
@@ -52,7 +53,7 @@ cd design/paperdoll-spike   # 仓库根目录下
 # 0)（仅首次 / u2net 缺失）下载抠图模型
 python download_model.py
 
-# 1) 抠图 + 坐标网格：masters -> cutouts/*-rmbg.png、_tmp/grid、_tmp/qc/contact-rmbg.png
+# 1) 抠图 + 坐标网格：masters -> _step1_export/*-rmbg.png、_tmp/grid、_tmp/qc/contact-rmbg.png
 & '..\.venv-art\Scripts\python.exe' step1.py
 
 # 2) 切 3 槽层 + 组合对照（仅 explorer 帽源/首次切鞋需联网）：layers/{outfits,hats,shoes} + _tmp/qc/contact-compose.png
@@ -61,7 +62,7 @@ python download_model.py
 # 3) 接缝放大质检（帽发 / 鞋踝，含每帽）：_tmp/qc/zoom-qc.png
 & '..\.venv-art\Scripts\python.exe' step3_zoomqc.py
 
-# 4) 导出 staging：-> _export/（manifest/layers webp@2x/icons 512/truth）
+# 4) 导出 staging：-> _step4_export/（manifest/layers webp@2x/icons 512/truth）
 & '..\.venv-art\Scripts\python.exe' step4_export.py
 
 # 5) 用导出的 WebP 异路径回读验证：_tmp/qc/export-verify.png（全局 python 即可）
@@ -78,12 +79,12 @@ python step6_publish.py
 | 脚本 | 解释器 | 输入 → 输出 |
 |---|---|---|
 | `download_model.py` | 任意联网 | 下载 u2net.onnx 到用户目录 |
-| `step1.py` | **.venv-art** | 自动发现 `masters/` → `cutouts/*-rmbg.png`、`_tmp/grid`、`_tmp/qc/contact-rmbg.png` |
-| `step2_layers.py` | **.venv-art**（部分联网） | `cutouts/`（+ explorer CDN 源）→ `layers/{outfits,hats,shoes}/*.png` + `_tmp/qc/contact-compose.png`；帽 cut_mode / HSV 带 / 鞋切常量在此 |
+| `step1.py` | **.venv-art** | 自动发现 `masters/` → `_step1_export/*-rmbg.png`、`_tmp/grid`、`_tmp/qc/contact-rmbg.png` |
+| `step2_layers.py` | **.venv-art** | `_step1_export/`（+ 本地 masters 戴帽/穿鞋源）→ `_step2_export/{outfits,hats,heads,masks,shoes}/*.png` + `_tmp/qc/contact-compose.png`；帽 cut_mode / HSV 带 / 鞋切常量在此 |
 | `step3_zoomqc.py` | **.venv-art** | 复用 step2 图层 → `_tmp/qc/zoom-qc.png` |
-| `step4_export.py` | **.venv-art** | `layers/` → `_export/`（manifest/WebP/图标/truth） |
-| `step5_verify_export.py` | 全局 | `_export/` WebP 回读 → `_tmp/qc/export-verify.png` |
-| `step6_publish.py` | 全局 | `_export/` → `apps/web/src/assets/paperdoll/`（layers/icons/truth 子集 + 瘦身 manifest） |
+| `step4_export.py` | **.venv-art** | `_step2_export/` → `_step4_export/`（manifest/WebP/图标/truth） |
+| `step5_verify_export.py` | 全局 | `_step4_export/` WebP 回读 → `_tmp/qc/export-verify.png` |
+| `step6_publish.py` | 全局 | `_step4_export/` → `apps/web/src/assets/paperdoll/`（layers/icons/truth 子集 + 瘦身 manifest） |
 
 ## 生产新套装
 
