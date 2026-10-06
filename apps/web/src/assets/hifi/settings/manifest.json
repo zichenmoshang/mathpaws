@@ -1,0 +1,60 @@
+{
+  "stage": [
+    2364,
+    1773
+  ],
+  "source": "design/high-fi/settings-v2.png",
+  "decomp": "_tmp/decomp-settings-v2",
+  "note": "行文字/行图标/开关层未采用：文字与图标前端排版（图标库 i-music/i-sound/i-broom/gear），开关用前端 Switch 组件（状态可变）",
+  "layers": [
+    {
+      "z": 0,
+      "file": "bg.jpg",
+      "bbox": null
+    },
+    {
+      "z": 1,
+      "file": "panel-card.webp",
+      "name": "设置面板白卡底板",
+      "bbox": [
+        376,
+        472,
+        1989,
+        1513
+      ]
+    },
+    {
+      "z": 14,
+      "file": "title-text.webp",
+      "name": "设置立体标题（固定文案）",
+      "bbox": [
+        934,
+        153,
+        1430,
+        395
+      ]
+    },
+    {
+      "z": 15,
+      "file": "chick.webp",
+      "name": "白色小雏鸟",
+      "bbox": [
+        1477,
+        201,
+        1704,
+        423
+      ]
+    },
+    {
+      "z": 16,
+      "file": "rabbit.webp",
+      "name": "抱星白兔（雪球兔）",
+      "bbox": [
+        629,
+        86,
+        902,
+        447
+      ]
+    }
+  ]
+}

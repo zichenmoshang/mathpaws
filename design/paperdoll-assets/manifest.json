@@ -1,0 +1,166 @@
+{
+  "schema": "paperdoll-manifest-v5-runtime",
+  "anchors_version": "anchors-v5-runtime",
+  "canvas": 2048,
+  "icon_size": 512,
+  "format": "webp-lossless-alpha",
+  "slots": [
+    "body",
+    "gear",
+    "shoe"
+  ],
+  "z_order": [
+    "body",
+    "shoe",
+    "gear"
+  ],
+  "runtime_composite": "body (+ item-hat erase mask when gear.kind=item) -> shoe -> gear; kind=head gear with a seam is relit toward the body neck colour before draw. Layers composite on a 2048 offscreen canvas then downscale once.",
+  "target_app_dir": "apps/web/src/assets/paperdoll/ (PaperDoll 组件)",
+  "default_look": {
+    "body": "default",
+    "gear": null,
+    "shoe": null
+  },
+  "bodies": [
+    {
+      "id": "default",
+      "cn_name": "默认套装",
+      "series": "job",
+      "icon_file": "icons/outfit-default-icon.webp",
+      "layer": "layers/bodies/body-default@2x.webp",
+      "prompt_doc": "dress-default-barefoot.md",
+      "master_image": "https://aka.doubaocdn.com/s/mrlfo0WwGM"
+    },
+    {
+      "id": "explorer",
+      "cn_name": "探险家套装",
+      "series": "job",
+      "icon_file": "icons/outfit-explorer-icon.webp",
+      "layer": "layers/bodies/body-explorer@2x.webp",
+      "prompt_doc": "dress-job-explorer-barefoot-nohat.md",
+      "master_image": "https://aka.doubaocdn.com/s/CTss4TXJgU"
+    },
+    {
+      "id": "scientist",
+      "cn_name": "小科学家套装",
+      "series": "job",
+      "icon_file": "icons/outfit-scientist-icon.webp",
+      "layer": "layers/bodies/body-scientist@2x.webp",
+      "prompt_doc": "dress-job-scientist-barefoot-nohat.md"
+    },
+    {
+      "id": "frog",
+      "cn_name": "小青蛙套装",
+      "series": "animal",
+      "icon_file": "icons/outfit-frog-icon.webp",
+      "layer": "layers/bodies/body-frog@2x.webp",
+      "prompt_doc": "dress-animal-frog-barefoot-nohat.md"
+    },
+    {
+      "id": "elf",
+      "cn_name": "小圣诞精灵套装",
+      "series": "festival",
+      "icon_file": "icons/outfit-elf-icon.webp",
+      "layer": "layers/bodies/body-elf@2x.webp",
+      "prompt_doc": "dress-festival-elf-barefoot-nohat.md"
+    },
+    {
+      "id": "wizard",
+      "cn_name": "小魔法师套装",
+      "series": "fantasy",
+      "icon_file": "icons/outfit-wizard-icon.webp",
+      "layer": "layers/bodies/body-wizard@2x.webp",
+      "prompt_doc": "dress-fantasy-wizard-barefoot-nohat.md"
+    }
+  ],
+  "gear": [
+    {
+      "id": "explorer",
+      "cn_name": "探险家遮阳帽",
+      "kind": "item",
+      "icon_file": "icons/hat-explorer-icon.webp",
+      "layer": "layers/hats/hat-explorer@2x.webp",
+      "master_image": "https://aka.doubaocdn.com/s/CTss4TXJgU",
+      "prompt_doc": "dress-job-explorer-barefoot-nohat.md",
+      "mask": "layers/masks/hole-explorer@2x.webp"
+    },
+    {
+      "id": "scientist",
+      "cn_name": "小科学家护目镜",
+      "kind": "item",
+      "icon_file": "icons/hat-scientist-icon.webp",
+      "layer": "layers/hats/hat-scientist@2x.webp",
+      "master_image": "dress-job-scientist-full.png",
+      "prompt_doc": "dress-job-scientist-full.md",
+      "mask": "layers/masks/hole-scientist@2x.webp"
+    },
+    {
+      "id": "frog",
+      "cn_name": "小青蛙蛙眼帽",
+      "kind": "head",
+      "icon_file": "icons/hat-frog-icon.webp",
+      "layer": "layers/heads/head-frog@2x.webp",
+      "master_image": "dress-animal-frog-full-v2.png",
+      "prompt_doc": "dress-animal-frog-full.md",
+      "seam": {
+        "y0": 880,
+        "cut": 920,
+        "overlap": 12,
+        "sigma": 3,
+        "skin_sample_rows_above_cut": 80
+      }
+    },
+    {
+      "id": "elf",
+      "cn_name": "小圣诞精灵尖顶帽",
+      "kind": "head",
+      "icon_file": "icons/hat-elf-icon.webp",
+      "layer": "layers/heads/head-elf@2x.webp",
+      "master_image": "dress-festival-elf-full-v2.png",
+      "prompt_doc": "dress-festival-elf-full.md",
+      "seam": {
+        "y0": 945,
+        "cut": 985,
+        "overlap": 12,
+        "sigma": 3,
+        "skin_sample_rows_above_cut": 80
+      }
+    },
+    {
+      "id": "wizard",
+      "cn_name": "小魔法师巫师帽",
+      "kind": "head",
+      "icon_file": "icons/hat-wizard-icon.webp",
+      "layer": "layers/heads/head-wizard@2x.webp",
+      "master_image": "dress-fantasy-wizard-full-v2.png",
+      "prompt_doc": "dress-fantasy-wizard-full.md",
+      "seam": {
+        "y0": 1003,
+        "cut": 1078,
+        "overlap": 12,
+        "sigma": 8,
+        "relit": [
+          0.28,
+          0.72
+        ],
+        "skin_sample_rows_above_cut": 80,
+        "note": "global skin relight (baked coverage already encodes the pair hair gate + vertical feather)"
+      }
+    }
+  ],
+  "shoes": [
+    {
+      "id": "default",
+      "cn_name": "暖白软底小鞋",
+      "icon_file": "icons/shoe-default-icon.webp",
+      "layer": "layers/shoes/shoe-default@2x.webp",
+      "master_image": "https://aka.doubaocdn.com/s/mrlfo0WwGM",
+      "prompt_doc": "dress-default-barefoot.md"
+    }
+  ],
+  "truth_dir": "_truth/ (offline baked forhat + per-body heads; dev regression only, never imported by production UI)",
+  "removed_slots": [
+    "acc",
+    "top/bottom"
+  ]
+}

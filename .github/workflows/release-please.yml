@@ -1,0 +1,64 @@
+name: Release & Deploy
+
+# release-please：根据 Conventional Commits 自动生成发布 PR；
+# 合并发布 PR → 自动打 tag + GitHub Release + 部署 demo 站。
+# 注意：release-please 用 GITHUB_TOKEN 打的 tag 不会级联触发其他
+# workflow，因此部署 job 必须放在本 workflow 内（deploy.yml 仅手动兜底）。
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release-deploy
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+    steps:
+      # 版本策略由 release-please-config.json + .release-please-manifest.json 驱动
+      # （基线 0.0.0 + 首个 feat: 提交 → 首次发布 PR 提议 0.1.0）
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          target-branch: main
+
+  deploy:
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # 项目站点地址为 https://<owner>.github.io/<repo>/，资源需带 /<repo>/ 前缀
+      - name: Build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: pnpm --filter mathpaws-client build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

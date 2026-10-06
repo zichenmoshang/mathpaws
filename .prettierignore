@@ -1,0 +1,11 @@
+node_modules
+dist
+.pnpm-store
+.pnpm-cache
+coverage
+design/.venv-art
+ml/mnist/venv312
+design/paperdoll-spike/_tmp
+ref_assets
+pnpm-lock.yaml
+*.md

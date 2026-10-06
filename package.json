@@ -1,0 +1,32 @@
+{
+  "name": "mathpaws",
+  "version": "0.0.0",
+  "private": true,
+  "description": "MathPaws - 儿童口算练习游戏：手写识别答题 + 换装/宠物/农场养成",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zichenmoshang/mathpaws.git"
+  },
+  "packageManager": "pnpm@10.14.0",
+  "scripts": {
+    "dev": "pnpm --filter mathpaws-client dev",
+    "build": "pnpm --filter mathpaws-client build",
+    "preview": "pnpm --filter mathpaws-client preview",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.11.0",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.11.0"
+  }
+}

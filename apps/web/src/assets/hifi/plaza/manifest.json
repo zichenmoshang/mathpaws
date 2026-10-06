@@ -1,0 +1,147 @@
+{
+  "stage": [
+    2364,
+    1773
+  ],
+  "source": "design/high-fi/plaza-v2.jpg",
+  "decomp": "_tmp/decomp-plaza-new",
+  "layers": [
+    {
+      "z": 0,
+      "file": "bg.jpg",
+      "bbox": null
+    },
+    {
+      "z": 1,
+      "file": "bld-farm.webp",
+      "name": "农场小屋建筑",
+      "bbox": [
+        863,
+        221,
+        1419,
+        866
+      ]
+    },
+    {
+      "z": 2,
+      "file": "bld-quiz.webp",
+      "name": "答题小屋建筑",
+      "bbox": [
+        30,
+        232,
+        977,
+        1233
+      ]
+    },
+    {
+      "z": 3,
+      "file": "farm-scarecrow.webp",
+      "name": "农场稻草人",
+      "bbox": [
+        1047,
+        748,
+        1160,
+        920
+      ]
+    },
+    {
+      "z": 4,
+      "file": "sign-quiz.webp",
+      "name": "答题小屋招牌",
+      "bbox": [
+        475,
+        652,
+        719,
+        800
+      ]
+    },
+    {
+      "z": 5,
+      "file": "sign-farm.webp",
+      "name": "农场小屋招牌",
+      "bbox": [
+        1182,
+        442,
+        1339,
+        546
+      ]
+    },
+    {
+      "z": 6,
+      "file": "bld-petshop.webp",
+      "name": "宠物商店建筑",
+      "bbox": [
+        1533,
+        360,
+        2213,
+        1163
+      ]
+    },
+    {
+      "z": 7,
+      "file": "sign-petshop.webp",
+      "name": "宠物商店招牌",
+      "bbox": [
+        1686,
+        533,
+        1847,
+        705
+      ]
+    },
+    {
+      "z": 8,
+      "file": "roof-bird.webp",
+      "name": "屋顶白色小鸟",
+      "bbox": [
+        1735,
+        350,
+        1847,
+        462
+      ]
+    },
+    {
+      "z": 9,
+      "file": "petshop-pets.webp",
+      "name": "橱窗宠物玩偶组",
+      "bbox": [
+        1864,
+        849,
+        2046,
+        1055
+      ]
+    },
+    {
+      "z": 11,
+      "file": "btn-farm.webp",
+      "name": "胡萝卜图标按钮",
+      "bbox": [
+        1527,
+        1485,
+        1745,
+        1706
+      ]
+    },
+    {
+      "z": 12,
+      "file": "btn-pet.webp",
+      "name": "爪印图标按钮",
+      "bbox": [
+        1792,
+        1485,
+        2007,
+        1706
+      ]
+    },
+    {
+      "z": 13,
+      "file": "btn-backpack.webp",
+      "name": "书包图标按钮",
+      "bbox": [
+        2053,
+        1487,
+        2270,
+        1707
+      ]
+    }
+  ]
+}

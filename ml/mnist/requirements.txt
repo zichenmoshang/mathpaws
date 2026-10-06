@@ -1,0 +1,11 @@
+# 版本清单（Windows + Python 3.12 验证通过，2026-09-26）
+# 注意：tensorflowjs 必须用 --no-deps 安装，否则会强制依赖
+# tensorflow-decision-forests（Windows 无新版 wheel）和 jax/flax（Keras 转换不需要）。
+# 完整安装步骤见 README.md，不要直接 pip install -r 本文件。
+tensorflow==2.18.1
+tf-keras==2.18.0
+tensorflow-hub==0.16.1
+tensorflowjs==4.22.0
+numpy==2.0.2
+packaging==23.2
+setuptools<81

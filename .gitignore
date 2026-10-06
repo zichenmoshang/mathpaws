@@ -1,0 +1,101 @@
+# ============================================================
+# mathpaws .gitignore
+# 与 .trae/.ignore 口径对齐（该文件让 Grep/ripgrep 与 git 同时生效）。
+# 有意差异：
+#   1) 锁文件不在此忽略，需提交以固定依赖版本；
+#   2) design/、ml/ 不整体忽略 —— 保留 paperdoll-spike / 训练脚本，
+#      只忽略其中的 venv 与重产物。
+# ============================================================
+
+# ---------- Node 依赖 ----------
+node_modules/
+.pnpm-store/
+
+# ---------- Python 虚拟环境与缓存 ----------
+# 本仓库即 design/.venv-art、ml/mnist/venv312
+venv/
+.venv/
+.venv-*/
+venv312/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# design / ml 下的虚拟环境（显式，目录本身不整体忽略）
+design/.venv-art/
+ml/mnist/venv312/
+
+# ---------- 构建产物 ----------
+dist/
+build/
+out/
+.output/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# ---------- 日志与临时文件 ----------
+logs/
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+
+# ---------- 缓存 ----------
+.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+
+# ---------- 参考素材（仅供人工查看，体量大） ----------
+ref_assets/
+
+# ---------- 模型权重等重二进制（离线产物） ----------
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.npy
+*.npz
+# 注意：apps/web/public/models 下 TF.js 运行时模型（.bin/model.json）
+# 是应用运行时资源，需保留，故不全局忽略 *.bin。
+
+# ---------- 环境变量与密钥 ----------
+.env
+.env.*
+!.env.example
+
+# ---------- 测试覆盖率 ----------
+coverage/
+
+# ---------- 内部文档（不公开，仅本地维护；公开文档不得引用） ----------
+docs/internal/
+
+# ---------- 生图中间产物与凭据元数据（含预签名 URL，不入库） ----------
+design/paperdoll-spike/_tmp/
+design/gacha-raw/**/*_metadata.json
+
+# ---------- 字体文件（授权未收口前不入库，见 G3 人工 Gate） ----------
+apps/web/public/fonts/
+
+# ---------- 脚本临时产物 ----------
+apps/web/scripts/.tmp-migration-bundle.mjs
+
+# Trae 工具
+.trae/
+
+# ---------- IDE / 操作系统 ----------
+.vscode/
+.idea/
+.history/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

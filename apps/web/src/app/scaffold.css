@@ -1,0 +1,180 @@
+/* 应用脚手架：加载过渡 / 错误边界 / 兼容性兜底（M0-ENG-01）
+   仅承载启动期与异常态的全屏遮罩，业务页面样式不在此文件。 */
+
+.mp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: linear-gradient(180deg, #7cc8ff 0%, #a9ddff 55%, #dcf3ff 100%);
+  font-family: "Baloo 2", "Microsoft YaHei", system-ui, sans-serif;
+  animation: mp-fade 0.25s ease;
+}
+
+/* —— 加载过渡 —— */
+.mp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  color: #fff;
+  text-align: center;
+}
+.mp-spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 6px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ff9a3d;
+  animation: mp-spin 0.8s linear infinite;
+  filter: drop-shadow(0 4px 10px rgba(30, 90, 150, 0.25));
+}
+.mp-loading-title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 3px 0 rgba(30, 90, 150, 0.18);
+}
+.mp-loading-hint {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* —— 卡片（错误 / 不兼容） —— */
+.mp-card {
+  width: min(440px, 92vw);
+  background: #fff;
+  border-radius: 28px;
+  padding: 36px 32px 30px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(30, 80, 130, 0.22), 0 4px 0 rgba(30, 80, 130, 0.06);
+  animation: mp-pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.mp-card-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mp-card-icon--warn {
+  background: #fff1e2;
+  color: #ff8a2a;
+}
+.mp-card-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #27608f;
+  margin-bottom: 10px;
+}
+.mp-card-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #5a7185;
+  margin-bottom: 14px;
+}
+.mp-card-detail {
+  text-align: left;
+  background: #f4f8fc;
+  color: #7d8ea0;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 96px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 18px;
+  user-select: text;
+}
+.mp-card-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.mp-card-list li {
+  background: #f4f8fc;
+  color: #3d5b78;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.mp-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* —— 按钮 —— */
+.mp-btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 18px;
+  border-radius: 999px;
+  padding: 14px 28px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.mp-btn:active {
+  transform: translateY(3px);
+}
+.mp-btn-primary {
+  color: #fff;
+  background: linear-gradient(180deg, #ffc24d, #ff9a3d);
+  box-shadow: 0 5px 0 #e07f28;
+}
+.mp-btn-primary:active {
+  box-shadow: 0 2px 0 #e07f28;
+}
+.mp-btn-ghost {
+  color: #3d8fd1;
+  background: #fff;
+  box-shadow: inset 0 0 0 2.5px #bfe0fb;
+}
+
+@keyframes mp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes mp-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mp-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-spinner {
+    animation-duration: 1.4s;
+  }
+  .mp-overlay,
+  .mp-card {
+    animation: none;
+  }
+}

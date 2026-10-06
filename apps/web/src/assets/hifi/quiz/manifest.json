@@ -1,0 +1,83 @@
+{
+  "source": "design/high-fi/quiz-page.png",
+  "via": "seedream-5.0-pro layer_decomposition (watermark:false)",
+  "canvas": [
+    2364,
+    1773
+  ],
+  "note": "蓝底未采用 z00 重绘背景，前端用 CSS 渐变近似（避免缩放上下色差）；题目文字前端排版",
+  "layers": [
+    {
+      "name": "page-left.webp",
+      "bbox": [
+        177,
+        331,
+        1173,
+        1661
+      ]
+    },
+    {
+      "name": "page-right.webp",
+      "bbox": [
+        1203,
+        333,
+        2196,
+        1660
+      ]
+    },
+    {
+      "name": "rings.webp",
+      "bbox": [
+        1099,
+        506,
+        1275,
+        1476
+      ]
+    },
+    {
+      "name": "writing-box.webp",
+      "bbox": [
+        1335,
+        501,
+        2058,
+        1446
+      ]
+    },
+    {
+      "name": "hint-text.webp",
+      "bbox": [
+        1548,
+        840,
+        1847,
+        897
+      ]
+    },
+    {
+      "name": "pencil.webp",
+      "bbox": [
+        1654,
+        947,
+        1751,
+        1052
+      ]
+    },
+    {
+      "name": "tag.webp",
+      "bbox": [
+        1514,
+        319,
+        1880,
+        459
+      ]
+    },
+    {
+      "name": "title.webp",
+      "bbox": [
+        151,
+        113,
+        963,
+        237
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "gacha-manifest-v1",
+  "format": "webp-alpha / png-alpha (glow)",
+  "target_app_dir": "apps/web/src/assets/gacha/ (GachaScene)",
+  "assets": [
+    {
+      "id": "gacha-box",
+      "cn_name": "魔法学盒（关闭态）",
+      "type": "ITEM",
+      "file": "gacha-box@2x.webp",
+      "size": [640, 611],
+      "transparent": true,
+      "generation": "T2I seedream-5.0-pro 1K white bg + rembg u2net",
+      "prompt_doc": "gacha-box.md",
+      "component": "GachaReveal/Chest"
+    },
+    {
+      "id": "gacha-box-open",
+      "cn_name": "魔法学盒（开启态 3/4 侧视溢光）",
+      "type": "ITEM",
+      "file": "gacha-box-open@2x.webp",
+      "size": [648, 720],
+      "transparent": true,
+      "generation": "i2i seedream-5.0-pro 2048 (ref=gacha-box closed) white bg + rembg u2net",
+      "prompt_doc": "gacha-box-open.md",
+      "component": "GachaReveal/Chest opening"
+    },
+    {
+      "id": "gacha-card-back",
+      "cn_name": "抽卡卡背",
+      "type": "ITEM",
+      "file": "gacha-card-back@2x.webp",
+      "size": [432, 640],
+      "transparent": true,
+      "generation": "T2I seedream-5.0-pro 1K white bg + edge flood-fill",
+      "prompt_doc": "gacha-card-back.md",
+      "component": "GachaReveal (储备)"
+    },
+    {
+      "id": "gacha-flag-ten",
+      "cn_name": "10连抽金边蓝飘旗按钮（无文字底图）",
+      "type": "ITEM",
+      "file": "gacha-flag-ten@2x.webp",
+      "size": [1145, 429],
+      "transparent": true,
+      "generation": "T2I seedream-5.0-pro 1K white bg + rembg u2net",
+      "prompt_doc": null,
+      "component": "DrawButton sky（文字 HTML 叠加）"
+    },
+    {
+      "id": "gacha-bg-starry",
+      "cn_name": "抽卡星空背景",
+      "type": "BG",
+      "file": "gacha-bg-starry@2x.webp",
+      "size": [2048, 1536],
+      "transparent": false,
+      "generation": "T2I seedream-5.0-pro 2048x1536, watermark false",
+      "prompt_doc": "gacha-bg-starry.md",
+      "component": "GachaScene background"
+    },
+    {
+      "id": "glow-legendary",
+      "cn_name": "传说光晕（金）",
+      "type": "FX",
+      "file": "glow-legendary.png",
+      "size": [256, 256],
+      "transparent": true,
+      "generation": "procedural Pillow radial",
+      "prompt_doc": null,
+      "component": "GachaReveal"
+    }
+  ]
+}

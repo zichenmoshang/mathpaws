@@ -1,0 +1,19 @@
+{
+  "source": "design/high-fi/daily-chest.jpg",
+  "source_size": [2364, 1773],
+  "pipeline": "layer_decomposition (doubao-seedream-5.0-pro)",
+  "note": "scroll/card-shell/card-food 的烘焙文字已在图层上擦除（保留羊皮纸质感），真实文案由前端排版（config/streak）",
+  "layers": [
+    { "z": 0, "file": "bg.jpg", "name": "星空背景", "bbox": [0, 0, 2364, 1773] },
+    { "z": 1, "file": "ribbon-left.png", "name": "左侧彩色飘带", "bbox": [168, 79, 645, 727] },
+    { "z": 2, "file": "ribbon-right.png", "name": "右侧彩色飘带", "bbox": [1624, 172, 2364, 1074] },
+    { "z": 3, "file": "stage.png", "name": "金色发光圆形展台", "bbox": [474, 903, 1893, 1264] },
+    { "z": 4, "file": "chest.png", "name": "发光金色宝箱", "bbox": [831, 411, 1567, 1041] },
+    { "z": 5, "file": "card-shell.png", "name": "贝壳奖励卡片", "bbox": [473, 1095, 1113, 1331] },
+    { "z": 6, "file": "card-food.png", "name": "宠物食物奖励卡片", "bbox": [1250, 1095, 1890, 1331] },
+    { "z": 7, "file": "scroll.png", "name": "连续学习卷轴横幅", "bbox": [775, 833, 1590, 1038] },
+    { "z": 8, "file": "stars.png", "name": "打卡进度星星序列", "bbox": [430, 1329, 1928, 1522] },
+    { "z": 9, "file": "title.png", "name": "每日打卡标题", "bbox": [618, 104, 1754, 423] },
+    { "z": 10, "file": "button.png", "name": "领取奖励按钮", "bbox": [809, 1532, 1556, 1720] }
+  ]
+}

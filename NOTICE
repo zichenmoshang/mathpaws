@@ -1,0 +1,30 @@
+MathPaws 第三方内容与授权注记
+==============================
+
+1. 代码与素材分轨授权
+   - 源代码：MIT License（见 LICENSE）
+   - 美术/音频/模型等素材：CC BY-NC 4.0（见 LICENSE-ASSETS）
+
+2. AI 生成素材
+   本仓库大部分美术素材由火山方舟 Seedream 生图服务生成，生成物的使用
+   与再分发依据火山方舟服务条款获得。相关生成参数与 prompt 记录见
+   design/asset-prompts/ 目录。若适用法律不承认 AI 生成物的可版权性，
+   贡献者在法律允许的最大范围内放弃相应权利。
+
+3. MNIST 数据集
+   ml/mnist 下的手写数字识别训练使用 MNIST 数据集
+   （Yann LeCun 等，http://yann.lecun.com/exdb/mnist/）。
+   训练出的模型文件为本项目产物，原始数据集不包含在本仓库中。
+
+4. 主要开源依赖（节选，完整列表见各 package.json）
+   - React（MIT）
+   - Vite（MIT）
+   - TensorFlow.js（Apache-2.0）
+   - three.js / @react-three/*（MIT）
+   - zustand（MIT）
+   - idb（ISC）
+
+5. 字体
+   项目界面拟使用的"站酷快乐体"等字体按其原始授权条款单独获取，
+   不随本仓库分发（apps/web/public/fonts/ 已被 .gitignore 排除）。
+   请按 docs 中的说明自行下载并确认其授权条款。

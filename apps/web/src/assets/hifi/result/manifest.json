@@ -1,0 +1,16 @@
+{
+  "source": "design/high-fi/result-page.png",
+  "via": "seedream-5.0-pro layer_decomposition (watermark:false)",
+  "canvas": [2364, 1773],
+  "note": "z00 重绘装饰背景与原稿一致，直接采用（bg 铺满舞台）；三个奖励文案含动态数值（贝壳奖励/食物/连学天数），文字层 z05/z07/z09 不采用，前端果冻立体字排版；回广场按钮文案固定，整按钮切图采用。",
+  "layers": [
+    { "name": "bg.webp", "bbox": [0, 0, 2364, 1773] },
+    { "name": "banner.webp", "bbox": [417, 284, 1945, 826] },
+    { "name": "bird.webp", "bbox": [992, 398, 1390, 717] },
+    { "name": "title.webp", "bbox": [639, 671, 1745, 1020] },
+    { "name": "icon-shell.webp", "bbox": [770, 1051, 951, 1233] },
+    { "name": "icon-star.webp", "bbox": [1102, 1050, 1282, 1232] },
+    { "name": "icon-flame.webp", "bbox": [1439, 1052, 1617, 1232] },
+    { "name": "btn-plaza.webp", "bbox": [898, 1400, 1467, 1608] }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "source": "design/high-fi/splash.png",
+  "via": "seedream-5.0-pro layer_decomposition (no prompt, watermark:false)",
+  "stage": [
+    2364,
+    1773
+  ],
+  "note": "K = 1024/2364；回贴经 _recompose_compare.jpg 比对验收。z4 进度条为满格图，前端按进度 clipPath 从左揭示。",
+  "layers": [
+    {
+      "z": 0,
+      "file": "bg.jpg",
+      "name": null,
+      "bbox": null,
+      "nativeSize": "2364x1773"
+    },
+    {
+      "z": 1,
+      "file": "nums-left.webp",
+      "name": "左侧装饰数字符号组",
+      "bbox": [
+        160,
+        1397,
+        682,
+        1682
+      ],
+      "nativeSize": "896x488"
+    },
+    {
+      "z": 2,
+      "file": "nums-center.webp",
+      "name": "中下侧装饰数字符号组",
+      "bbox": [
+        696,
+        1385,
+        1182,
+        1684
+      ],
+      "nativeSize": "899x552"
+    },
+    {
+      "z": 3,
+      "file": "nums-right.webp",
+      "name": "右侧装饰数字符号组",
+      "bbox": [
+        1325,
+        1387,
+        2151,
+        1685
+      ],
+      "nativeSize": "1121x404"
+    },
+    {
+      "z": 4,
+      "file": "progress-bar.webp",
+      "name": "彩虹渐变进度条",
+      "bbox": [
+        480,
+        1488,
+        1887,
+        1595
+      ],
+      "nativeSize": "1408x107",
+      "bboxNote": "absolute x0 服务返回 100 异常，按 normalized 203/1000*2364=480 修正"
+    },
+    {
+      "z": 5,
+      "file": "logo.webp",
+      "name": "mathpaws品牌logo文字",
+      "bbox": [
+        556,
+        981,
+        1811,
+        1272
+      ],
+      "nativeSize": "1255x291"
+    },
+    {
+      "z": 6,
+      "file": "bird.webp",
+      "name": "卡通白色小鸟",
+      "bbox": [
+        868,
+        269,
+        1575,
+        1042
+      ],
+      "nativeSize": "707x773"
+    }
+  ]
+}
