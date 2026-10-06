@@ -5,7 +5,7 @@
 - **类型**：STAND + REF 合一（既是 2D 立绘锚点，也是 Hunyuan3D 建模输入）
 - **比例与像素**：1:1，生成 2048×2048（交付/建模可缩到 1024²）
 - **生成方式**：T2I 文生图；模型 **seedream_5.0_pro**
-- **参考图 / core-ip**：本图即 core-ip 源头。画风对齐 `design/high-fi/plaza.png` 的搪胶质感与 `#lookdev` Soft Clay 预设
+- **参考图 / core-ip**：本图即 core-ip 源头。画风对齐 `design/high-fi/plaza/plaza.png` 的搪胶质感与 `#lookdev` Soft Clay 预设
 - **确认人 / 确认时间**：用户 / 2026-09-28（方案确认）；图面验收待回填
 - **采用结果（候选 1）**：
   - URL：https://aka.doubaocdn.com/s/mrlfo0WwGM

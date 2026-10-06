@@ -7,9 +7,9 @@
 - **生成方式**：T2I（doubao-seedream-5.0-pro）
 - **参考图 / core-ip**：
   - core-ip CDN URL 或本地路径：中性主角 core-ip `G1-char-hero-core`（候选1 https://aka.doubaocdn.com/s/mrlfo0WwGM）
-  - 其他参考（高保真/设定）：早期探索稿 `design/high-fi/equipment.png`（仅借鉴圆形物品盘/角标语言，主体与槽位以本稿为准）
+  - 其他参考（高保真/设定）：早期探索稿 equipment.png（2026-10-06 已清理；仅留存"圆形物品盘/角标"语言记录，主体与槽位以本稿为准）
 - **确认人 / 确认时间**：用户 2026-09-30（approved）
-- **采用结果**：`design/high-fi/backpack.png`（doubao-seedream-5.0-pro，2048×1024，2026-09-30，无水印版；第 1 稿含水印已弃用）
+- **采用结果**：`design/high-fi/backpack/backpack.png`（doubao-seedream-5.0-pro，2048×1024，2026-09-30，无水印版；第 1 稿含水印已弃用）
 
 ---
 

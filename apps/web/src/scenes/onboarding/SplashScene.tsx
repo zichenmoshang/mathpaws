@@ -1,5 +1,5 @@
 // P1 Splash（M4-BOOT-02，高保真拆层重建）
-// 资产由 seedream-5.0-pro layer_decomposition 从 design/high-fi/splash.png 拆出
+// 资产由 seedream-5.0-pro layer_decomposition 从 design/high-fi/splash/splash.png 拆出
 // （z0 背景 + 数字符号 3 组 + 彩虹进度条 + logo + 白雏鸟），
 // 层在 1024×768 逻辑舞台内按 bbox×K 定位（K=1024/2364），回贴已与原稿比对验收。
 // 进度条为满格位图，按加载进度用 clipPath 从左揭示；其下垫 CSS 空轨道。

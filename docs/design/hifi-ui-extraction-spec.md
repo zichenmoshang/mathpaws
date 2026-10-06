@@ -104,7 +104,7 @@ node design/paperdoll-spike/decomp.js `
 - 发现的问题：右页虚线手写框未被识别为独立层且在重绘中消失；默认参数出图带水印（已改为必传 `watermark:false`）；层尺寸与 bbox 不一致（§4 已给处理）；
 - 白底角色戴帽图（festival-elf）对照实验：自动模式把整个人物归为单层、prompt 强拆被 400 拒绝——据此确认本通道不用于换装（§2 / §7）。
 
-## 9. 实测案例档案（2026-10-05，farm-v2 / settings-v2 / pet-v2）
+## 9. 实测案例档案（2026-10-05，farm / settings / pet）
 
 - 三稿均为 Seedream Pro 文生图新出（2364×1773）后拆层：farm 14 层采用 11、settings 16 层采用 5、pet 15 层采用 11；absolute↔normalized 交叉校验全部 maxdiff≤2，PIL 全层回贴与原稿并排一致（`_tmp/decomp-{farm,settings,pet}-v2/`）。
 - **烘焙数字擦除（资源牌 / 倒计时牌）**：纯色补丁在渐变底上必显眼 → 用"逐行采样干净列带均值填充"（脚本 `_tmp/export_farm_settings_layers.py`），擦后数字前端排版。

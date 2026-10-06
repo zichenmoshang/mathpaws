@@ -69,7 +69,7 @@ export function nextFarmLevelXp(level: number): number | null {
 
 /**
  * 各农场等级的耕地数量：
- * 一期 = 2×2 固定 4 块（对齐高保真 farm-v2 四块木栅栏田地）；
+ * 一期 = 2×2 固定 4 块（对齐高保真 farm 四块木栅栏田地）；
  * PRD §10.3 的扩地（Lv2→6 / Lv4→8 / Lv6→9）转二期，届时函数恢复分级。
  */
 export function plotCountForLevel(_farmLevel: number): number {

@@ -2,7 +2,7 @@
 
 > 版本：一期定稿　|　最后更新：2026-09-28
 > 广场是 mathpaws **唯一的实时 3D 场景**与"游玩 / 探索枢纽"；其余页面全 2D。产品规则见 [../PRD.md](../PRD.md) §6，资产需求见 [asset-checklist.md](./asset-checklist.md)，3D 台账 / 建模管线见 [asset-manifest.md](./asset-manifest.md) 与 [gen3d-guide.md](./gen3d-guide.md)。
-> 视觉质感靶子 = `design/high-fi/plaza.png`（**不重出**，只做 Look Dev 对齐 + 局部返工）。
+> 视觉质感靶子 = `design/high-fi/plaza/plaza.png`（**不重出**，只做 Look Dev 对齐 + 局部返工）。
 
 ---
 

@@ -7,7 +7,7 @@
 - **生成方式**：I2I（image_edit），模型 seedream_5.0_pro；**必须带 core-ip**
 - **参考图 / core-ip**：
   - core-ip CDN：https://aka.doubaocdn.com/s/mrlfo0WwGM （G1-char-hero-core，已锁定）
-  - 其他参考：`design/high-fi/plaza.png` 搪胶质感；规范 `docs/design/paperdoll-system.md` §3/§4
+  - 其他参考：`design/high-fi/plaza/plaza.png` 搪胶质感；规范 `docs/design/paperdoll-system.md` §3/§4
 - **确认人 / 确认时间**：用户 / 2026-09-28（批准生成）
 - **采用结果**：✅ 候选 1 采用，待验收。CDN https://aka.doubaocdn.com/s/TzoBbgeB2t ；模型 seedream_5.0_pro（I2I，带 core-ip）；1:1，2048×2048；2026-09-28。
   - 自检：同脸（大眼双高光 / 粉腮红 / 微笑）、可可棕短发 + 呆毛、暖白肤色、约 3 头身、正面 A-pose、搪胶质感、纯白底无字；奶油白无袖背心 + 同色贴身打底短裤、裸露四肢、默认暖白鞋；无爪印、无外套、无任何配饰。

@@ -1,5 +1,5 @@
 // P13 设置页（M4-P13+G）— 按 hifi-ui-extraction-spec 拆层重建：
-// 高保真 design/high-fi/settings-v2.png（Seedream 出稿、去振动/保存钮）→ layer_decomposition
+// 高保真 design/high-fi/settings/settings.png（Seedream 出稿、去振动/保存钮）→ layer_decomposition
 // 16 层（_tmp/decomp-settings-v2，交叉校验 maxdiff≤2，PIL 回贴通过）
 // → 采用 5 层落 assets/hifi/settings + manifest.json（bg/白卡底板/设置标题/白兔/雏鸟）。
 // 行文字与图标前端排版（图标库）；开关用前端 Switch（状态可变，不用烘焙层）。

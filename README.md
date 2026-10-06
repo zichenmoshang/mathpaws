@@ -4,7 +4,7 @@
 
 **[在线 demo](https://zichenmoshang.github.io/mathpaws/)** · [Wiki](https://github.com/zichenmoshang/mathpaws/wiki) · [PRD](docs/PRD.md)
 
-![首页](design/high-fi/home.png)
+![首页](design/high-fi/home/home.png)
 
 ## 特性
 
@@ -15,9 +15,9 @@
 - **全离线**：IndexedDB 持久化 10 表 + schema 版本迁移，PWA 可安装
 - **工程方法论**：手写识别与"AI 生图 → 拆层 → 运行时重组"高保真还原工作流均可复用，见[深度文章](#文档)
 
-![答题](design/high-fi/quiz-page.png)
-![广场](design/high-fi/plaza-v2.jpg)
-![农场](design/high-fi/farm-v2.png)
+![答题](design/high-fi/quiz/quiz-page.png)
+![广场](design/high-fi/plaza/plaza.jpg)
+![农场](design/high-fi/farm/farm.png)
 
 ## 快速开始
 

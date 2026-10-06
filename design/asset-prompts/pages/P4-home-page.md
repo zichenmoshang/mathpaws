@@ -8,10 +8,10 @@
 - **参考图 / core-ip**：
   - 中性主角锚点（光脚默认装母图，locked）：`design/paperdoll-spike/masters/dress-default-barefoot.png`
   - 雪球兔锚点（locked；本图要求其 **s1 幼崽版**）：`design/gen3d-input/pet-rabbit.png`
-  - UI 风格参考：`design/high-fi/backpack.png`（天空/云/半透明白面板/胶囊按钮语言）、`design/high-fi/gacha.png`（釉面立体质感）
-  - 旧稿 `design/high-fi/home-v1-deprecated.png`（原名 home-panel.png）**仅可借鉴**闹钟+书本+星星的元素语言；**布局/标题/Tab 一律不沿用**（旧稿整体作废）
+  - UI 风格参考：`design/high-fi/backpack/backpack.png`（天空/云/半透明白面板/胶囊按钮语言）、`design/high-fi/gacha/gacha.png`（釉面立体质感）
+  - 旧稿 home-v1-deprecated.png（原名 home-panel.png，整体作废，2026-10-06 已清理）；仅留存"闹钟+书本+星星"元素语言的记录，布局/标题/Tab 一律不沿用
 - **确认人 / 确认时间**：用户 / 2026-10-01（第 1 稿直接批准）
-- **采用结果**：[`design/high-fi/home.png`](../high-fi/home.png)（doubao-seedream-5.0-pro I2I 双参考，2048×1536 PNG，2026-10-01，无水印，95s）；旧稿留存 `design/high-fi/home-v1-deprecated.png`
+- **采用结果**：[`design/high-fi/home/home.png`](../high-fi/home/home.png)（doubao-seedream-5.0-pro I2I 双参考，2048×1536 PNG，2026-10-01，无水印，95s）；旧稿 v1 已于 2026-10-06 清理（历史见 git）
 
 ---
 
@@ -66,7 +66,7 @@
 1. **兔 s1 资产尚未正式产出**（M1-AST-01 待补：s1/s2/s3 + 姿态/STAND）。本稿先用 core 锚点 I2I 幼崽化救场；M1-AST-01 兔 s1 STAND 锁定后，P4 实现阶段以正式 s1 切图替换/必要时局部重出。
 2. 绿色"益智乐园"按钮在本稿画死表达意图；实现时评估复用 UI-primary-button 绿色变体（独立位图），不直接切整页图。
 3. 圆台可复用已固化的 `P16-platform`；卡内闹钟/书本等插画在 M1-AST-02 图标库交付后替换为 `i-alarm` 等正式图标，本稿只定构图与氛围。
-4. 旧稿处理：已重命名为 `design/high-fi/home-v1-deprecated.png`（不删除，保留历史）。
+4. 旧稿处理：home-v1-deprecated.png 已于 2026-10-06 删除（历史见 git）。
 
 ## 确认记录
 

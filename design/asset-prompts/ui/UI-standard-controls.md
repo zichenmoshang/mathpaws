@@ -6,7 +6,7 @@
 - **比例与像素**：见各资产（生成 1024–2048，导出 @2x WebP）
 - **生成方式**：T2I（doubao-seedream-5.0-pro；UI 控件非角色，不带 core-ip）
 - **参考图 / core-ip**：
-  - 风格锚：`design/high-fi/backpack.png`（金蓝糖果、3D 黏土/搪胶质感）
+  - 风格锚：`design/high-fi/backpack/backpack.png`（金蓝糖果、3D 黏土/搪胶质感）
 - **确认人 / 确认时间**：用户 / 2026-09-30
 - **采用结果**：6 个资产全部采用，落地路径见各节
 

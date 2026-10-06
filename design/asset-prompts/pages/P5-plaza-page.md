@@ -7,7 +7,7 @@
 - **生成方式**：T2I 文生图（seedream_5.0_pro）
 - **后处理**：layer_decomposition 拆层
 - **参考图 / core-ip**：无（场景原创文生图）
-- **采用结果**：`design/high-fi/plaza-v2.jpg`；[`apps/web/src/assets/hifi/plaza/`](../../../apps/web/src/assets/hifi/plaza)（bg + 13 语义层 + manifest.json）
+- **采用结果**：`design/high-fi/plaza/plaza.jpg`；[`apps/web/src/assets/hifi/plaza/`](../../../apps/web/src/assets/hifi/plaza)（bg + 13 语义层 + manifest.json）
 
 ---
 

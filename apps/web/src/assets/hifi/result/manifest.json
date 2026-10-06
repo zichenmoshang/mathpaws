@@ -1,5 +1,5 @@
 {
-  "source": "design/high-fi/result-page.png",
+  "source": "design/high-fi/result/result-page.png",
   "via": "seedream-5.0-pro layer_decomposition (watermark:false)",
   "canvas": [2364, 1773],
   "note": "z00 重绘装饰背景与原稿一致，直接采用（bg 铺满舞台）；三个奖励文案含动态数值（贝壳奖励/食物/连学天数），文字层 z05/z07/z09 不采用，前端果冻立体字排版；回广场按钮文案固定，整按钮切图采用。",

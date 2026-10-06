@@ -3,7 +3,7 @@
     2364,
     1773
   ],
-  "source": "design/high-fi/settings-v2.png",
+  "source": "design/high-fi/settings/settings.png",
   "decomp": "_tmp/decomp-settings-v2",
   "note": "行文字/行图标/开关层未采用：文字与图标前端排版（图标库 i-music/i-sound/i-broom/gear），开关用前端 Switch 组件（状态可变）",
   "layers": [

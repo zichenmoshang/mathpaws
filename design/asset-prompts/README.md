@@ -102,10 +102,10 @@
 
 | 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
 |---|---|---|---|---|---|---|
-| P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./pages/P16-backpack-page.md) | `design/high-fi/backpack.png` |
-| P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./pages/P4-home-page.md) | `design/high-fi/home.png`（旧稿留存 home-v1-deprecated.png） |
-| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P5-plaza-page.md`](./pages/P5-plaza-page.md)（事后补登） | `design/high-fi/plaza-v2.jpg`、`apps/web/src/assets/hifi/plaza/*` |
-| P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./pages/P12-daily-chest.md) | `design/high-fi/daily-chest.png`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 daily-chest-v1-deprecated.png） |
+| P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./pages/P16-backpack-page.md) | `design/high-fi/backpack/backpack.png` |
+| P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./pages/P4-home-page.md) | `design/high-fi/home/home.png`（旧稿 v1 已于 2026-10-06 清理） |
+| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P5-plaza-page.md`](./pages/P5-plaza-page.md)（事后补登） | `design/high-fi/plaza/plaza.jpg`、`apps/web/src/assets/hifi/plaza/*` |
+| P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./pages/P12-daily-chest.md) | `design/high-fi/daily-chest/daily-chest.jpg`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 v1 已于 2026-10-06 清理） |
 
 ### ui（标准控件与图标）
 

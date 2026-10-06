@@ -108,7 +108,7 @@ mathpaws/
 - **单例 renderer + 场景状态机**：离开广场回 2D 时 dispose 几何 / 材质 / 纹理、释放 WebGL 上下文（最近 GLB 可留缓存），避免与长会话叠加显存。
 - **渲染参数**：DPR 钳制 ≤2；贴图 ≤1024（特写 2K）；场景总 tris <300k；GLB Draco/Meshopt；后处理按设备分级（低端降 / 关 Bloom / DOF），帧率监控掉帧自动降质。
 - **相机 / 操控**：第三人称自由旋转跟随相机（右手拖动，水平 360°、俯仰 clamp），左手虚拟摇杆移动；广场边界 + 建筑碰撞体，越界拉回。**无体力系统**（旧"每分钟 -5 体力"作废）。
-- **质感**：Clay / vinyl PBR（润搪胶、roughness 约 0.4–0.6 起调、metalness≈0、软阴影、程序化 IBL、毛绒用 fresnel sheen，最终以 Look Dev 校准固化为准），先在 Look Dev 以 `design/high-fi/plaza.png` 为靶子固化预设（`three/ClayMaterial.tsx` / `SceneRig.tsx` / `Effects.tsx`，后处理链见 plaza-3d §7）。
+- **质感**：Clay / vinyl PBR（润搪胶、roughness 约 0.4–0.6 起调、metalness≈0、软阴影、程序化 IBL、毛绒用 fresnel sheen，最终以 Look Dev 校准固化为准），先在 Look Dev 以 `design/high-fi/plaza/plaza.png` 为靶子固化预设（`three/ClayMaterial.tsx` / `SceneRig.tsx` / `Effects.tsx`，后处理链见 plaza-3d §7）。
 - 标签页 hidden 时 requestAnimationFrame 暂停会导致 3D 空白，属预期；回到前台需正确恢复（ResizeObserver / resize 监听兜底）。
 
 ## 6. 手写数字识别（MNIST / tfjs）

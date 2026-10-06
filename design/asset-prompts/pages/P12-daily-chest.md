@@ -5,7 +5,7 @@
 - **类型**：PANEL（弹窗式高保真）
 - **比例与像素**：4:3，2364×1773
 - **生成方式**：T2I 文生图（seedream_5.0_pro，`watermark:false`），随后标准 layer_decomposition 拆层
-- **采用结果**：[`design/high-fi/daily-chest.png`](../high-fi/daily-chest.png)；旧稿留存 `design/high-fi/daily-chest-v1-deprecated.png`
+- **采用结果**：[`design/high-fi/daily-chest/daily-chest.jpg`](../high-fi/daily-chest/daily-chest.jpg)；旧稿 v1 已于 2026-10-06 清理（历史见 git）
 
 ---
 
@@ -29,7 +29,7 @@
 
 ## 拆层与落地（标准 layer_decomposition）
 
-- 调用：`node design/paperdoll-spike/decomp.js design/high-fi/daily-chest.png design/paperdoll-spike/_tmp/decomp-chest`（不传 prompt，`watermark:false`）
+- 调用：`node design/paperdoll-spike/decomp.js design/high-fi/daily-chest/daily-chest.jpg design/paperdoll-spike/_tmp/decomp-chest`（不传 prompt，`watermark:false`）
 - 产物：z0 背景 + 10 语义层（ribbon-left/right、stage、chest、scroll、card-shell、card-food、stars、title、button）
 - 正式资产：[`apps/web/src/assets/hifi/daily-chest/`](../../apps/web/src/assets/hifi/daily-chest)（含 manifest.json，bbox 台账）
 - **烘焙文字处理**：scroll / card-shell / card-food 三层上的烘焙文字在图层内擦除（保留羊皮纸质感），由前端排真实文案；脚本 [`design/paperdoll-spike/_tmp/erase_chest_text.py`](../paperdoll-spike/_tmp/erase_chest_text.py)，原图备份 `_tmp/decomp-chest/original/`

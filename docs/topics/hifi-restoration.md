@@ -67,7 +67,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 ```json
 {
-  "source": "design/high-fi/quiz-page.png",
+  "source": "design/high-fi/quiz/quiz-page.png",
   "via": "seedream-5.0-pro layer_decomposition (watermark:false)",
   "canvas": [2364, 1773],
   "note": "蓝底未采用 z00 重绘背景，前端用 CSS 渐变近似；题目文字前端排版",

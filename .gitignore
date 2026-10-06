@@ -80,7 +80,6 @@ docs/internal/
 
 # ---------- 生图中间产物与凭据元数据（含预签名 URL，不入库） ----------
 design/paperdoll-spike/_tmp/
-design/gacha-raw/**/*_metadata.json
 
 # ---------- 字体文件（授权未收口前不入库，见 G3 人工 Gate） ----------
 apps/web/public/fonts/

@@ -4,9 +4,9 @@
 - **所属页面/批次**：P10 学盒抽卡场景 GachaReveal
 - **类型**：ITEM（1:1，母图 2048×2048；rembg 后导 WebP @2x，成品 648×720）
 - **生成方式**：i2i（以关闭态学盒为唯一参考；不含角色，不受 brand-ip 门禁阻塞）
-- **参考图 / core-ip**：关闭态成品 `gacha-box@2x.webp`（母图 `seedream_1790755085_1.png`，压缩 `_ref-box.jpg`）；`design/high-fi/gacha.png` 为风格锚点
+- **参考图 / core-ip**：关闭态成品 `gacha-box@2x.webp`（母图 seedream_1790755085_1.png / 压缩参考 _ref-box.jpg，2026-10-06 已随 masters 目录清理，历史见 git）；`design/high-fi/gacha/gacha.png` 为风格锚点
 - **确认人 / 确认时间**：用户 / 2026-09-30
-- **采用结果**：`apps/web/src/assets/gacha/gacha-box-open@2x.webp`（母图 `design/gacha-raw/2026-09-30/seedream_1790758869_1.jpg`）
+- **采用结果**：`apps/web/src/assets/gacha/gacha-box-open@2x.webp`（母图 seedream_1790758869_1.jpg，2026-10-06 已随 masters 清理）
 - **用途**：替换/并存于关闭态 `gacha-box@2x.webp`，抽卡开启瞬间展示开盒侧视 + 盒口金光，贴合 high-fi。
 - **光效分工**：AI 只画"盒口内部溢出的金光"；**外部大范围径向光晕由前端 glow 图层负责**，不在本图生成（抠图无法保留干净的半透明外发光）。
 
