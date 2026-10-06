@@ -25,7 +25,7 @@ jobs:
       releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
       # 版本策略由 release-please-config.json + .release-please-manifest.json 驱动
-      # （基线 0.0.0 + 首个 feat: 提交 → 首次发布 PR 提议 0.1.0）
+      # （首发已出 1.0.0；之后 feat: → minor、fix: → patch 自动递增）
       - uses: googleapis/release-please-action@v4
         id: release
         with:

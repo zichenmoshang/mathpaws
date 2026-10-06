@@ -52,8 +52,8 @@ pnpm dev        # 启动 Web 客户端（apps/web）
 - **版本发布全自动（release-please）**：向 main 合并后，release-please
   依据 Conventional Commits 自动生成"发布 PR"（升版本号 + 更新 CHANGELOG）；
   **合并发布 PR** 即自动打 tag、建 GitHub Release、部署 demo 站
-  `https://<owner>.github.io/mathpaws/`。忘了发布也没关系——发布 PR 会
-  一直挂着等你合并。
+  `https://zichenmoshang.github.io/mathpaws/`。忘了发布也没关系——发布 PR
+  会一直挂着等你合并。
 - 因此 commit 消息请遵守 Conventional Commits：`feat: ...`（新功能）、
   `fix: ...`（修复）、`docs:` / `chore:` / `refactor:` 等。
 - 手动兜底：Actions 页面运行 "Deploy Demo (manual fallback)"。

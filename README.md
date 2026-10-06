@@ -2,6 +2,8 @@
 
 面向儿童的口算练习游戏：**手写数字识别答题** + **抽卡换装 / 宠物养成 / 农场经营** 奖励循环。全离线 PWA，AI 生成美术 + 高保真拆层还原。
 
+**[在线 demo](https://zichenmoshang.github.io/mathpaws/)** · [Wiki](https://github.com/zichenmoshang/mathpaws/wiki) · [PRD](docs/PRD.md)
+
 ![首页](design/high-fi/home.png)
 
 ## 特性
