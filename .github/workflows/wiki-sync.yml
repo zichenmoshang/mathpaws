@@ -1,0 +1,44 @@
+name: Wiki Sync
+
+# docs/topics 深度文章与 docs/wiki 页面骨架变更时，自动同步到 GitHub Wiki。
+# Wiki 是独立 git 仓库（<repo>.wiki.git），GITHUB_TOKEN 可直接推送。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/topics/**'
+      - 'docs/wiki/**'
+      - '.github/workflows/wiki-sync.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone wiki repo
+        run: git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki
+
+      # 页面映射：仓库源文件（左）→ Wiki 页面名（右）；新增文章时在此追加
+      - name: Sync pages
+        run: |
+          cp docs/topics/handwriting-recognition.md "wiki/手写数字识别方案.md"
+          cp docs/topics/hifi-restoration.md "wiki/高保真还原工作流.md"
+          cp docs/wiki/Home.md wiki/Home.md
+          cp docs/wiki/_Sidebar.md wiki/_Sidebar.md
+
+      - name: Commit & push (if changed)
+        run: |
+          cd wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "wiki already up to date"
+          else
+            git commit -m "docs: sync from ${{ github.repository }}@${{ github.sha }}"
+            git push
+          fi
