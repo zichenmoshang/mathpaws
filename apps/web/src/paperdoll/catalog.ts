@@ -9,10 +9,11 @@
 //   item gear（explorer/scientist）：body 先按 mask 挖洞再叠帽子；
 //   head gear（frog/elf/wizard）：整头覆盖颈缝；wizard 按 body 颈色 relit。
 //
-// 资产来源：design/paperdoll-assets（step4 导出 v5）→ src/assets/paperdoll。
+// 资产来源：design/paperdoll-spike 管线（step4 导出 staging → step5 QC → step6 发布）→ src/assets/paperdoll。
 // 离线烘焙真值在 _truth/，只被 PaperDollCompositeDev 回归页引用，不进生产。
 // ============================================================================
 import type { DollGear, PaperDollLayers, SeamSpec } from '@mathpaws/paperdoll'
+import manifest from '../assets/paperdoll/manifest.json'
 
 
 // --- 角色身体（每角色 1 层）-------------------------------------------------
@@ -54,14 +55,29 @@ import type { CosmeticSlot } from '../config/cosmetics'
 
 export type SlotId = 'outfit' | 'hat' | 'shoe'
 
-/** wizard pair 头的颈部 relit 规格（与 manifest v5 gear.seam 一致） */
-const WIZARD_SEAM: SeamSpec = {
-  y0: 1003, cut: 1078, overlap: 12, sigma: 8,
-  relitSrc: 0.28, relitNeck: 0.72, skinSampleRows: 80,
+/** seam 几何统一读发布版 manifest（step6 瘦身，源自 step2 常量），不再手抄 */
+type ManifestGear = {
+  id: string
+  seam?: {
+    y0: number; cut: number; overlap: number; sigma: number
+    relit?: number[]; skin_sample_rows_above_cut: number
+  }
 }
-/** 非 pair 整头（frog/elf）：只需颈缝几何，不 relit（值见 step2 HEAD_CUTS） */
-const FROG_SEAM: SeamSpec = { y0: 880, cut: 920, overlap: 12, sigma: 3, skinSampleRows: 80 }
-const ELF_SEAM: SeamSpec = { y0: 945, cut: 985, overlap: 12, sigma: 3, skinSampleRows: 80 }
+const GEAR_SEAMS = new Map(
+  (manifest.gear as ManifestGear[])
+    .filter((g): g is ManifestGear & { seam: NonNullable<ManifestGear['seam']> } => !!g.seam)
+    .map(g => [g.id, g.seam]),
+)
+
+function seamOf(id: string): SeamSpec | undefined {
+  const s = GEAR_SEAMS.get(id)
+  if (!s) return undefined
+  return {
+    y0: s.y0, cut: s.cut, overlap: s.overlap, sigma: s.sigma,
+    relitSrc: s.relit?.[0], relitNeck: s.relit?.[1],
+    skinSampleRows: s.skin_sample_rows_above_cut,
+  }
+}
 
 export interface OutfitOption {
   id: string
@@ -101,11 +117,11 @@ export const HAT_OPTIONS: GearOption[] = [
     id: 'scientist', label: '小科学家护目镜', icon: scientistHatIcon,
     gear: { kind: 'item', layer: hatScientist, mask: holeScientist },
   },
-  { id: 'frog', label: '小青蛙蛙眼帽', icon: frogHatIcon, gear: { kind: 'head', layer: headFrog, seam: FROG_SEAM } },
-  { id: 'elf', label: '小圣诞精灵帽', icon: elfHatIcon, gear: { kind: 'head', layer: headElf, seam: ELF_SEAM } },
+  { id: 'frog', label: '小青蛙蛙眼帽', icon: frogHatIcon, gear: { kind: 'head', layer: headFrog, seam: seamOf('frog') } },
+  { id: 'elf', label: '小圣诞精灵帽', icon: elfHatIcon, gear: { kind: 'head', layer: headElf, seam: seamOf('elf') } },
   {
     id: 'wizard', label: '小魔法师巫师帽', icon: wizardHatIcon,
-    gear: { kind: 'head', layer: headWizard, seam: WIZARD_SEAM },
+    gear: { kind: 'head', layer: headWizard, seam: seamOf('wizard') },
   },
 ]
 

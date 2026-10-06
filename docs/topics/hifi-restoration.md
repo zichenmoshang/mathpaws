@@ -79,7 +79,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 `note` 字段同样重要：哪些层**没采用**、为什么（如重绘背景被 CSS 渐变替代以避免缩放色差）、文字是否前端重排——这些决策不记下来，下次维护就会重蹈覆辙。
 
-**系统级 anchors**（换装系统，见 §6）：`design/paperdoll-assets/anchors.json` 是锚点参数的**单一事实源**——由导出脚本从切层常量直接生成，不手抄、不维护第二份。
+**系统级 anchors**（换装系统，见 §6）：`design/paperdoll-spike/step2_layers.py` 的切层常量注册表是锚点参数的**单一事实源**——运行时所需 seam 由管线随瘦身 manifest 发布，不手抄、不维护第二份。
 
 台账的价值在于：运行时回贴、离线回归、资产管理三方消费同一份坐标，任何一方发现不一致都是可定位的台账问题，而不是玄学视觉偏差。
 
@@ -141,6 +141,6 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 - 页面资产与坐标台账：`apps/web/src/assets/hifi/<page>/manifest.json`
 - 运行时回贴示例：`apps/web/src/components/ChestPanel.tsx`
 - 纸娃娃系统规范与 SOP：`docs/design/paperdoll-system.md`
-- 纸娃娃切层流水线（step1–5）：`design/paperdoll-spike/README.md`
-- 纸娃娃冻结资产与锚点台账：`design/paperdoll-assets/`（`manifest.json`、`anchors.json`）
+- 纸娃娃切层流水线（step1–6）：`design/paperdoll-spike/README.md`
+- 纸娃娃管线与资产：staging `design/paperdoll-spike/_export/`（全量 manifest）；发布版 `apps/web/src/assets/paperdoll/`（瘦身 manifest + layers/icons）
 - 运行时合成实现：`packages/paperdoll/src/compose.ts`

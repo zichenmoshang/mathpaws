@@ -20,7 +20,7 @@ import json
 from PIL import Image, ImageDraw
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.abspath(os.path.join(BASE, "..", "paperdoll-assets"))
+OUT = os.path.join(BASE, "_export")
 I = os.path.join(OUT, "icons")
 QDIR = os.path.join(BASE, "_tmp", "qc")
 os.makedirs(QDIR, exist_ok=True)

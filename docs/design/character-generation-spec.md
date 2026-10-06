@@ -2,7 +2,7 @@
 
 > 版本：v1.0　|　最后更新：2026-10-04
 > 本文回答一个问题：**新增一个可换装角色（或一顶新头饰）时，AI 生图必须满足什么几何契约，才能只产出 1 张 body（或 1 个 head）就被运行时直接复用，不需要任何逐组合手工切层。**
-> 生产管线与切层算法见 [paperdoll-system.md](./paperdoll-system.md)；运行时算法见 `packages/ui/src/paperdoll-compose.ts`；全部几何常量以 `design/paperdoll-assets/anchors.json`（anchors-v5-runtime）为唯一事实源。
+> 生产管线与切层算法见 [paperdoll-system.md](./paperdoll-system.md)；运行时算法见 `packages/ui/src/paperdoll-compose.ts`；全部几何常量以 `design/paperdoll-spike/step2_layers.py` 注册表为唯一事实源（2026-10-06 起不再导出 anchors.json，运行时 seam 随瘦身 manifest 发布）。
 
 ---
 
@@ -90,8 +90,8 @@ v5 运行时模型：**N 个角色身体 + M 件头饰，组合在浏览器实�
 1. prompt 过 §6 检查单 → 用户确认 → Seedream 生成光脚白底母图；
 2. 母图存 `design/paperdoll-spike/masters/dress-<id>-barefoot-nohat.png`；
 3. 在 `step2_layers.py` 的 `OUTFITS` 注册一行（id / cn / series / cutout stem / prompt_doc）；
-4. 跑 `step1.py` → `step2_layers.py` → `step3_zoomqc.py` → `step4_export.py` → `step5_verify_export.py`；
-5. 同步 `design/paperdoll-assets/` → `apps/web/src/assets/paperdoll/`；
+4. 跑 `step1.py` → `step2_layers.py` → `step3_zoomqc.py` → `step4_export.py` → `step5_verify_export.py`（QC）；
+5. QC 验收后跑 `step6_publish.py` 发布到 `apps/web/src/assets/paperdoll/`；
 6. `catalog.ts` 的 `OUTFIT_OPTIONS` 加 1 项（body URL + 图标）；
 7. **回归门禁**：
    - `#paperdoll`：新身体 × 全部 5 头饰（含鞋 / 光脚）逐一点验；

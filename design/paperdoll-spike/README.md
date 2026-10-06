@@ -28,7 +28,7 @@ paperdoll-spike/
 
 - 可随时整个删 `_tmp/`；`cutouts/`、`layers/` 也可重生成。
 - `masters/` 是唯一长期保留的输入（也能从 `design/asset-prompts/` 记录的结果重新生成）。
-- **最终冻结资产**在同级 `../paperdoll-assets/`（`anchors.json`、`manifest.json`、`layers/{outfits,hats,shoes}/*.webp`、`icons/*.webp`）。
+- **staging** 在 `_export/`（gitignored：`manifest.json`、`layers/`、`icons/`、`_truth/`）；QC 验收后由 `step6_publish.py` 发布进 `apps/web/src/assets/paperdoll/`。
 
 ## Python 环境（重要）
 
@@ -61,14 +61,17 @@ python download_model.py
 # 3) 接缝放大质检（帽发 / 鞋踝，含每帽）：_tmp/qc/zoom-qc.png
 & '..\.venv-art\Scripts\python.exe' step3_zoomqc.py
 
-# 4) 导出冻结资产：-> ../paperdoll-assets（anchors/manifest/layers webp@2x/icons 512）
+# 4) 导出 staging：-> _export/（manifest/layers webp@2x/icons 512/truth）
 & '..\.venv-art\Scripts\python.exe' step4_export.py
 
 # 5) 用导出的 WebP 异路径回读验证：_tmp/qc/export-verify.png（全局 python 即可）
 python step5_verify_export.py
+
+# 6) QC 验收通过后发布进业务目录（layers/icons/truth 子集 + 瘦身 manifest）
+python step6_publish.py
 ```
 
-**验收**：看 `_tmp/qc/contact-compose.png`（组合）、`zoom-qc.png`（放大）、`export-verify.png`（WebP 回读 + 图标），按主文档 §8.2 逐组核对；再把 `../paperdoll-assets` 的 layers/icons/manifest/anchors 复制进 `apps/web/src/assets/paperdoll/`，在 `#paperdoll` 页做运行时验收。
+**验收**：看 `_tmp/qc/contact-compose.png`（组合）、`zoom-qc.png`（放大）、`export-verify.png`（WebP 回读 + 图标），按主文档 §8.2 逐组核对；验收后跑 `step6_publish.py` 发布进 `apps/web/src/assets/paperdoll/`，在 `#paperdoll` 页做运行时验收。
 
 ## 脚本一览
 
@@ -78,13 +81,14 @@ python step5_verify_export.py
 | `step1.py` | **.venv-art** | 自动发现 `masters/` → `cutouts/*-rmbg.png`、`_tmp/grid`、`_tmp/qc/contact-rmbg.png` |
 | `step2_layers.py` | **.venv-art**（部分联网） | `cutouts/`（+ explorer CDN 源）→ `layers/{outfits,hats,shoes}/*.png` + `_tmp/qc/contact-compose.png`；帽 cut_mode / HSV 带 / 鞋切常量在此 |
 | `step3_zoomqc.py` | **.venv-art** | 复用 step2 图层 → `_tmp/qc/zoom-qc.png` |
-| `step4_export.py` | **.venv-art** | `layers/` → `../paperdoll-assets/`（anchors/manifest/WebP/图标） |
-| `step5_verify_export.py` | 全局 | `../paperdoll-assets/` WebP 回读 → `_tmp/qc/export-verify.png` |
+| `step4_export.py` | **.venv-art** | `layers/` → `_export/`（manifest/WebP/图标/truth） |
+| `step5_verify_export.py` | 全局 | `_export/` WebP 回读 → `_tmp/qc/export-verify.png` |
+| `step6_publish.py` | 全局 | `_export/` → `apps/web/src/assets/paperdoll/`（layers/icons/truth 子集 + 瘦身 manifest） |
 
 ## 生产新套装
 
 1. 先在 `design/asset-prompts/` 写好 prompt（含帽套装再写"摘帽版"），**人工确认后**才 image_edit 生光脚母图与戴帽源图，存进 `masters/`（step1 自动发现，无需改脚本）。易漂移部位用双参考（编辑图 + core-ip）。
 2. 在 `step2_layers.py` 的 `OUTFITS` / `HATS` 注册新条目并选帽 `cut_mode`（默认 color；卡其色等与皮肤难分时用 ellipse；大帽体用 head）；新坐标先用 `_tmp/grid` 量好再改常量。
-3. 走"快速开始"1→5，过 §8.2 矩阵验收与 `#paperdoll` 运行时验收，再在 catalog.ts 挂选项、回填台账。
+3. 走"快速开始"1→6，过 §8.2 矩阵验收与 `#paperdoll` 运行时验收，再在 catalog.ts 挂选项、回填台账。
 
 详见主文档 §6（SOP）、§7（帽 / 鞋遮罩解法）、§9（抠图用 rembg、补画才用 Seedream）。
