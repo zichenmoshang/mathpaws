@@ -46,9 +46,11 @@ Vite + React 18 + TypeScript（strict）· Zustand · TensorFlow.js（WASM）· 
 
 ## 文档
 
+- **[在线 demo](https://zichenmoshang.github.io/mathpaws/)**——浏览器直接体验（PWA，可安装）
+- **[项目 Wiki](https://github.com/zichenmoshang/mathpaws/wiki)**——深度文章与导航首页
 - [产品需求文档（PRD）](docs/PRD.md)
-- [手写数字识别方案](docs/topics/handwriting-recognition.md)
-- [高保真 UI 还原工作流](docs/topics/hifi-restoration.md)
+- [手写数字识别方案](docs/topics/handwriting-recognition.md)（[Wiki 版](https://github.com/zichenmoshang/mathpaws/wiki/手写数字识别方案)）
+- [高保真 UI 还原工作流](docs/topics/hifi-restoration.md)（[Wiki 版](https://github.com/zichenmoshang/mathpaws/wiki/高保真还原工作流)）
 - [设计文档索引](docs/design/)
 
 ## 路线图
