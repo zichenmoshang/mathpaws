@@ -143,4 +143,4 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 - 纸娃娃系统规范与 SOP：`docs/design/paperdoll-system.md`
 - 纸娃娃切层流水线（step1–5）：`design/paperdoll-spike/README.md`
 - 纸娃娃冻结资产与锚点台账：`design/paperdoll-assets/`（`manifest.json`、`anchors.json`）
-- 运行时合成实现：`packages/ui/src/paperdoll-compose.ts`
+- 运行时合成实现：`packages/paperdoll/src/compose.ts`
