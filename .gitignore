@@ -90,6 +90,7 @@ apps/web/scripts/.tmp-migration-bundle.mjs
 
 # Trae 工具
 .trae/
+skills-lock.json
 
 # ---------- IDE / 操作系统 ----------
 .vscode/
