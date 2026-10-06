@@ -88,7 +88,7 @@ v5 运行时模型：**N 个角色身体 + M 件头饰，组合在浏览器实�
 ## 7. 新角色接入 SOP（目标：只加 1 个 body）
 
 1. prompt 过 §6 检查单 → 用户确认 → Seedream 生成光脚白底母图；
-2. 母图存 `design/paperdoll-spike/masters/dress-<id>-barefoot-nohat.png`；
+2. 母图存 `design/paperdoll-spike/masters/<系列>/dress-<id>-barefoot-nohat.png`；
 3. 在 `step2_layers.py` 的 `OUTFITS` 注册一行（id / cn / series / cutout stem / prompt_doc）；
 4. 跑 `step1.py` → `step2_layers.py` → `step3_zoomqc.py` → `step4_export.py` → `step5_verify_export.py`（QC）；
 5. QC 验收后跑 `step6_publish.py` 发布到 `apps/web/src/assets/paperdoll/`；

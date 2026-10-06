@@ -6,7 +6,7 @@
 - **比例与像素**：4:3，2048×1536（平板横屏；对应运行时 1024×768 contain）
 - **生成方式**：I2I 多参考图（seedream_5.0_pro，无水印）——成图含两个已锁角色，按 brand-ip 门禁**禁止纯 T2I 自行画角色**
 - **参考图 / core-ip**：
-  - 中性主角锚点（光脚默认装母图，locked）：`design/paperdoll-spike/masters/dress-default-barefoot.png`
+  - 中性主角锚点（光脚默认装母图，locked）：`design/paperdoll-spike/masters/default/dress-default-barefoot.png`
   - 雪球兔锚点（locked；本图要求其 **s1 幼崽版**）：`design/gen3d-input/pet-rabbit.png`
   - UI 风格参考：`design/high-fi/backpack/backpack.png`（天空/云/半透明白面板/胶囊按钮语言）、`design/high-fi/gacha/gacha.png`（釉面立体质感）
   - 旧稿 home-v1-deprecated.png（原名 home-panel.png，整体作废，2026-10-06 已清理）；仅留存"闹钟+书本+星星"元素语言的记录，布局/标题/Tab 一律不沿用

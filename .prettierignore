@@ -5,7 +5,7 @@ dist
 coverage
 design/.venv-art
 ml/mnist/venv312
-design/paperdoll-spike/_tmp
+_tmp
 ref_assets
 pnpm-lock.yaml
 *.md

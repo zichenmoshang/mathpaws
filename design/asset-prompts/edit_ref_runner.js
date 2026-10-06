@@ -19,8 +19,8 @@ const GENERATE = path.resolve(__dirname, '..', '..', '.trae', 'skills',
   'byted-ark-seedream-skill', 'scripts', 'generate.js');
 if (!fs.existsSync(GENERATE)) throw new Error(`generate.js not found: ${GENERATE}`);
 
-// 强制保存到项目 raw 目录（generate.js 的 getSavePath 会优先读此环境变量）
-const SAVE_DIR = __dirname;
+// 生成图统一落到本目录 ad-hoc 工作区（gitignored；generate.js 的 getSavePath 优先读此环境变量）
+const SAVE_DIR = path.resolve(__dirname, '_tmp');
 process.env.ARK_SEEDREAM_SAVE_PATH = SAVE_DIR;
 
 process.argv = [

@@ -10,8 +10,8 @@ risk areas:
   * shoe-ankle    : where the horizontal-cut shoe collar wraps the bare leg —
                     look for a gap, skin showing through, or a hard cut line.
 
-Read-only: it loads layers/outfits|hats|shoes and writes a contact sheet to
-_tmp/qc/zoom-qc.png. Driven by the registries; missing layers are skipped.
+Read-only: it loads _step2_export/outfits|hats|shoes and writes a contact sheet to
+_step3_export/zoom-qc.png. Driven by the registries; missing layers are skipped.
 Run after step2.
 """
 import os
@@ -85,7 +85,8 @@ for t in tiles:
     sheet.paste(t, (0, y))
     y += t.height + 10
 
-out = os.path.join(s2.QDIR, "zoom-qc.png")
-os.makedirs(s2.QDIR, exist_ok=True)
+QDIR = os.path.join(s2.BASE, "_step3_export")
+out = os.path.join(QDIR, "zoom-qc.png")
+os.makedirs(QDIR, exist_ok=True)
 sheet.save(out)
 print("zoom ->", out)

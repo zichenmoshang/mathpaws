@@ -23,7 +23,7 @@
 ```
 AI 文生图高保真原稿 (design/high-fi/<page>.png)
    │
-   ▼  layer_decomposition 语义拆层 (design/paperdoll-spike/decomp.js)
+   ▼  layer_decomposition 语义拆层 (design/high-fi/decomp.js)
 z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
    │
    ▼  逐元素验收（棋盘格 / 对比原稿 / bbox 交叉校验）
@@ -41,7 +41,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 ## 3. 拆层：layer_decomposition 的本质与边界
 
-拆层用的是 doubao-seedream-5.0-pro 的 `layer_decomposition` 能力：输入一张图，输出 `z0` 背景 + 若干语义对象的透明 PNG，每层带名称、描述和 bounding box，并自动补全被遮挡的部分。入口脚本 `design/paperdoll-spike/decomp.js`，拆层规格全文在 `docs/design/hifi-ui-extraction-spec.md`。
+拆层用的是 doubao-seedream-5.0-pro 的 `layer_decomposition` 能力：输入一张图，输出 `z0` 背景 + 若干语义对象的透明 PNG，每层带名称、描述和 bounding box，并自动补全被遮挡的部分。入口脚本 `design/high-fi/decomp.js`，拆层规格全文在 `docs/design/hifi-ui-extraction-spec.md`。
 
 要用好它，先接受三条本质属性：
 
@@ -136,7 +136,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 ## 相关链接
 
 - 拆层规格（layer_decomposition 方法、验收清单、实测档案）：`docs/design/hifi-ui-extraction-spec.md`
-- 拆层入口脚本：`design/paperdoll-spike/decomp.js`
+- 拆层入口脚本：`design/high-fi/decomp.js`
 - 高保真原稿：`design/high-fi/`
 - 页面资产与坐标台账：`apps/web/src/assets/hifi/<page>/manifest.json`
 - 运行时回贴示例：`apps/web/src/components/ChestPanel.tsx`

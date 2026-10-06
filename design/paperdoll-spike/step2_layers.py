@@ -65,7 +65,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 MDIR = os.path.join(BASE, "masters")
 CDIR = os.path.join(BASE, "_step1_export")                 # rembg RGBA (step1 out)
 LDIR = os.path.join(BASE, "_step2_export")                 # cut full-canvas layers
-QDIR = os.path.join(BASE, "_tmp", "qc")                    # disposable QC sheets
+QDIR = os.path.join(LDIR, "qc")                            # disposable QC sheets
 ODIR = os.path.join(LDIR, "outfits")
 HDIR = os.path.join(LDIR, "hats")
 SDIR = os.path.join(LDIR, "shoes")
@@ -87,8 +87,8 @@ W = H = 2048
 # ---- sources (non-barefoot originals) ----
 # sources are archived local masters (CDN single-point dependency removed
 # 2026-10-06); ("cdn", url) remains a supported source type for future hats.
-CORE_SHOD_MASTER = "dress-default-shod.png"           # shod default -> shoe
-EXPLORER_FULL_MASTER = "dress-job-explorer-full.png"  # hatted -> explorer hat
+CORE_SHOD_MASTER = "default/dress-default-shod.png"           # shod default -> shoe
+EXPLORER_FULL_MASTER = "job-explorer/dress-job-explorer-full.png"  # hatted -> explorer hat
 
 # ---- shoe horizontal split (validated) ----
 SHOE_CUT = 1780         # body has no shoes below this y; ankle skin ends ~1776
@@ -200,7 +200,7 @@ HATS = {
             "side_l":  [435, 415, 610, 655],
             "side_r":  [1380, 410, 1505, 615],
         },
-        "source": ("master", "dress-job-scientist-full.png"),
+        "source": ("master", "job-scientist/dress-job-scientist-full.png"),
         "prompt_doc": "dress-job-scientist-full.md",
     },
     "frog": {
@@ -221,7 +221,7 @@ HATS = {
             "side_l":      [440, 550, 605, 780],
             "side_r":      [1355, 540, 1460, 750],
         },
-        "source": ("master", "dress-animal-frog-full-v2.png"),
+        "source": ("master", "animal-frog/dress-animal-frog-full.png"),
         "prompt_doc": "dress-animal-frog-full.md",
     },
     "elf": {
@@ -246,7 +246,7 @@ HATS = {
             "side_r":      [1350, 555, 1490, 745],
             "pom":         [1415, 345, 1650, 560],
         },
-        "source": ("master", "dress-festival-elf-full-v2.png"),
+        "source": ("master", "festival-elf/dress-festival-elf-full.png"),
         "prompt_doc": "dress-festival-elf-full.md",
     },
     "wizard": {
@@ -267,7 +267,7 @@ HATS = {
             "conn_l":    [560, 560, 880, 700],
             "conn_r":    [1060, 555, 1380, 695],
         },
-        "source": ("master", "dress-fantasy-wizard-full-v2.png"),
+        "source": ("master", "fantasy-wizard/dress-fantasy-wizard-full.png"),
         "prompt_doc": "dress-fantasy-wizard-full.md",
     },
 }

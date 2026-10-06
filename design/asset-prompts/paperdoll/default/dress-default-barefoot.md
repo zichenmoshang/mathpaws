@@ -8,7 +8,7 @@
   - 编辑对象（[img0]）：默认套装整身 core-ip https://aka.doubaocdn.com/s/mrlfo0WwGM
   - 身份锚点：即由 [img0] 继承，不另引
 - **确认人 / 确认时间**：用户 / 2026-09-29
-- **采用结果**：`design/paperdoll-spike/masters/dress-default-barefoot.png`（2048×2048 PNG，生成耗时 102.5s）
+- **采用结果**：`design/paperdoll-spike/masters/default/dress-default-barefoot.png`（2048×2048 PNG，生成耗时 102.5s）
 - **用途**：换装「整身」层的**无帽版**之一。脚部方案 A——整身生成成**光脚**（去掉暖白鞋、补全双脚与裤脚），鞋作为独立 L2 层叠加；这样鞋可任意替换（含凉鞋/光脚）且无覆盖残留。
 
 ---
@@ -31,4 +31,4 @@
 
 ## 确认记录
 
-- 第 1 稿（2026-09-29）：单参考（默认套装 core-ip），光脚及全身锚点均达标，用户确认采用，归档为 masters/dress-default-barefoot.png。
+- 第 1 稿（2026-09-29）：单参考（默认套装 core-ip），光脚及全身锚点均达标，用户确认采用，归档为 masters/default/dress-default-barefoot.png。

@@ -1,6 +1,6 @@
 # dress-job-explorer-barefoot（探险家套装·光脚【戴帽】整身母图）
 
-- **状态**：superseded（2026-09-29 被取代）。此图本身戴帽，无法充当 nohat（摘帽）版；戴帽态改由「摘帽母图 forhat + 独立帽层」合成。摘帽母图见 dress-job-explorer-barefoot-nohat.md，对应 master `masters/dress-job-explorer-barefoot-nohat.png`；帽层由探险家原图 CDN 按发际带 R 切出。本文件留作历史记录，对应旧母图已删除。
+- **状态**：superseded（2026-09-29 被取代）。此图本身戴帽，无法充当 nohat（摘帽）版；戴帽态改由「摘帽母图 forhat + 独立帽层」合成。摘帽母图见 dress-job-explorer-barefoot-nohat.md，对应 master `masters/job-explorer/dress-job-explorer-barefoot-nohat.png`；帽层由探险家原图 CDN 按发际带 R 切出。本文件留作历史记录，对应旧母图已删除。
 - **历史状态**：approved（用户 2026-09-29 曾确认，模型 doubao-seedream-5.0-pro）
 - **所属页面/批次**：P10 学盒纸娃娃 / P16 换装 / P4 立绘；换装架构改造（整身为主 + 帽/鞋可换，脚部方案 A）
 - **类型**：ITEM（I2I 局部编辑 image_edit / seedream_5.0_pro / 1:1 / 2048²）
@@ -9,7 +9,7 @@
   - 编辑对象（[img0]）：小探险家整身图 https://aka.doubaocdn.com/s/CTss4TXJgU
   - 身份锚点（[img1]）：core-ip https://aka.doubaocdn.com/s/mrlfo0WwGM（第 1 稿仅传 img0 时眼睛被改成带睫毛偏女性眼型；定稿改为 img0+img1 双参考，眼部严格锚定 img1）
 - **确认人 / 确认时间**：用户 / 2026-09-29
-- **采用结果**：`design/paperdoll-spike/masters/dress-job-explorer-barefoot.png`（2048×2048 PNG，定稿为第 2 稿，生成耗时 84.9s）
+- **采用结果**：`design/paperdoll-spike/masters/job-explorer/dress-job-explorer-barefoot.png`（2048×2048 PNG，定稿为第 2 稿，生成耗时 84.9s；该母图后续已删除）
 - **用途**：换装「整身」层的无帽版之一。脚部方案 A——整身生成成**光脚**（去掉暖白鞋、补全双脚与裤脚），鞋作为独立 L2 层叠加；同时本套装含帽，后续在 step2 沿发际带 R 产出 for-hat 整身版。
 
 ---
@@ -33,4 +33,4 @@
 ## 确认记录
 
 - 第 1 稿（2026-09-29）：单参考（仅探险家整身图），光脚/帽/马甲/短裤达标，但眼睛被改成带睫毛偏女性眼型，废弃。
-- 第 2 稿（2026-09-29）：双参考（探险家图 [img0] + core-ip [img1]），prompt 增加无睫毛圆眼锚定，用户确认采用，归档为 masters/dress-job-explorer-barefoot.png。
+- 第 2 稿（2026-09-29）：双参考（探险家图 [img0] + core-ip [img1]），prompt 增加无睫毛圆眼锚定，用户确认采用，归档为 masters/job-explorer/dress-job-explorer-barefoot.png。

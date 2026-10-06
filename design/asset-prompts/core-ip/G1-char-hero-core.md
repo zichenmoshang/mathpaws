@@ -1,6 +1,6 @@
 # G1-char-hero-core · 中性主角 core-ip（定锚）
 
-- **状态**：locked / done（2026-09-28 候选 1 初锁；**2026-09-30 用户改以 `design/paperdoll-spike/masters/dress-default-barefoot.png` 为正式 core-ip 锚点**，后续所有主角衍生的 image_edit 参考源以该光脚母图为准）
+- **状态**：locked / done（2026-09-28 候选 1 初锁；**2026-09-30 用户改以 `design/paperdoll-spike/masters/default/dress-default-barefoot.png` 为正式 core-ip 锚点**，后续所有主角衍生的 image_edit 参考源以该光脚母图为准）
 - **所属页面/批次**：全局品牌 IP / 批次 0（core-ip 地基）；P2 主角亮相起名、P5 3D 广场、P4 首页左列、P10 学盒纸娃娃、P16 背包换装均衍生自本图
 - **类型**：STAND + REF 合一（既是 2D 立绘锚点，也是 Hunyuan3D 建模输入）
 - **比例与像素**：1:1，生成 2048×2048（交付/建模可缩到 1024²）
@@ -73,4 +73,4 @@
 
 - 第 1 稿（2026-09-28）：用户确认上述 4 项，胸口标记选定「浅蓝爪印」，指定模型 Seedream 5.0 Pro，批准生成。
 - 候选 1（2026-09-28，seedream_5.0_pro）：https://aka.doubaocdn.com/s/mrlfo0WwGM —— ✅ 用户验收通过，**锁定为 core-ip**，后续表情 / 立绘 / 换装套装 / 建模均以本图为 image_edit 参考源。
-- **2026-09-30 锚点更新（用户指令）**：正式 core-ip 参考源改定为光脚默认装母图 `design/paperdoll-spike/masters/dress-default-barefoot.png`（即候选 1 的 I2I 光脚衍生，见 [dress-default-barefoot.md](../paperdoll/default/dress-default-barefoot.md)）。脸部 / 发型 / 上衣爪印 / 短裤 / 搪胶质感等全部设定锚点不变，仅脚部由"暖白鞋"改为"光脚"（鞋作为独立换装层叠加）。此后所有 image_edit 衍生一律带此光脚母图。
+- **2026-09-30 锚点更新（用户指令）**：正式 core-ip 参考源改定为光脚默认装母图 `design/paperdoll-spike/masters/default/dress-default-barefoot.png`（即候选 1 的 I2I 光脚衍生，见 [dress-default-barefoot.md](../paperdoll/default/dress-default-barefoot.md)）。脸部 / 发型 / 上衣爪印 / 短裤 / 搪胶质感等全部设定锚点不变，仅脚部由"暖白鞋"改为"光脚"（鞋作为独立换装层叠加）。此后所有 image_edit 衍生一律带此光脚母图。

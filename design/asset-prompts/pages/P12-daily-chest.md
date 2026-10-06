@@ -29,10 +29,10 @@
 
 ## 拆层与落地（标准 layer_decomposition）
 
-- 调用：`node design/paperdoll-spike/decomp.js design/high-fi/daily-chest/daily-chest.jpg design/paperdoll-spike/_tmp/decomp-chest`（不传 prompt，`watermark:false`）
+- 调用：`node design/high-fi/decomp.js design/high-fi/daily-chest/daily-chest.jpg design/high-fi/_tmp/decomp-chest`（不传 prompt，`watermark:false`；工作区产物按约定可随时清理）
 - 产物：z0 背景 + 10 语义层（ribbon-left/right、stage、chest、scroll、card-shell、card-food、stars、title、button）
 - 正式资产：[`apps/web/src/assets/hifi/daily-chest/`](../../apps/web/src/assets/hifi/daily-chest)（含 manifest.json，bbox 台账）
-- **烘焙文字处理**：scroll / card-shell / card-food 三层上的烘焙文字在图层内擦除（保留羊皮纸质感），由前端排真实文案；脚本 [`design/paperdoll-spike/_tmp/erase_chest_text.py`](../paperdoll-spike/_tmp/erase_chest_text.py)，原图备份 `_tmp/decomp-chest/original/`
+- **烘焙文字处理**：scroll / card-shell / card-food 三层上的烘焙文字在图层内擦除（保留羊皮纸质感），由前端排真实文案；脚本 `erase_chest_text.py`（一次性脚本，2026-10-06 已随 _tmp 清理），原图备份 `_tmp/decomp-chest/original/`（已随 _tmp 清理）
   - 擦除盒起点设在图标右缘（贝壳 x398、食物碗 x368），图标本体不遮挡
   - 重建方式：卷轴 = 左右干净带按行水平插值；卡片 = 上下干净行按列垂直插值，右侧用最右列延展
 - 落点组件：[`apps/web/src/components/ChestPanel.tsx`](../../apps/web/src/components/ChestPanel.tsx)

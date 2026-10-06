@@ -8,7 +8,7 @@
   - 编辑对象（[img0]）：小探险家戴帽整身图 https://aka.doubaocdn.com/s/CTss4TXJgU
   - 身份锚点（[img1]）：core-ip https://aka.doubaocdn.com/s/mrlfo0WwGM
 - **确认人 / 确认时间**：用户 / 2026-09-29
-- **采用结果**：`design/paperdoll-spike/masters/dress-job-explorer-barefoot-nohat.png`
+- **采用结果**：`design/paperdoll-spike/masters/job-explorer/dress-job-explorer-barefoot-nohat.png`
 - **用途**：换装「整身」层探险家套装的**真正 nohat（摘帽）版**——摘掉卡其遮阳帽并补全帽下头发，光脚。step2 中此图直接作为 outfit-explorer-nohat；其沿 R 挖洞版为 forhat，配合独立帽层得到戴帽态。
 
 ---

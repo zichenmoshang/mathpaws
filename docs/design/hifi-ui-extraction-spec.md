@@ -2,7 +2,7 @@
 
 > 版本：v1.1　|　最后更新：2026-10-05（新增 §9 实测案例：擦烘焙数字/形象的 PIL 方法、热点勿四等分、EPERM 绕行）
 > 适用问题：**设计稿（高保真 PNG/JPEG）里已经画好的拟物 UI 元素，如何切成透明素材给前端用。**
-> 配套实测档案：`design/paperdoll-spike/_tmp/decomp-quiz/`（quiz-page 拆层全产物）；入口脚本：`design/paperdoll-spike/decomp.js`。
+> 配套实测档案：`decomp-quiz`（quiz-page 拆层全产物；ad-hoc 工作区内容按约定可随时清理，拆层产物以 `apps/web/src/assets/hifi/quiz/` 与 §9 描述为准）；入口脚本：`design/high-fi/decomp.js`。
 > 与其他切图通道的分工见文末"通道选择表"；角色换装类需求不要用本文通道，见 [character-generation-spec.md](./character-generation-spec.md)。
 
 ---
@@ -63,9 +63,9 @@
 ```powershell
 # 1) 输入稿放临时目录（高保真原稿只读，不修改）
 # 2) 调用（Key 已在环境变量；脚本不打印 Key / URL / 长 JSON）
-node design/paperdoll-spike/decomp.js `
-  design/high-fi/<page>.png `
-  design/paperdoll-spike/_tmp/decomp-<page>
+node design/high-fi/decomp.js `
+  design/high-fi/<page>/<page>.png `
+  design/high-fi/_tmp/decomp-<page>
 # 产物：layer_zNN_*.png/jpg + layers.json（名称/描述/bbox/尺寸台账）
 ```
 

@@ -1,7 +1,8 @@
 # <资产 ID> · <名称>
 
 - **状态**：draft / approved / done / locked / superseded（弃用）
-- **所属批次 / 消费方**：类别已由目录表达（core-ip/ paperdoll/<系列>/ gacha/ pages/ ui/）；此处填批次 ID（如 M1-AST-03）与消费方页面（如 P10 学盒、P16 背包）
+- **类别**：pet / paperdoll / page / ui（四选一，决定母图落点；对照表见 README「类别与生成物落点」）
+- **所属批次 / 消费方**：批次 ID（如 M1-AST-03）与消费方页面（如 P10 学盒、P16 背包）
 - **类型**：PAGE / STAND / POSE / ICON / ITEM / BG / TEX / REF / PANEL
 - **比例与像素**：如 1:1 1024×1024
 - **生成方式**：T2I（仅 core-ip） / I2I（衍生，必须带 core-ip）；模型（如 seedream_5.0_pro）

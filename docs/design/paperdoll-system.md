@@ -66,11 +66,10 @@
 ### 5.1 目录
 
 - 工作区 `design/paperdoll-spike/`：
-  - `masters/`：**输入**，AI 白底母图（2048²，勿手改）；
+  - `masters/<系列>/`：**输入**，AI 白底母图（2048²，勿手改；按系列分目录，step1 递归发现）；
   - `_step1_export/`：step1 rembg 抠图 `*-rmbg.png`（不入库、可重生成）；
   - `_step2_export/outfits|hats|heads|masks|shoes/`：step2 切出的全画布透明 PNG（不入库、可重生成）；
-  - `_tmp/qc/`、`_tmp/grid/`：**可整体删除**的临时质检图与坐标网格；
-  - 根目录为生产脚本。
+   - 根目录为生产脚本。
 - **staging `design/paperdoll-spike/_step4_export/`**（gitignored）：`manifest.json`（全量含溯源字段）、`layers/{bodies,heads,hats,masks,shoes}/*.webp`、`icons/*.webp`、`_truth/`（回归真值矩阵）。
 - 母图 prompt 存档：`design/asset-prompts/`（门禁见 §10）。
 - **正式接入**：step5 QC 验收后跑 `step6_publish.py`，把 layers/icons、瘦身 manifest（去 prompt_doc/master_image 等溯源字段）与 `_truth` 子集（仅 wizard 组）发布进 `apps/web/src/assets/paperdoll/`，由 `PaperDoll` 组件消费。改资产后重跑 step4 → step5 → step6。
@@ -90,11 +89,11 @@
 | 脚本 | 作用 |
 |---|---|
 | `download_model.py` | 镜像下载 u2net.onnx，一次性 |
-| `step1.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `_step1_export/*-rmbg.png`、`_tmp/grid/*-grid.png`、`_tmp/qc/contact-rmbg.png` |
-| `step2_layers.py` | **核心**：先从戴帽源图按各帽 `cut_mode`（color/ellipse/head，wizard 配对）切帽层；再从光脚 cutout 产出整身 nohat 与每帽 forhat（洞与帽层同形）；鞋层水平切 + 向裸脚贴合（已产出则复用）；写 `_step2_export/{outfits,hats,heads,masks,shoes}/*.png` 与 `_tmp/qc/contact-compose.png`；HSV 带 / 切常量在此文件 |
-| `step3_zoomqc.py` | 接缝放大质检：鞋踝 + 每帽帽发（含配对帽），写 `_tmp/qc/zoom-qc.png` |
+| `step1.py` | rembg 抠图 + 坐标网格：**自动发现** `masters/` 全部白底 PNG，写 `_step1_export/*-rmbg.png`、`_step1_export/grid/*-grid.png`、`_step1_export/qc/contact-rmbg.png` |
+| `step2_layers.py` | **核心**：先从戴帽源图按各帽 `cut_mode`（color/ellipse/head，wizard 配对）切帽层；再从光脚 cutout 产出整身 nohat 与每帽 forhat（洞与帽层同形）；鞋层水平切 + 向裸脚贴合（已产出则复用）；写 `_step2_export/{outfits,hats,heads,masks,shoes}/*.png` 与 `_step2_export/qc/contact-compose.png`；HSV 带 / 切常量在此文件 |
+| `step3_zoomqc.py` | 接缝放大质检：鞋踝 + 每帽帽发（含配对帽），写 `_step3_export/zoom-qc.png` |
 | `step4_export.py` | 从 step2 常量导出全画布 WebP@2x、512 图标、全量 `manifest.json` 到 `_step4_export/` staging |
-| `step5_verify_export.py` | **用导出的 WebP 异路径回读**重新合成 + 图标拼图，写 `_tmp/qc/export-verify.png` |
+| `step5_verify_export.py` | **用导出的 WebP 异路径回读**重新合成 + 图标拼图，写 `_step5_export/export-verify.png` |
 | `step6_publish.py` | QC 验收后发布：layers/icons 镜像 + `_truth` 子集（wizard 组）+ 瘦身 manifest → `apps/web/src/assets/paperdoll/` |
 
 ## 6. 端到端生产 SOP（每套照此执行）

@@ -2,9 +2,9 @@
 
 Reads the AI white-bg master images from masters/ and for each master writes:
   _step1_export/<name>-rmbg.png    full-res RGBA cutout, input to step2/step3/measure
-  _tmp/grid/<name>-grid.png  checkerboard-backed 1024 grid labelled in ORIGINAL
+  _step1_export/grid/<name>-grid.png  checkerboard-backed 1024 grid labelled in ORIGINAL
                              2048-pixel coordinates, for measuring masks/anchors
-Also writes a 2x2 checkerboard contact sheet at _tmp/qc/contact-rmbg.png.
+Also writes a 2x2 checkerboard contact sheet at _step1_export/qc/contact-rmbg.png.
 
 rembg removes the white background, the soft under-feet contact shadow and the
 enclosed background between the legs, with feathered edges. The retired border
@@ -14,7 +14,7 @@ idea is kept here (drawn over the clean cutout).
 
 Default model is birefnet-general-lite (2026-10-03 A/B on the barefoot master:
 contour 1-3px more faithful than u2net, no dark under-feet rim, same rembg API;
-see _tmp/ab). u2net stays available for fallback: pass it as argv[1].
+comparison sheets since discarded). u2net stays available for fallback: pass it as argv[1].
 
 Run with the Python 3.12 asset venv (.venv-art) that has rembg + onnxruntime.
 Usage: <venv-art python> step1.py [model]   (default birefnet-general-lite)
@@ -27,15 +27,17 @@ from rembg import remove, new_session
 BASE = os.path.dirname(os.path.abspath(__file__))
 MDIR = os.path.join(BASE, "masters")
 CDIR = os.path.join(BASE, "_step1_export")
-QDIR = os.path.join(BASE, "_tmp", "qc")
-GDIR = os.path.join(BASE, "_tmp", "grid")
+QDIR = os.path.join(CDIR, "qc")
+GDIR = os.path.join(CDIR, "grid")
 for _d in (CDIR, QDIR, GDIR):
     os.makedirs(_d, exist_ok=True)
 
-# Auto-discover every white-bg master in masters/ so new batches need no edits
-# here. Sorted for a stable contact-sheet layout.
+# Auto-discover every white-bg master in masters/ (recursive: series subdirs)
+# so new batches need no edits here. Sorted for a stable contact-sheet layout.
 FILES = sorted(
-    fn for fn in os.listdir(MDIR)
+    os.path.relpath(os.path.join(root, fn), MDIR)
+    for root, _dirs, fns in os.walk(MDIR)
+    for fn in fns
     if fn.lower().endswith(".png") and not fn.lower().endswith("-grid.png")
 ) if os.path.isdir(MDIR) else []
 
@@ -81,7 +83,7 @@ def main():
     n_rows = max(1, (len(FILES) + per_row - 1) // per_row)
     sheet = Image.new("RGB", (cell * per_row, (cell + 30) * n_rows), (255, 255, 255))
     for i, fname in enumerate(FILES):
-        stem = fname.replace(".png", "")
+        stem = os.path.basename(fname).replace(".png", "")
         im = Image.open(os.path.join(MDIR, fname)).convert("RGB")
         out = remove(im, session=session, post_process_mask=True)
         cut_path = os.path.join(CDIR, stem + "-rmbg.png")
