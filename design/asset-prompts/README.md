@@ -18,7 +18,12 @@
 
 1. **draft**：AI 填好完整 prompt、尺寸/比例、生成方式、参考图、可见文字清单、负面约束，等待确认。
 2. **approved**：用户明确确认（或给出修改意见后回到 draft，再确认）。只有该状态可生成。
-3. **done**：生成完成后回填结果（CDN URL / 本地路径、模型、比例、时间、是否采用）。未采用的候选也要留档并标注「弃用」。
+3. **done**：生成完成后回填结果（CDN URL / 本地路径、模型、比例、时间、是否采用）。未采用的候选也要留档并标注 superseded。
+
+主流程之外的两个状态：
+
+- **locked**：core-ip 类锚定资产。确认后作为该角色长期参考源锁定，不再变动；其所有衍生图一律以此图为 image_edit 参考。
+- **superseded**：被新版本取代的旧稿（含未采用的候选），留档备查、不再使用。
 
 ## 品牌 IP 一致性（brand-ip）
 
@@ -91,7 +96,7 @@
 | gacha-box | 魔法学盒·关闭态正视图 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-box.md`](./gacha/gacha-box.md) | `apps/web/src/assets/gacha/gacha-box@2x.webp` |
 | gacha-card-back | 抽卡卡背 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-card-back.md`](./gacha/gacha-card-back.md) | `apps/web/src/assets/gacha/gacha-card-back@2x.webp` |
 | gacha-bg-starry | 抽卡星空背景 | BG | T2I（seedream_5.0_pro，无水印） | done | [`gacha-bg-starry.md`](./gacha/gacha-bg-starry.md) | `apps/web/src/assets/gacha/gacha-bg-starry@2x.webp` |
-| gacha-box-open | 魔法学盒·开启态 3/4 侧视溢光 | ITEM | i2i（参考关闭态 gacha-box） | done | [`gacha-box-open.md`](./gacha/gacha-box-open.md) | `gacha-box-open@2x.webp` |
+| gacha-box-open | 魔法学盒·开启态 3/4 侧视溢光 | ITEM | i2i（参考关闭态 gacha-box） | done | [`gacha-box-open.md`](./gacha/gacha-box-open.md) | `apps/web/src/assets/gacha/gacha-box-open@2x.webp` |
 
 ### pages（整页高保真）
 
@@ -99,7 +104,7 @@
 |---|---|---|---|---|---|---|
 | P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./pages/P16-backpack-page.md) | `design/high-fi/backpack.png` |
 | P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./pages/P4-home-page.md) | `design/high-fi/home.png`（旧稿留存 home-v1-deprecated.png） |
-| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | 见 tasks M5 | `design/high-fi/plaza-v2.jpg`、`apps/web/src/assets/hifi/plaza/*` |
+| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P5-plaza-page.md`](./pages/P5-plaza-page.md)（事后补登） | `design/high-fi/plaza-v2.jpg`、`apps/web/src/assets/hifi/plaza/*` |
 | P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./pages/P12-daily-chest.md) | `design/high-fi/daily-chest.png`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 daily-chest-v1-deprecated.png） |
 
 ### ui（标准控件与图标）
