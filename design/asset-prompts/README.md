@@ -34,6 +34,7 @@
 ## 文件与命名
 
 - 每个资产一个 md 文件：`<资产ID>-<短名>.md`，复制 `_TEMPLATE.md` 填写。
+- 文件按类别归档到子目录：`core-ip/`（角色锚定）、`paperdoll/<系列>/`（素体与换装母图，新系列在其下新建系列目录）、`gacha/`、`pages/`、`ui/`。
 - 资产 ID 与内部执行计划（`docs/internal/`，不公开）的资产批次、`docs/design/asset-checklist.md` 对齐，例如 `G1-char-hero-core`、`P4-home-page`。
 - 生成结果图片不放进本目录（本目录只存 prompt 与确认记录）；图片按 asset-checklist 的固化工序落到 `apps/web` 资源目录或 3D 输入目录，并在本文件回填路径/URL。
 
@@ -53,40 +54,64 @@
 
 ## 登记表 INDEX
 
+> 存档文件按类别归档到子目录，与「文件与命名」约定一致。
+
+### core-ip（角色锚定）
+
 | 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
 |---|---|---|---|---|---|---|
-| G1-char-hero-core | 中性主角 core-ip（定锚；**2026-09-30 改以光脚默认装母图为锚**） | STAND/REF | T2I（seedream_5.0_pro） | **locked** | [`G1-char-hero-core.md`](./G1-char-hero-core.md) | `design/paperdoll-spike/masters/dress-default-barefoot.png`（初锁候选 https://aka.doubaocdn.com/s/mrlfo0WwGM） |
-| paperdoll-body | 中性主角纸娃娃素体（内衣基底，切固定层） | STAND | I2I（edit core-ip） | **done 已验收（spike 通过）** | [`paperdoll-body.md`](./paperdoll-body.md) | https://aka.doubaocdn.com/s/TzoBbgeB2t |
-| dress-job-explorer-full | 小探险家整身套装（换装 spike，切 hat/top/bottom/acc；acc 专用） | STAND | I2I（edit core-ip） | **done 已验收（spike 通过）** | [`dress-job-explorer-full.md`](./dress-job-explorer-full.md) | https://aka.doubaocdn.com/s/CTss4TXJgU |
-| dress-job-explorer-top-noacc | 小探险家去望远镜补全马甲母图（切 hat/top/bottom 专用） | STAND | I2I（edit explorer-full） | **done 已验收（spike 通过）** | [`dress-job-explorer-top-noacc.md`](./dress-job-explorer-top-noacc.md) | https://aka.doubaocdn.com/s/V1rRGkBfRG |
-| dress-job-scientist-full | 小科学家·戴护目镜穿鞋整身母图（v3，帽=护目镜，已去放大镜 acc） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-job-scientist-full.md`](./dress-job-scientist-full.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-job-scientist-barefoot-nohat | 小科学家·光脚摘护目镜整身母图（outfit nohat 来源） | ITEM | I2I（双参考 scientist-full+core-ip） | done 已切层 | [`dress-job-scientist-barefoot-nohat.md`](./dress-job-scientist-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-animal-frog-full | 小青蛙·戴蛙眼帽穿鞋整身母图（v3，帽=蛙眼帽，验证顶部外扩，已去荷叶包 acc） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-animal-frog-full.md`](./dress-animal-frog-full.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-animal-frog-barefoot-nohat | 小青蛙·光脚摘蛙眼帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 frog-full+core-ip） | done 已切层 | [`dress-animal-frog-barefoot-nohat.md`](./dress-animal-frog-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-festival-elf-full | 小圣诞精灵·戴尖顶帽穿鞋整身母图（festival 系列） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-festival-elf-full.md`](./dress-festival-elf-full.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-festival-elf-barefoot-nohat | 小圣诞精灵·光脚摘帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 elf-full+core-ip） | done 已切层 | [`dress-festival-elf-barefoot-nohat.md`](./dress-festival-elf-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-fantasy-wizard-full | 小魔法师·戴尖顶巫师帽穿鞋整身母图（fantasy 系列） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-fantasy-wizard-full.md`](./dress-fantasy-wizard-full.md) | `apps/web/src/assets/paperdoll/layers` |
-| dress-fantasy-wizard-barefoot-nohat | 小魔法师·光脚摘帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 wizard-full+core-ip） | done 已切层 | [`dress-fantasy-wizard-barefoot-nohat.md`](./dress-fantasy-wizard-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
-| _superseded_ dress-job-scientist-top-noacc | v2 旧 4 槽草稿，已被 barefoot-nohat 取代（acc/top/bottom 槽已移除） | STAND | I2I | superseded（v3） | [`dress-job-scientist-top-noacc.md`](./dress-job-scientist-top-noacc.md) | — |
-| _superseded_ dress-animal-frog-top-noacc | v2 旧 4 槽草稿，已被 barefoot-nohat 取代 | STAND | I2I | superseded（v3） | [`dress-animal-frog-top-noacc.md`](./dress-animal-frog-top-noacc.md) | — |
-| gacha-box | 魔法学盒·关闭态正视图 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-box.md`](./gacha-box.md) | `apps/web/src/assets/gacha/gacha-box@2x.webp` |
-| gacha-card-back | 抽卡卡背 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-card-back.md`](./gacha-card-back.md) | `apps/web/src/assets/gacha/gacha-card-back@2x.webp` |
-| gacha-bg-starry | 抽卡星空背景 | BG | T2I（seedream_5.0_pro，无水印） | done | [`gacha-bg-starry.md`](./gacha-bg-starry.md) | `apps/web/src/assets/gacha/gacha-bg-starry@2x.webp` |
-| P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./P16-backpack-page.md) | `design/high-fi/backpack.png` |
-| UI-back-button | 标准返回钮（全页面复用，透明） | ICON | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `packages/ui/src/assets/ui-back-button.webp` |
-| UI-primary-button | 标准底部主按钮背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `packages/ui/src/assets/ui-primary-button.webp` |
-| UI-tab-active | Tab 选中态背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `packages/ui/src/assets/ui-tab-active.webp` |
-| UI-tab-inactive | Tab 未选中态背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `packages/ui/src/assets/ui-tab-inactive.webp` |
-| P16-dressing-title | 「换装书房」标题艺术字 v2（透明） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `apps/web/src/assets/ui/p16-dressing-title.webp` |
-| P16-platform | 人物脚下椭圆平台（透明） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./UI-standard-controls.md) | `apps/web/src/assets/ui/p16-platform.webp` |
-| gacha-box-open | 魔法学盒·开启态 3/4 侧视溢光 | ITEM | i2i（参考关闭态 gacha-box） | done | [`gacha-box-open.md`](./gacha-box-open.md) | `gacha-box-open@2x.webp` |
-| pet-rabbit-core | 雪球兔 core-ip（毛绒短绒质感；蓝项圈金骨牌） | STAND/REF | 既有图锁定 | **locked（2026-09-30）** | [`pet-rabbit-core.md`](./pet-rabbit-core.md) | `design/gen3d-input/pet-rabbit.png` |
-| brand-bird-core | 白雏鸟 core-ip（吉祥物**插画**，搪胶风带浅色外描边，刻意区别于宠物质感） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`brand-bird-core.md`](./brand-bird-core.md) | `apps/web/src/assets/img/core/brand-bird-core@2x.png` |
-| pet-dog-core | 小狗 core-ip（一期"即将开放"锁定占位） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`pet-dog-core.md`](./pet-dog-core.md) | `apps/web/src/assets/img/core/pet-dog-core@2x.png` |
-| pet-cat-core | 小猫 core-ip（一期"即将开放"锁定占位） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`pet-cat-core.md`](./pet-cat-core.md) | `apps/web/src/assets/img/core/pet-cat-core@2x.png` |
-| M1-icon-set | 图标库批次2（37 个；单图 1024²·立体厚涂游戏图标风，透明 WebP） | ICON/ITEM/PANEL | T2I（rembg 抠图） | **done（2026-10-01）** | [`M1-icon-set.md`](./M1-icon-set.md) | `apps/web/src/assets/img/icons/*.webp`、`.../img/farm/*.webp` |
-| P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./P4-home-page.md) | `design/high-fi/home.png`（旧稿留存 home-v1-deprecated.png） |
+| G1-char-hero-core | 中性主角 core-ip（定锚；**2026-09-30 改以光脚默认装母图为锚**） | STAND/REF | T2I（seedream_5.0_pro） | **locked** | [`G1-char-hero-core.md`](./core-ip/G1-char-hero-core.md) | `design/paperdoll-spike/masters/dress-default-barefoot.png`（初锁候选 https://aka.doubaocdn.com/s/mrlfo0WwGM） |
+| pet-rabbit-core | 雪球兔 core-ip（毛绒短绒质感；蓝项圈金骨牌） | STAND/REF | 既有图锁定 | **locked（2026-09-30）** | [`pet-rabbit-core.md`](./core-ip/pet-rabbit-core.md) | `design/gen3d-input/pet-rabbit.png` |
+| brand-bird-core | 白雏鸟 core-ip（吉祥物**插画**，搪胶风带浅色外描边，刻意区别于宠物质感） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`brand-bird-core.md`](./core-ip/brand-bird-core.md) | `apps/web/src/assets/img/core/brand-bird-core@2x.png` |
+| pet-dog-core | 小狗 core-ip（一期"即将开放"锁定占位） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`pet-dog-core.md`](./core-ip/pet-dog-core.md) | `apps/web/src/assets/img/core/pet-dog-core@2x.png` |
+| pet-cat-core | 小猫 core-ip（一期"即将开放"锁定占位） | STAND | T2I（seedream_5.0_pro） | **locked（2026-09-30）** | [`pet-cat-core.md`](./core-ip/pet-cat-core.md) | `apps/web/src/assets/img/core/pet-cat-core@2x.png` |
+
+### paperdoll（素体与换装母图）
+
+| 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
+|---|---|---|---|---|---|---|
+| paperdoll-body | 中性主角纸娃娃素体（内衣基底，切固定层） | STAND | I2I（edit core-ip） | **done 已验收（spike 通过）** | [`paperdoll-body.md`](./paperdoll/paperdoll-body.md) | https://aka.doubaocdn.com/s/TzoBbgeB2t |
+| dress-job-explorer-full | 小探险家整身套装（换装 spike，切 hat/top/bottom/acc；acc 专用） | STAND | I2I（edit core-ip） | **done 已验收（spike 通过）** | [`dress-job-explorer-full.md`](./paperdoll/job-explorer/dress-job-explorer-full.md) | https://aka.doubaocdn.com/s/CTss4TXJgU |
+| dress-job-explorer-top-noacc | 小探险家去望远镜补全马甲母图（切 hat/top/bottom 专用） | STAND | I2I（edit explorer-full） | **done 已验收（spike 通过）** | [`dress-job-explorer-top-noacc.md`](./paperdoll/job-explorer/dress-job-explorer-top-noacc.md) | https://aka.doubaocdn.com/s/V1rRGkBfRG |
+| dress-job-scientist-full | 小科学家·戴护目镜穿鞋整身母图（v3，帽=护目镜，已去放大镜 acc） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-job-scientist-full.md`](./paperdoll/job-scientist/dress-job-scientist-full.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-job-scientist-barefoot-nohat | 小科学家·光脚摘护目镜整身母图（outfit nohat 来源） | ITEM | I2I（双参考 scientist-full+core-ip） | done 已切层 | [`dress-job-scientist-barefoot-nohat.md`](./paperdoll/job-scientist/dress-job-scientist-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-animal-frog-full | 小青蛙·戴蛙眼帽穿鞋整身母图（v3，帽=蛙眼帽，验证顶部外扩，已去荷叶包 acc） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-animal-frog-full.md`](./paperdoll/animal-frog/dress-animal-frog-full.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-animal-frog-barefoot-nohat | 小青蛙·光脚摘蛙眼帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 frog-full+core-ip） | done 已切层 | [`dress-animal-frog-barefoot-nohat.md`](./paperdoll/animal-frog/dress-animal-frog-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-festival-elf-full | 小圣诞精灵·戴尖顶帽穿鞋整身母图（festival 系列） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-festival-elf-full.md`](./paperdoll/festival-elf/dress-festival-elf-full.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-festival-elf-barefoot-nohat | 小圣诞精灵·光脚摘帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 elf-full+core-ip） | done 已切层 | [`dress-festival-elf-barefoot-nohat.md`](./paperdoll/festival-elf/dress-festival-elf-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-fantasy-wizard-full | 小魔法师·戴尖顶巫师帽穿鞋整身母图（fantasy 系列） | STAND | I2I（edit core-ip） | done 已切层 | [`dress-fantasy-wizard-full.md`](./paperdoll/fantasy-wizard/dress-fantasy-wizard-full.md) | `apps/web/src/assets/paperdoll/layers` |
+| dress-fantasy-wizard-barefoot-nohat | 小魔法师·光脚摘帽整身母图（outfit nohat 来源） | ITEM | I2I（双参考 wizard-full+core-ip） | done 已切层 | [`dress-fantasy-wizard-barefoot-nohat.md`](./paperdoll/fantasy-wizard/dress-fantasy-wizard-barefoot-nohat.md) | `apps/web/src/assets/paperdoll/layers` |
+| _superseded_ dress-job-scientist-top-noacc | v2 旧 4 槽草稿，已被 barefoot-nohat 取代（acc/top/bottom 槽已移除） | STAND | I2I | superseded（v3） | [`dress-job-scientist-top-noacc.md`](./paperdoll/job-scientist/dress-job-scientist-top-noacc.md) | — |
+| _superseded_ dress-animal-frog-top-noacc | v2 旧 4 槽草稿，已被 barefoot-nohat 取代 | STAND | I2I | superseded（v3） | [`dress-animal-frog-top-noacc.md`](./paperdoll/animal-frog/dress-animal-frog-top-noacc.md) | — |
+
+### gacha（抽卡）
+
+| 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
+|---|---|---|---|---|---|---|
+| gacha-box | 魔法学盒·关闭态正视图 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-box.md`](./gacha/gacha-box.md) | `apps/web/src/assets/gacha/gacha-box@2x.webp` |
+| gacha-card-back | 抽卡卡背 | ITEM | T2I（seedream_5.0_pro） | done | [`gacha-card-back.md`](./gacha/gacha-card-back.md) | `apps/web/src/assets/gacha/gacha-card-back@2x.webp` |
+| gacha-bg-starry | 抽卡星空背景 | BG | T2I（seedream_5.0_pro，无水印） | done | [`gacha-bg-starry.md`](./gacha/gacha-bg-starry.md) | `apps/web/src/assets/gacha/gacha-bg-starry@2x.webp` |
+| gacha-box-open | 魔法学盒·开启态 3/4 侧视溢光 | ITEM | i2i（参考关闭态 gacha-box） | done | [`gacha-box-open.md`](./gacha/gacha-box-open.md) | `gacha-box-open@2x.webp` |
+
+### pages（整页高保真）
+
+| 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
+|---|---|---|---|---|---|---|
+| P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./pages/P16-backpack-page.md) | `design/high-fi/backpack.png` |
+| P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./pages/P4-home-page.md) | `design/high-fi/home.png`（旧稿留存 home-v1-deprecated.png） |
 | P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | 见 tasks M5 | `design/high-fi/plaza-v2.jpg`、`apps/web/src/assets/hifi/plaza/*` |
-| P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./P12-daily-chest.md) | `design/high-fi/daily-chest.png`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 daily-chest-v1-deprecated.png） |
+| P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./pages/P12-daily-chest.md) | `design/high-fi/daily-chest.png`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 daily-chest-v1-deprecated.png） |
+
+### ui（标准控件与图标）
+
+| 资产 ID | 名称 | 类型 | 生成方式 | 状态 | 存档文件 | 结果 |
+|---|---|---|---|---|---|---|
+| UI-back-button | 标准返回钮（全页面复用，透明） | ICON | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `packages/ui/src/assets/ui-back-button.webp` |
+| UI-primary-button | 标准底部主按钮背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `packages/ui/src/assets/ui-primary-button.webp` |
+| UI-tab-active | Tab 选中态背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `packages/ui/src/assets/ui-tab-active.webp` |
+| UI-tab-inactive | Tab 未选中态背景（9-slice，无文字） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `packages/ui/src/assets/ui-tab-inactive.webp` |
+| P16-dressing-title | 「换装书房」标题艺术字 v2（透明） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `apps/web/src/assets/ui/p16-dressing-title.webp` |
+| P16-platform | 人物脚下椭圆平台（透明） | ITEM | T2I（seedream_5.0_pro，无水印） | done | [`UI-standard-controls.md`](./ui/UI-standard-controls.md) | `apps/web/src/assets/ui/p16-platform.webp` |
+| M1-icon-set | 图标库批次2（37 个；单图 1024²·立体厚涂游戏图标风，透明 WebP） | ICON/ITEM/PANEL | T2I（rembg 抠图） | **done（2026-10-01）** | [`M1-icon-set.md`](./ui/M1-icon-set.md) | `apps/web/src/assets/img/icons/*.webp`、`.../img/farm/*.webp` |
 
 > 其余整页高保真、装扮部件、作物道具、图标、背景随 M1–M5 批次在开工前逐批补登；**未登记不生成**。
