@@ -186,7 +186,7 @@ title 30（页标题）/ h2 22 / body 18 / aux 14 / question 64（答题题干 /
 
 ### 8.3 性能与渲染
 - 3D（二期）：DPR ≤2、场景总 tris 目标 <300k、GLB Draco / Meshopt 压缩（预算见 [phase2/asset-manifest.md](./design/phase2/asset-manifest.md)）。
-- tfjs 手写识别走 **WASM 后端**（CPU），不与 three.js 争抢 WebGL（见 architecture）。
+- tfjs 手写识别走 **WASM 后端**（CPU），不与 three.js 争抢 WebGL（见 [architecture.md](./architecture.md)）。
 
 ---
 
