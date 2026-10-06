@@ -10,6 +10,7 @@
 # ---------- Node 依赖 ----------
 node_modules/
 .pnpm-store/
+.pnpm-cache/
 
 # ---------- Python 虚拟环境与缓存 ----------
 # 本仓库即 design/.venv-art、ml/mnist/venv312
