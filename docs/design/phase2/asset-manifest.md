@@ -9,7 +9,7 @@
 >
 > 当前主线（2026-09）：云端免费版 Tripo / Meshy 拿不到 glb / 骨骼 / 多图（全订阅，已验证为死路），改 **AutoDL RTX4090 + 开源 Hunyuan3D-2.1** 出几何 / 彩色 PBR，**Blender 修模 / 绑骨 / 减面 / 导出**。建模操作见 [gen3d-guide.md](./gen3d-guide.md)（环境搭建 Runbook 在内部目录，不公开）。
 >
-> 📋 本台账只管 3D；**页面 / 2D 切图 / UI 组件总清单与页面归属见 [asset-checklist.md](./asset-checklist.md)**；视觉质感规范见 [../design-system.md](../design-system.md)。
+> 📋 本台账只管 3D；**页面组件 ↔ 位图资产映射见 [../../design-system.md](../../design-system.md) §7.3**；视觉质感规范同文。
 >
 > **一期范围原则：仅广场实时 3D；农场是 2D（其道具不入 3D）；学盒 / 背包是顶部 UI 图标（无建筑）；一期宠物仅雪球兔。**
 

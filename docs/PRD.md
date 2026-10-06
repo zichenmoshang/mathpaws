@@ -2,7 +2,7 @@
 
 > 版本：一期（V1）定稿　|　最后更新：2026-10-06
 > 本文档是产品**逻辑 / 数值 / 结构 / 范围**的唯一事实来源（SSOT），**已固化**：正文只保留一期当前生效规则；历史决策见文末《变更记录》，一期施工期的任何修订须同步登记变更记录。二期范围与机制基线见 [PRD-v2.md](./PRD-v2.md)。
-> 视觉质感 / 配色 / 具体长相以返工对齐后的高保真与 [design-system.md](./design-system.md) 为准；广场 3D（二期）实现见 [plaza-3d.md](./design/plaza-3d.md)（留档），工程实现见 [architecture.md](./design/architecture.md)，页面 / 资产跟踪见 [asset-checklist.md](./design/asset-checklist.md)。
+> 视觉质感 / 配色 / 具体长相以返工对齐后的高保真与 [design-system.md](./design-system.md) 为准；广场 3D（二期）实现见 [plaza-3d.md](./design/phase2/plaza-3d.md)（留档），工程实现见 [architecture.md](./architecture.md)，组件 ↔ 资产映射与 AI 生图规范见 [design-system.md](./design-system.md) §7.3 / §10。
 
 ---
 
@@ -17,7 +17,7 @@
 ### 1.3 目标用户与设备
 - 小学三年级学生（8–9 岁），家长期望其每天坚持练习口算。
 - **目标真机：华为 MatePad 11.5"（型号 TGR-W10，HarmonyOS 4.2.0，8GB RAM，2800×1840），平板横屏**；不做手机竖屏版。
-- 交付形态：**PWA 网页应用**（一期无 App、无注册），开发期局域网 HTTP 调试、正式期免费 HTTPS 静态托管。详见 [architecture.md](./design/architecture.md) §部署。
+- 交付形态：**PWA 网页应用**（一期无 App、无注册），开发期局域网 HTTP 调试、正式期免费 HTTPS 静态托管。详见 [architecture.md](./architecture.md) §部署。
 
 ### 1.4 核心价值
 不是"做卷子"，而是"养宠物、种庄稼、抽装扮"——把日常练习变成养成经营的资源来源。**宠物养成是第一驱动力（可爱 + 可进化）**。
@@ -131,7 +131,7 @@
 
 ## 6. 模块 3：广场（2D 静态页）
 
-> 广场 = 整页 2D 背景 + 热点，人物不可移动；实时 3D 广场转二期（[plaza-3d.md](./design/plaza-3d.md) 留档）。
+> 广场 = 整页 2D 背景 + 热点，人物不可移动；实时 3D 广场转二期（[plaza-3d.md](./design/phase2/plaza-3d.md) 留档）。
 
 ### 6.1 建筑与热点
 - 整页 2D 背景（以 plaza.jpg 为准），建筑不可移动，点击热点进下游：

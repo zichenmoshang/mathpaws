@@ -40,7 +40,7 @@
 
 - 每个资产一个 md 文件：`<资产ID>-<短名>.md`，复制 `_TEMPLATE.md` 填写。
 - 文件按类别归档到子目录：`core-ip/`（角色锚定）、`paperdoll/<系列>/`（素体与换装母图，新系列在其下新建系列目录）、`gacha/`、`pages/`、`ui/`。
-- 资产 ID 与内部执行计划（`docs/internal/`，不公开）的资产批次、`docs/design/asset-checklist.md` 对齐，例如 `G1-char-hero-core`、`P4-home-page`。
+- 资产 ID 与内部执行计划（`docs/internal/`，不公开）的资产批次对齐，例如 `G1-char-hero-core`、`P4-home-page`。
 ### 类别与生成物落点（新增存档先在 `_TEMPLATE.md` 头字段选定类别，四选一）
 
 生图工具：文生图走 skill 的 generate.js；图生图（带参考图）用本目录 [`edit_ref_runner.js`](./edit_ref_runner.js)（绕 Windows 参数长度限制）。生成图先落本目录 `_tmp/`（gitignored），**用户确认后**按下表归档母图；固化工序再从归档母图落到 `apps/web` 资源目录，并在存档回填路径/URL。
@@ -52,7 +52,7 @@
 | page（页面高保真） | `pages/` | `design/high-fi/<page>/` | `decomp.js` 拆层（工作区 `design/high-fi/_tmp/decomp-<page>`）→ hifi 资产 |
 | ui（控件 / 元素） | `ui/`、`gacha/`、`core-ip/` 的 brand-bird | `design/ui/` | 固化进 `apps/web` 资源 |
 
-## 尺寸速查（以 asset-checklist §9.1 为准）
+## 尺寸速查（唯一事实源 = [../../docs/design-system.md](../../docs/design-system.md) §10）
 
 | 类型 | 用途 | 比例/像素 |
 |---|---|---|
