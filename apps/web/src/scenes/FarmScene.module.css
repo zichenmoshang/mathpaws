@@ -1,0 +1,309 @@
+/* FarmScene 局部样式（自 FarmScene.tsx 内联样式常量迁移；1024×768 逻辑像素） */
+
+/* 舞台外出血背景：cover 铺满视口留边 */
+.bleedBg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 场景根：LogicalStage 内的 1024×768 逻辑画布 */
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* 舞台内背景：铺满舞台随缩放（img 默认 object-fit 即 fill，不再显式声明） */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 资源牌数字（牌右半区居中，位置由内联 pillNumPlace 给） */
+.pillNum {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 28px;
+  color: #9a6a24;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .8);
+}
+
+/* 等级条：标题横幅（z2 y280-525）下方 */
+.levelWrap {
+  position: absolute;
+  top: 236px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.progressGrow {
+  flex: 1;
+}
+.lv {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #7ed957;
+  color: #fff;
+  font-weight: 900;
+  font-size: 17px;
+  box-shadow: 0 3px 0 #4e9c33;
+}
+.xpText {
+  font-weight: 900;
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(60, 110, 180, .6);
+}
+
+/* 地块热点按钮（位置由内联 place(cell) 给） */
+.plotBtn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* 地块内容（相对地块热点定位） */
+.plantBtnImg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+.sproutsImg {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  width: 58%;
+  transform: translateX(-50%);
+  object-fit: contain;
+}
+/* 倒计时小气泡：地块右上角，不挡植物 */
+.cdBubble {
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .95);
+  border: 2px solid #6fb3e8;
+  color: #2b6cb0;
+  font-weight: 900;
+  font-size: 14px;
+  box-shadow: 0 3px 6px rgba(40, 90, 160, .25);
+  white-space: nowrap;
+}
+.fruitImg {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 52%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px rgba(60, 30, 10, .35));
+}
+/* 注意：mp-farm-ready 动画的 transform 会覆盖 .fruitImg 的 transform，
+   必须把 translate(-50%,-50%) 写进 keyframes，否则果实锚点失效向右下偏移 */
+.fruitReady {
+  animation: mp-farm-ready 1.2s ease-in-out infinite;
+}
+@keyframes mp-farm-ready {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.08); }
+}
+.readyTag {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  padding: 2px 14px;
+  border-radius: 999px;
+  background: #ffec99;
+  color: #8a6d1d;
+  font-weight: 900;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 3px 6px rgba(60, 30, 10, .25);
+}
+
+/* 仓库按钮：右下角橙色胶囊 */
+.warehouseBtn {
+  position: absolute;
+  right: 28px;
+  bottom: 24px;
+  height: 60px;
+  padding: 0 34px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(180deg, #ffd83d, #ffb020);
+  color: #7a4a12;
+  font-weight: 900;
+  font-size: 22px;
+  box-shadow: 0 5px 0 #e08f00;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.coldHint {
+  position: absolute;
+  bottom: 118px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #cdeab6;
+  color: #5da23f;
+  font-weight: 900;
+  font-size: 17px;
+  box-shadow: 0 6px 12px rgba(90, 150, 80, .2);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  white-space: nowrap;
+}
+.fly {
+  position: absolute;
+  top: 240px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  border: 2px solid #7ed957;
+  color: #3e9c4c;
+  font-weight: 900;
+  font-size: 19px;
+  white-space: nowrap;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  z-index: 30;
+}
+
+/* 面板内部（种子袋 / 仓库共用） */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+.panelTitle {
+  font-size: 24px;
+  font-weight: 900;
+  color: #3f4d5c;
+}
+.panelList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-height: 440px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.cropRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: #f7faf4;
+  border: 2px solid #e3eee0;
+}
+.cropIcon {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+.cropMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cropName {
+  font-weight: 900;
+  font-size: 18px;
+  color: #3f4d5c;
+}
+.cropSub {
+  font-weight: 800;
+  font-size: 13px;
+  color: #8a97a3;
+}
+.rowActions {
+  display: flex;
+  gap: 8px;
+}
+.smallBuyBtn {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: none;
+  background: #fff3e0;
+  color: #ad6800;
+  font-weight: 900;
+  font-size: 14px;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+.plantBtn {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(180deg, #9be15d, #6cc24a);
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
+  box-shadow: 0 4px 0 #4e9c33;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+.seedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+.whCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #f7faf4;
+  border: 2px solid #e3eee0;
+}
+.whIcon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+.whFoot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+.whFlower {
+  font-weight: 900;
+  font-size: 18px;
+  color: #ad6800;
+}
+.sellFly {
+  font-weight: 900;
+  font-size: 17px;
+  color: #3e9c4c;
+}

@@ -1,12 +1,11 @@
 // 全局统一的轻提示（一期口径：未做功能一律保留入口，点击弹"即将开放"）。
 // 任意页面调用 comingSoon() 或 toastMessage(msg) 即可，无需自己实现弹层；
 // 同一时刻只显示一条。
-import { FONT } from '@mathpaws/ui'
 import { useEffect } from 'react'
-import type { CSSProperties } from 'react'
 import { create } from 'zustand'
 
 import { audio } from '../utils/audio'
+import styles from './ComingSoonToast.module.css'
 
 interface ToastState {
   visible: boolean
@@ -56,30 +55,13 @@ export function ComingSoonToast() {
   if (!visible) return null
 
   return (
-    <div style={backdropStyle} onClick={hide}>
-      <div style={toastStyle} role="status">
-        <span style={emojiStyle}>{icon}</span>
+    // 全屏背板不拦截指针（1.6s 自动消失期间不吞下层点击）；
+    // 点击提示气泡本身仍可提前关闭
+    <div className={styles.backdrop}>
+      <div className={styles.toast} role="status" onClick={hide}>
+        <span className={styles.emoji}>{icon}</span>
         {message}
       </div>
     </div>
   )
 }
-
-const backdropStyle: CSSProperties = {
-  position: 'fixed', inset: 0, zIndex: 200,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(30,60,100,.18)',
-  fontFamily: FONT.family,
-  animation: 'mp-pop-in .18s ease-out',
-}
-
-const toastStyle: CSSProperties = {
-  display: 'inline-flex', alignItems: 'center', gap: 10,
-  padding: '18px 34px', borderRadius: 999,
-  background: 'linear-gradient(180deg,#ffffff,#eef6ff)',
-  border: '4px solid rgba(255,255,255,.9)',
-  boxShadow: '0 14px 34px rgba(30,70,130,.3)',
-  fontWeight: 900, fontSize: 'clamp(18px,2.6vh,26px)', color: '#3f6ea3',
-}
-
-const emojiStyle: CSSProperties = { fontSize: '1.2em' }

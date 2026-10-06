@@ -8,9 +8,10 @@
 //   - 未完成打卡（当天未答题）→ 领取钮置灰，提示先完成 1 轮答题；
 //   - 可领取 → 领取奖励（贝壳 + 食物），提示后自动关闭弹框；
 //   - 已领取（chestLastOpened===今天）再次打开 → 置灰「明日再来」。
+// 样式：静态部分已迁移至 ChestPanel.module.css（含 cqw 容器查询），
+//       内联仅保留 bbox / props 驱动的动态值。
 // ============================================================================
-import { FONT } from '@mathpaws/ui'
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 import bg from '../assets/hifi/daily-chest/bg.jpg'
 import buttonImg from '../assets/hifi/daily-chest/button.png'
@@ -28,6 +29,7 @@ import stage from '../assets/hifi/daily-chest/stage.png'
 import scroll from '../assets/hifi/daily-chest/scroll.png'
 import stars from '../assets/hifi/daily-chest/stars.png'
 import title from '../assets/hifi/daily-chest/title.png'
+import styles from './ChestPanel.module.css'
 
 // 各层在原稿(2364×1773)中的 bbox 与图层原生尺寸
 const SCROLL_BBOX: BBox = [775, 833, 1590, 1038]
@@ -55,27 +57,34 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
   const done = claimedToday || justOpened
   const canClaim = !done && studiedToday
 
+  // onClose 每次渲染都可能是新引用：用 ref 持有最新值，
+  // 避免父组件重渲染导致 900ms 自动关闭计时器被反复重启
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   // 领取成功：短暂提示后自动关闭弹框
   useEffect(() => {
     if (!justOpened) return
-    const t = setTimeout(onClose, 900)
+    const t = setTimeout(() => onCloseRef.current(), 900)
     return () => clearTimeout(t)
-  }, [justOpened, onClose])
+  }, [justOpened])
 
   const claim = () => {
     if (!canClaim) return
     useEconomyStore.getState().addShells(level.shells)
     useEconomyStore.getState().addPetFood(level.food)
-    markChestOpened(dayKey())
+    markChestOpened()
     setJustOpened(true)
     audio.playSfx('reward')
   }
 
   return (
-    <div style={backdropStyle} onClick={onClose} role="dialog" aria-modal="true">
-      <div style={frameStyle} onClick={e => e.stopPropagation()}>
+    <div className={styles.backdrop} onClick={onClose} role="dialog" aria-modal="true">
+      <div className={styles.frame} onClick={e => e.stopPropagation()}>
         {/* 背景 */}
-        <img src={bg} alt="" draggable={false} style={fillStyle} />
+        <img src={bg} alt="" draggable={false} className={styles.fill} />
 
         {/* 拆层回贴（bbox 归一化为百分比，2364×1773） */}
         <Layer src={ribbonLeft} bbox={[168, 79, 645, 727]} />
@@ -111,9 +120,8 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
         {/* 关闭 */}
         <button
           aria-label="关闭"
-          className="mp-btn"
+          className={`mp-btn ${styles.closeBtn}`}
           onClick={() => { audio.playSfx('click'); onClose() }}
-          style={closeStyle}
         >
           <svg viewBox="0 0 24 24" width="58%" height="58%" aria-hidden>
             <path d="M6 6L18 18M18 6L6 18" stroke="#6B7C90" strokeWidth="3.2" strokeLinecap="round" />
@@ -123,14 +131,14 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
         {/* 领取按钮：用图层底板，未满足条件时置灰并盖提示 */}
         <button
           type="button"
-          className="mp-btn"
+          className={`mp-btn ${styles.claimBtn}`}
           disabled={!canClaim}
           onClick={claim}
-          style={{ ...claimBtnStyle, cursor: canClaim ? 'pointer' : 'not-allowed' }}
+          style={{ cursor: canClaim ? 'pointer' : 'not-allowed' }}
         >
-          <img src={buttonImg} alt="" draggable={false} style={fillStyle} />
+          <img src={buttonImg} alt="" draggable={false} className={styles.fill} />
           {!canClaim && !justOpened && (
-            <span style={btnHintStyle}>
+            <span className={styles.btnHint}>
               {claimedToday ? '已领取，明日再来' : '完成 1 轮答题后领取'}
             </span>
           )}
@@ -138,8 +146,8 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
 
         {/* 领取成功短暂提示（随后弹框自动关闭） */}
         {justOpened && (
-          <div style={claimedOverlayStyle}>
-            <div style={claimedTextStyle}>领取成功</div>
+          <div className={styles.claimedOverlay}>
+            <div className={styles.claimedText}>领取成功</div>
           </div>
         )}
       </div>
@@ -154,15 +162,12 @@ type Size = [number, number]
 function Layer({ src, bbox }: { src: string; bbox: BBox }) {
   const [x0, y0, x1, y1] = bbox
   const style: CSSProperties = {
-    position: 'absolute',
     left: `${(x0 / 2364) * 100}%`,
     top: `${(y0 / 1773) * 100}%`,
     width: `${((x1 - x0) / 2364) * 100}%`,
     height: `${((y1 - y0) / 1773) * 100}%`,
-    objectFit: 'fill',
-    pointerEvents: 'none',
   }
-  return <img src={src} alt="" draggable={false} style={style} />
+  return <img src={src} alt="" draggable={false} className={styles.layer} style={style} />
 }
 
 /**
@@ -192,87 +197,17 @@ function TextZone({
 
   return (
     <div
+      className={styles.textZone}
       style={{
-        position: 'absolute',
         left: `${(fx0 / 2364) * 100}%`,
         top: `${(fy0 / 1773) * 100}%`,
         width: `${((fx1 - fx0) / 2364) * 100}%`,
         height: `${((fy1 - fy0) / 1773) * 100}%`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
         color, fontWeight: weight,
         fontSize: `${((fy1 - fy0) / 2364) * 100 * fontScale}cqw`,
-        whiteSpace: 'nowrap',
-        pointerEvents: 'none',
       }}
     >
       {children}
     </div>
   )
-}
-
-// ---------------------------------------------------------------------------
-// 样式
-// ---------------------------------------------------------------------------
-const backdropStyle: CSSProperties = {
-  position: 'fixed', inset: 0, zIndex: 100,
-  background: 'rgba(30,50,80,.5)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  fontFamily: FONT.family,
-  animation: 'mp-pop-in .22s ease-out',
-}
-
-const frameStyle: CSSProperties = {
-  position: 'relative',
-  width: 'min(760px, 92vw)',
-  aspectRatio: '2364 / 1773',
-  borderRadius: 24,
-  overflow: 'hidden',
-  containerType: 'inline-size',
-  boxShadow: '0 24px 60px rgba(20,40,80,.45)',
-}
-
-const fillStyle: CSSProperties = {
-  position: 'absolute', inset: 0, width: '100%', height: '100%',
-  objectFit: 'fill',
-}
-
-const closeStyle: CSSProperties = {
-  position: 'absolute', top: '2.2%', right: '2.4%',
-  width: '5.2%', aspectRatio: '1', borderRadius: '50%',
-  border: 'none', cursor: 'pointer', zIndex: 20,
-  background: 'rgba(255,255,255,.92)',
-  boxShadow: '0 3px 8px rgba(20,40,80,.25)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  padding: 0,
-}
-
-const claimBtnStyle: CSSProperties = {
-  position: 'absolute',
-  left: `${(809 / 2364) * 100}%`,
-  top: `${(1532 / 1773) * 100}%`,
-  width: `${((1556 - 809) / 2364) * 100}%`,
-  height: `${((1720 - 1532) / 1773) * 100}%`,
-  border: 'none', padding: 0, cursor: 'pointer', background: 'transparent',
-  zIndex: 15,
-}
-
-const btnHintStyle: CSSProperties = {
-  position: 'absolute', inset: 0,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(60,70,90,.55)',
-  color: '#fff', fontWeight: 900, fontSize: '3cqw',
-  borderRadius: 999,
-}
-
-const claimedOverlayStyle: CSSProperties = {
-  position: 'absolute', inset: 0, zIndex: 18,
-  background: 'rgba(40,50,75,.55)',
-  display: 'flex', flexDirection: 'column',
-  alignItems: 'center', justifyContent: 'center',
-}
-
-const claimedTextStyle: CSSProperties = {
-  color: '#fff', fontWeight: 900,
-  fontSize: '8cqw',
-  textShadow: '0 3px 8px rgba(0,0,0,.4)',
 }

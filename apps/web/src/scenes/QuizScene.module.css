@@ -1,0 +1,176 @@
+/* QuizScene 静态样式（自 tsx 内联迁入）；字体栈等同 @mathpaws/ui 的 FONT.family。
+   原稿坐标换算出的 left/top/width/height 与状态驱动值（字号、判定色等）仍由 tsx 内联给出。
+   注意：本文件引用 styles/global.css 的全局 mp-* keyframes，不重复定义。
+   动画名必须写成 var(--mp-kf, mp-xxx)——CSS Modules 会把 animation 里的裸动画名
+   局部化导致引用失效；var() 包裹可跳过局部化，变量永不定义、恒取 fallback。 */
+
+/* 贴合高保真蓝底：顶部中心偏亮、中部偏深、向底部变浅 */
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(130% 72% at 50% -12%, rgba(133, 205, 252, .9) 0%, rgba(63, 150, 247, 0) 55%),
+    linear-gradient(180deg, #57a6f6 0%, #3796f6 36%, #43acf9 66%, #60d0fb 100%);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* 顶部栏：返回 / 标题 / 进度+宝箱，同一层级 */
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 11vh;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 22px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.titleImg {
+  height: 46%;
+  max-height: 54px;
+  min-height: 34px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(20, 80, 150, .3));
+}
+
+.progressWrap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  width: min(280px, 30vw);
+  flex-shrink: 0;
+}
+
+.chestInBar {
+  height: 5.4vh;
+  max-height: 56px;
+  min-height: 38px;
+  width: auto;
+  margin-left: -8px;
+  object-fit: contain;
+}
+
+/* 书本区顶部与顶栏同口径：顶栏 height:11vh + min-height:64px，
+   极小高度屏按 64px 让位，避免与顶栏互相挤压 */
+.bookArea {
+  position: absolute;
+  top: max(11vh, 64px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 笔记本舞台：等比缩放 */
+.stage {
+  position: relative;
+  aspect-ratio: 2030 / 1350;
+  height: min(97%, calc(96vw * 1350 / 2030));
+}
+
+/* 书页切图按舞台拉伸填充 */
+.fillImg {
+  object-fit: fill;
+}
+
+/* 纯装饰图层：不拦截指针（线圈 / 标签 / 占位提示 / 铅笔） */
+.peNone {
+  pointer-events: none;
+}
+
+/* 题目行（前端排版，自适应单行）；left/width/top 与运行时字号 fontPx 由 tsx 内联给出 */
+.prompt {
+  position: absolute;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3em;
+  white-space: nowrap;
+  font-weight: 800;
+  color: #263238; /* 等同 C.ink */
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  line-height: 1;
+}
+
+.promptText {
+  letter-spacing: .02em;
+}
+
+/* 答案框：边框/文字颜色随判定状态由 tsx 内联给出 */
+.answerBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.18em;
+  height: 1.18em;
+  padding: 0 .06em;
+  border-radius: .18em;
+  box-sizing: border-box;
+}
+
+/* 答对提示：右上角 +奖励贝壳 + 太棒啦 */
+.correctHint {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+  animation: var(--mp-kf, mp-pop-in) .35s ease-out;
+}
+
+.correctRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.correctPlus {
+  font-size: clamp(22px, 3.4vh, 40px);
+  font-weight: 900;
+  color: #ff6d1f;
+  text-shadow: 0 2px 0 #fff;
+  line-height: 1;
+}
+
+.correctShell {
+  height: 1.9em;
+  width: auto;
+}
+
+.cheerText {
+  font-size: clamp(20px, 3vh, 36px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-top: 4px;
+  background: linear-gradient(180deg, #ff8a3d, #ff4f9a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .5);
+}
+
+/* 浮动提示容器（答错重写 / 识别不可用）；left/top/width 由 tsx 内联给出 */
+.floatHint {
+  position: absolute;
+  text-align: center;
+  pointer-events: none;
+}
+
+.floatHintTag {
+  display: inline-block;
+  padding: .5em 1.1em;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  font-size: clamp(13px, 1.7vh, 20px);
+  font-weight: 800;
+  color: #e53935; /* 等同 C.redDeep */
+  box-shadow: 0 4px 12px rgba(200, 60, 60, .2);
+}

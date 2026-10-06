@@ -3,10 +3,12 @@
 // 四角浮动的中性装扮（整身/头饰）+ 底部单抽/十连。
 // 规则对齐 config：单抽 50 / 十连 450；每次必出一件；重复仅提示"已有 XX"、
 // 不返还贝壳。结果卡品质色由 RARITY_META 驱动。
+// 静态样式已迁入同目录 GachaScene.module.css（CSS Modules）；
+// style={{...}} 仅保留运行时动态值（开盒状态、稀有度配色、延迟/进度等）。
 import {
-  C, FONT, R, BackButton,
+  BackButton,
 } from '@mathpaws/ui'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import gachaBg from '../assets/gacha/gacha-bg-starry@2x.webp'
@@ -14,17 +16,28 @@ import gachaBoxOpen from '../assets/gacha/gacha-box-open@2x.webp'
 import gachaBox from '../assets/gacha/gacha-box@2x.webp'
 import flagTen from '../assets/gacha/gacha-flag-ten@2x.webp'
 import glowLegendary from '../assets/gacha/glow-legendary.png'
-import { RARITY_META, COSMETIC_SLOT_LABEL, type Rarity } from '../config/cosmetics'
 import {
-  SINGLE_COST, TEN_COST, RARE_PITY, LEGEND_PITY, GACHA_ITEM_MAP,
+  RARITY_META, COSMETIC_SLOT_LABEL, type Rarity, type CosmeticSlot,
+} from '../config/cosmetics'
+import {
+  SINGLE_COST, TEN_COST, RARE_PITY, LEGEND_PITY, GACHA_ITEM_MAP, GACHA_POOL,
 } from '../config/gachaPool'
 import { performDraw, type DrawOutcome } from '../stores'
 import { useEconomyStore } from '../stores/useEconomyStore'
 import { useGachaStore } from '../stores/useGachaStore'
 import { audio } from '../utils/audio'
 
-// 四角浮动展示（池中代表：稀有整身/帽 + 普通整身/帽）
-const FLOAT_IDS = ['explorer-outfit', 'frog-hat', 'frog-outfit', 'explorer-hat'] as const
+import styles from './GachaScene.module.css'
+
+// 四角浮动展示：从卡池定义派生代表（稀有整身 → 普通帽 → 普通整身 → 稀有帽），不再手抄 id
+const pickFloat = (rarity: Rarity, slot: CosmeticSlot): string | undefined =>
+  GACHA_POOL.find(i => i.rarity === rarity && i.slot === slot)?.id
+const FLOAT_IDS = [
+  pickFloat('rare', 'outfit'),
+  pickFloat('normal', 'hat'),
+  pickFloat('normal', 'outfit'),
+  pickFloat('rare', 'hat'),
+].filter((id): id is string => !!id)
 
 // 四周金角位置：刻意打破严格四角对称，做轻微随机偏移。
 const FLOAT_POS: Array<{ top?: string; bottom?: string; left?: string; right?: string }> = [
@@ -86,47 +99,30 @@ function ShellIcon({ size = 26, variant = 'gold' }: { size?: number; variant?: '
 /** 中央学盒（透明切图；开启时关闭态淡出、开盒溢光态淡入 + 轻微回弹） */
 function Chest({ opening }: { opening: boolean }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: 'clamp(210px,34vmin,330px)',
-        aspectRatio: '640 / 660',
-        animation: 'mp-chest-bob 3s ease-in-out infinite',
-      }}
-    >
+    <div className={styles.chest}>
       {/* 传说金色光晕（垫在学盒后） */}
       <img
         src={glowLegendary}
         alt=""
         aria-hidden
-        style={{
-          position: 'absolute', inset: '-30%',
-          width: '160%', height: '160%',
-          animation: 'mp-glow-pulse 2.6s ease-in-out infinite',
-        }}
+        className={styles.chestGlow}
       />
       <img
         src={gachaBox}
         alt=""
         aria-hidden
         draggable={false}
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%', objectFit: 'contain',
-          opacity: opening ? 0 : 1,
-          transition: 'opacity .28s',
-        }}
+        className={styles.chestImg}
+        style={{ opacity: opening ? 0 : 1 }}
       />
       <img
         src={gachaBoxOpen}
         alt="魔法学盒"
         draggable={false}
+        className={`${styles.chestImg} ${styles.chestImgOpen}`}
         style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%', objectFit: 'contain',
           opacity: opening ? 1 : 0,
           transform: opening ? 'scale(1.05)' : 'scale(.96)',
-          transition: 'opacity .28s, transform .28s',
         }}
       />
     </div>
@@ -144,38 +140,12 @@ function FloatRing({
   if (!item) return null
   return (
     <div
-      style={{
-        position: 'absolute', ...pos,
-        width: 'clamp(88px,13vmin,130px)',
-        aspectRatio: '1',
-        borderRadius: '50%',
-        padding: 'clamp(9px,1.4vmin,13px)',
-        // 立体金环：顶亮 -> 中部金 -> 底部深金
-        background: 'linear-gradient(160deg,#FFF6C4 0%,#FFD968 30%,#F2A51C 62%,#B9760A 100%)',
-        boxShadow: [
-          '0 10px 22px rgba(0,0,0,.38)',
-          '0 0 14px rgba(255,214,90,.45)',
-          'inset 0 2px 3px rgba(255,255,255,.85)',
-          'inset 0 -3px 6px rgba(120,70,0,.55)',
-        ].join(','),
-        animation: `mp-float 3.4s ease-in-out ${delay}s infinite`,
-      }}
+      className={styles.floatRing}
+      // 位置与动画延迟为运行时派生值，保留内联
+      style={{ ...pos, animationDelay: `${delay}s` }}
     >
-      <div
-        style={{
-          position: 'relative',
-          width: '100%', height: '100%', borderRadius: '50%',
-          overflow: 'hidden',
-          // 内圈透明，透出深蓝星空背景；仅加内阴影与极淡径向暗角增加凹陷感
-          background: 'radial-gradient(circle at 50% 45%, rgba(20,46,120,0), rgba(8,20,64,.28))',
-          boxShadow: [
-            'inset 0 2px 4px rgba(255,240,180,.35)',
-            'inset 0 -4px 8px rgba(6,14,46,.55)',
-          ].join(','),
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
-      >
-        <img src={item.icon} alt={item.name} style={{ width: '84%', height: '84%', objectFit: 'contain' }} />
+      <div className={styles.floatRingInner}>
+        <img src={item.icon} alt={item.name} className={styles.floatRingImg} />
       </div>
     </div>
   )
@@ -214,20 +184,14 @@ function GoldStar({
   )
 }
 
-// 旋转放射光芒（conic-gradient 实现，叠在大卡背后）。
+// 旋转放射光芒（conic-gradient 实现，叠在大卡背后；颜色随稀有度动态注入）。
 function Rays({ color }: { color: string }) {
   return (
     <div
       aria-hidden
+      className={styles.rays}
       style={{
-        position: 'absolute', top: '50%', left: '50%',
-        width: '135%', aspectRatio: '1', translate: '-50% -50%',
-        borderRadius: '50%',
         background: `conic-gradient(from 0deg, ${color} 0deg 12deg, transparent 12deg 30deg, ${color} 30deg 42deg, transparent 42deg 60deg, ${color} 60deg 72deg, transparent 72deg 90deg, ${color} 90deg 102deg, transparent 102deg 120deg, ${color} 120deg 132deg, transparent 132deg 150deg, ${color} 150deg 162deg, transparent 162deg 180deg)`,
-        maskImage: 'radial-gradient(circle, #000 18%, rgba(0,0,0,.55) 52%, transparent 72%)',
-        WebkitMaskImage: 'radial-gradient(circle, #000 18%, rgba(0,0,0,.55) 52%, transparent 72%)',
-        opacity: 0.5,
-        animation: 'mp-rays-spin 22s linear infinite',
       }}
     />
   )
@@ -239,57 +203,40 @@ function FeaturedCard({ o, compact = false }: { o: DrawOutcome; compact?: boolea
   const meta = RARITY_META[o.item.rarity]
   return (
     <div
-      style={{
-        position: 'relative',
-        width: compact ? 'min(38vw, 168px)' : 'min(52vw, 220px, 38vh)',
-        aspectRatio: '3 / 4',
-        animation: 'mp-card-float 3.6s ease-in-out infinite',
-      }}
+      className={styles.featuredCard}
+      style={{ width: compact ? 'min(38vw, 168px)' : 'min(52vw, 220px, 38vh)' }}
     >
       <Rays color={g.edge} />
       {/* 卡框（稀有度色发光） */}
       <div
+        className={styles.cardFrame}
         style={{
-          position: 'absolute', inset: 0, borderRadius: 22,
           background: `linear-gradient(160deg, ${g.edge}, #fff 40%, ${g.edge})`,
-          padding: 6,
           boxShadow: `0 0 26px ${g.glow}, 0 16px 30px rgba(0,0,0,.28)`,
         }}
       >
         <div
-          style={{
-            position: 'relative', width: '100%', height: '100%', borderRadius: 17,
-            overflow: 'hidden',
-            background: `radial-gradient(circle at 50% 32%, #fff, ${g.soft} 78%)`,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'flex-end',
-            padding: '14px 10px 12px',
-          }}
+          className={styles.cardInner}
+          style={{ background: `radial-gradient(circle at 50% 32%, #fff, ${g.soft} 78%)` }}
         >
           {/* 内顶高光星点 */}
-          <GoldStar size={compact ? 12 : 16} style={{ position: 'absolute', top: compact ? 9 : 12, left: compact ? 12 : 16, opacity: .9 }} />
-          <GoldStar size={compact ? 10 : 12} style={{ position: 'absolute', top: compact ? 22 : 30, right: compact ? 13 : 18, opacity: .8 }} />
+          <GoldStar size={compact ? 12 : 16} className={styles.cardStarA} style={{ top: compact ? 9 : 12, left: compact ? 12 : 16 }} />
+          <GoldStar size={compact ? 10 : 12} className={styles.cardStarB} style={{ top: compact ? 22 : 30, right: compact ? 13 : 18 }} />
           <img
             src={o.item.icon}
             alt={o.item.name}
-            style={{
-              position: 'absolute', top: '16%', left: 0, right: 0, margin: 'auto',
-              width: '72%', aspectRatio: '1', objectFit: 'contain',
-              filter: `drop-shadow(0 8px 10px ${g.glow})`,
-            }}
+            className={styles.cardImg}
+            style={{ filter: `drop-shadow(0 8px 10px ${g.glow})` }}
           />
           <div
-            style={{
-              color: meta.color, fontWeight: 900, fontSize: compact ? 15 : 19, lineHeight: 1.15,
-              fontFamily: FONT.family, textAlign: 'center',
-            }}
+            className={styles.cardName}
+            style={{ color: meta.color, fontSize: compact ? 15 : 19 }}
           >
             {o.item.name}
           </div>
           <div
-            style={{
-              color: C.inkSoft, fontWeight: 800, fontSize: compact ? 10 : 12, fontFamily: FONT.family,
-            }}
+            className={styles.cardSlot}
+            style={{ fontSize: compact ? 10 : 12 }}
           >
             {COSMETIC_SLOT_LABEL[o.item.slot]}·{meta.label}
           </div>
@@ -304,44 +251,28 @@ function MiniRewardCard({ o, i, featured }: { o: DrawOutcome; i: number; feature
   const g = GLOW[o.item.rarity]
   return (
     <div
+      className={styles.miniCard}
       style={{
-        position: 'relative',
-        borderRadius: 13, padding: 3,
         background: `linear-gradient(160deg, ${g.edge}, ${g.soft})`,
         boxShadow: featured ? `0 0 0 2px #fff, 0 0 10px ${g.glow}` : '0 3px 6px rgba(0,0,0,.18)',
-        animation: `mp-pop-in .35s ${Math.min(i * 0.05, 0.45)}s both`,
+        // 逐格弹出延迟（随序号递增），保留内联
+        animationDelay: `${Math.min(i * 0.05, 0.45)}s`,
       }}
     >
       {!o.isNew && (
-        <span
-          style={{
-            position: 'absolute', top: 3, left: 3, zIndex: 2,
-            background: '#eceff1', color: '#546e7a',
-            fontSize: 9, fontWeight: 800, lineHeight: 1,
-            padding: '2px 5px', borderRadius: R.pill, whiteSpace: 'nowrap',
-            fontFamily: FONT.family,
-          }}
-        >
+        <span className={styles.miniDup}>
           已有
         </span>
       )}
       <div
-        style={{
-          width: '100%', aspectRatio: '1', borderRadius: 10, overflow: 'hidden',
-          background: `radial-gradient(circle at 50% 38%, #fff, ${g.soft} 80%)`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
+        className={styles.miniImgWrap}
+        style={{ background: `radial-gradient(circle at 50% 38%, #fff, ${g.soft} 80%)` }}
       >
-        <img src={o.item.icon} alt={o.item.name} style={{ width: '78%', height: '78%', objectFit: 'contain' }} />
+        <img src={o.item.icon} alt={o.item.name} className={styles.miniImg} />
       </div>
       <div
-        style={{
-          color: RARITY_META[o.item.rarity].color, fontWeight: 900,
-          fontSize: 10, lineHeight: 1.1, textAlign: 'center',
-          fontFamily: FONT.family,
-          padding: '2px 1px 3px',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        }}
+        className={styles.miniName}
+        style={{ color: RARITY_META[o.item.rarity].color }}
       >
         {o.item.name}
       </div>
@@ -368,77 +299,43 @@ function ResultModal({
   })
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'absolute', inset: 0, zIndex: 40,
-        background: 'radial-gradient(circle at 50% 30%, rgba(60,40,120,.66), rgba(6,12,42,.8))',
-        backdropFilter: 'blur(2px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-        animation: 'mp-fade-in .25s both',
-      }}
-    >
+    <div onClick={onClose} className={styles.overlay}>
       <div
         onClick={e => e.stopPropagation()}
-        style={{
-          position: 'relative',
-          width: isTen ? 'min(96vw, 560px)' : 'min(90vw, 380px)',
-          maxHeight: '94vh',
-          animation: 'mp-panel-in .42s cubic-bezier(.2,1.2,.4,1) both',
-        }}
+        className={styles.panel}
+        style={{ width: isTen ? 'min(96vw, 560px)' : 'min(90vw, 380px)' }}
       >
         {/* 顶部装饰：大星 + 飘带 + 小星 + 两侧金珠 */}
-        <div aria-hidden style={{ position: 'absolute', top: -18, left: '50%', translate: '-50% 0', zIndex: 3, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,.3))' }}>
+        <div aria-hidden className={styles.decoStarMain}>
           <GoldStar size={46} />
         </div>
-        <div aria-hidden style={{ position: 'absolute', top: -6, left: 'calc(50% - 64px)', zIndex: 2 }}>
-          <GoldStar size={20} style={{ opacity: .95 }} />
+        <div aria-hidden className={styles.decoStarLeft}>
+          <GoldStar size={20} className={styles.decoStarSmall} />
         </div>
-        <div aria-hidden style={{ position: 'absolute', top: -6, left: 'calc(50% + 44px)', zIndex: 2 }}>
-          <GoldStar size={20} style={{ opacity: .95 }} />
+        <div aria-hidden className={styles.decoStarRight}>
+          <GoldStar size={20} className={styles.decoStarSmall} />
         </div>
         {/* 金珠 */}
-        <div aria-hidden style={{ position: 'absolute', top: 30, left: -8, zIndex: 3, width: 26, height: 26, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%,#FFF6BF,#E6A23C)', boxShadow: '0 3px 6px rgba(0,0,0,.3)' }} />
-        <div aria-hidden style={{ position: 'absolute', top: 30, right: -8, zIndex: 3, width: 26, height: 26, borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%,#FFF6BF,#E6A23C)', boxShadow: '0 3px 6px rgba(0,0,0,.3)' }} />
+        <div aria-hidden className={`${styles.goldBead} ${styles.goldBeadLeft}`} />
+        <div aria-hidden className={`${styles.goldBead} ${styles.goldBeadRight}`} />
 
         {/* 金色厚边框面板 */}
-        <div
-          style={{
-            borderRadius: 30, padding: 7,
-            background: 'linear-gradient(180deg,#FFF3B0 0%,#FFD25A 40%,#E69A24 80%,#C47E16 100%)',
-            boxShadow: [
-              '0 0 26px rgba(255,210,90,.5)',
-              '0 22px 50px rgba(0,0,0,.5)',
-              'inset 0 2px 3px rgba(255,255,255,.8)',
-            ].join(','),
-          }}
-        >
+        <div className={styles.panelFrame}>
           <div
+            className={styles.panelBody}
             style={{
-              borderRadius: 24,
-              maxHeight: 'calc(94vh - 14px)', overflowY: 'auto', overflowX: 'hidden',
-              background: 'linear-gradient(180deg,#FFFDF6 0%,#FFF6E2 60%,#FFF1D4 100%)',
               padding: isTen ? '28px 16px 16px' : '30px 18px 20px',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isTen ? 10 : 14,
+              gap: isTen ? 10 : 14,
             }}
           >
             {/* 标题金横幅 */}
             <div
-              style={{
-                position: 'relative',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                minWidth: '62%', height: isTen ? 38 : 42, padding: '0 28px',
-                borderRadius: R.pill,
-                background: 'linear-gradient(180deg,#FFD866 0%,#F5A623 100%)',
-                boxShadow: '0 4px 8px rgba(180,110,10,.4), inset 0 2px 2px rgba(255,255,255,.7)',
-              }}
+              className={styles.banner}
+              style={{ height: isTen ? 38 : 42 }}
             >
               <span
-                style={{
-                  color: '#fff', fontWeight: 900, fontSize: isTen ? 19 : 21, fontFamily: FONT.family,
-                  textShadow: textStroke('#B06A0C'),
-                  whiteSpace: 'nowrap',
-                }}
+                className={`${styles.bannerText} ${styles.strokeGold}`}
+                style={{ fontSize: isTen ? 19 : 21 }}
               >
                 {anyNew ? '获得新装扮！' : '本次收获'}
               </span>
@@ -448,13 +345,7 @@ function ResultModal({
 
             {/* 十连网格 */}
             {isTen && (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(5, minmax(0,1fr))',
-                  gap: 7, width: '100%',
-                }}
-              >
+              <div className={styles.tenGrid}>
                 {outcomes.map((o, i) => (
                   <MiniRewardCard
                     key={`${o.item.id}-${i}`}
@@ -466,33 +357,27 @@ function ResultModal({
             )}
 
             {/* 金胶囊确认按钮 + 新装扮引导去背包 */}
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 2 }}>
+            <div className={styles.actions}>
               {anyNew && onGoBackpack && (
                 <button
-                  className="mp-btn"
+                  className={`mp-btn ${styles.goBackpackBtn}`}
                   onClick={() => { audio.playSfx('click'); onGoBackpack() }}
-                  style={{
-                    height: isTen ? 50 : 56, minWidth: 150, border: 'none', borderRadius: R.pill,
-                    background: 'linear-gradient(180deg,#9fd0f5,#6fb3e8)',
-                    color: '#fff', fontWeight: 900, fontSize: 19, fontFamily: FONT.family,
-                    boxShadow: '0 4px 0 #4a8fc4', cursor: 'pointer',
-                    textShadow: '0 1px 2px rgba(40,90,140,.5)',
-                  }}
+                  style={{ height: isTen ? 50 : 56 }}
                 >
                   去背包穿戴
                 </button>
               )}
               <button
-                className="mp-btn"
+                className={`mp-btn ${styles.okBtn}`}
                 onClick={() => { audio.playSfx('click'); onClose() }}
-                style={{ position: 'relative', height: isTen ? 50 : 56, minWidth: 190, border: 'none', background: 'transparent' }}
+                style={{ height: isTen ? 50 : 56 }}
               >
-                <span aria-hidden style={{ position: 'absolute', inset: 0, borderRadius: R.pill, background: 'linear-gradient(180deg,#FFF3B0 0%,#FFD25A 42%,#E69A24 80%,#C47E16 100%)' }} />
-                <span aria-hidden style={{ position: 'absolute', inset: 5, borderRadius: R.pill, background: 'linear-gradient(180deg,#FFD866 0%,#F5A623 100%)' }} />
-                <span aria-hidden style={{ position: 'absolute', inset: 5, borderRadius: R.pill, background: 'linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,0) 45%)' }} />
-                <GoldStar size={18} style={{ position: 'absolute', left: 18, top: '50%', translate: '0 -50%', zIndex: 2 }} />
-                <GoldStar size={18} style={{ position: 'absolute', right: 18, top: '50%', translate: '0 -50%', zIndex: 2 }} />
-                <span style={{ position: 'relative', zIndex: 2, color: '#fff', fontWeight: 900, fontSize: 22, fontFamily: FONT.family, textShadow: textStroke('#B06A0C') }}>
+                <span aria-hidden className={styles.okBtnLayer1} />
+                <span aria-hidden className={styles.okBtnLayer2} />
+                <span aria-hidden className={styles.okBtnLayer3} />
+                <GoldStar size={18} className={styles.okBtnStarLeft} />
+                <GoldStar size={18} className={styles.okBtnStarRight} />
+                <span className={`${styles.okBtnText} ${styles.strokeGold}`}>
                   好的
                 </span>
               </button>
@@ -513,12 +398,21 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
 
   const anyNew = useMemo(() => outcomes?.some(o => o.isNew), [outcomes])
 
+  // 开盒动画计时器：卸载时清理，避免组件销毁后 setState
+  const drawTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => {
+    if (drawTimer.current) clearTimeout(drawTimer.current)
+  }, [])
+
   const draw = (times: 1 | 10) => {
+    // 开盒动画期间直接忽略（不单纯依赖按钮 disabled 防连点）
+    if (opening) return
     const cost = times === 10 ? TEN_COST : SINGLE_COST
     if (shells < cost) return
     setOpening(true)
     audio.playSfx('open')
-    window.setTimeout(() => {
+    drawTimer.current = window.setTimeout(() => {
+      drawTimer.current = null
       const result = performDraw(times)
       if (result) {
         setOutcomes(result)
@@ -534,11 +428,9 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
 
   return (
     <div
-      style={{
-        position: 'absolute', inset: 0, overflow: 'hidden',
-        background: `url(${gachaBg}) center / cover no-repeat, #12276B`,
-        fontFamily: FONT.family,
-      }}
+      className={styles.root}
+      // 星空背景图为打包资产 URL，保留内联注入
+      style={{ background: `url(${gachaBg}) center / cover no-repeat, #12276B` }}
     >
       {/* 左上返回：与全站统一的标准返回钮 */}
       <BackButton
@@ -548,25 +440,13 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
       />
 
       {/* 右上贝壳 */}
-      <div
-        style={{
-          position: 'absolute', top: 14, right: 14, zIndex: 10,
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          height: 44, padding: '0 16px', borderRadius: R.pill,
-          background: 'rgba(0,0,0,.28)', border: '2px solid rgba(255,255,255,.25)',
-        }}
-      >
+      <div className={styles.shellPill}>
         <ShellIcon size={26} />
-        <span style={{ color: '#fff', fontWeight: 900, fontSize: 22 }}>{shells}</span>
+        <span className={styles.shellCount}>{shells}</span>
       </div>
 
       {/* 顶部保底进度 */}
-      <div
-        style={{
-          position: 'absolute', top: 14, left: '50%', translate: '-50% 0',
-          display: 'flex', gap: 12, zIndex: 9,
-        }}
-      >
+      <div className={styles.pityRow}>
         <PityText label="稀有" cur={pityRare} total={RARE_PITY} />
         <PityText label="传说" cur={pityLegend} total={LEGEND_PITY} />
       </div>
@@ -577,22 +457,12 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
       ))}
 
       {/* 中央学盒 */}
-      <div
-        style={{
-          position: 'absolute', top: '46%', left: '50%', translate: '-50% -50%',
-        }}
-      >
+      <div className={styles.chestWrap}>
         <Chest opening={opening} />
       </div>
 
       {/* 底部抽卡按钮 */}
-      <div
-        style={{
-          position: 'absolute', bottom: 24, left: 0, right: 0,
-          display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24,
-          padding: '0 20px',
-        }}
-      >
+      <div className={styles.bottomBar}>
         <DrawButton
           tone="sun"
           title="抽一次"
@@ -626,58 +496,19 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
 function PityText({ label, cur, total }: { label: string; cur: number; total: number }) {
   const pct = Math.min(1, cur / total)
   return (
-    <div
-      style={{
-        position: 'relative',
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        height: 36, padding: '0 14px 9px',
-        borderRadius: R.pill, overflow: 'hidden',
-        background: 'linear-gradient(180deg,#3E9BEF 0%,#2E86DE 52%,#1F63B8 100%)',
-        boxShadow: [
-          '0 0 0 2px #E8A93A',
-          '0 3px 6px rgba(0,0,0,.3)',
-          'inset 0 1px 2px rgba(255,255,255,.5)',
-        ].join(','),
-        whiteSpace: 'nowrap',
-      }}
-    >
+    <div className={styles.pity}>
       <GoldStar size={14} />
-      <span style={{ color: '#fff', fontWeight: 800, fontSize: 13, textShadow: '0 1px 1px rgba(0,0,0,.35)' }}>
+      <span className={styles.pityLabel}>
         {label}保底 {cur}/{total}
       </span>
       {/* 底部内凹轨道 + 金色进度填充 */}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute', left: 8, right: 8, bottom: 4, height: 5,
-          borderRadius: R.pill,
-          background: 'rgba(9,40,92,.55)',
-          boxShadow: 'inset 0 1px 2px rgba(0,0,0,.45)',
-        }}
-      >
+      <span aria-hidden className={styles.pityTrack}>
         <span
-          style={{
-            display: 'block', height: '100%', width: `${pct * 100}%`,
-            borderRadius: R.pill,
-            background: 'linear-gradient(180deg,#FFF3B0,#FFD24A 55%,#F0A824)',
-            boxShadow: '0 0 5px rgba(255,210,80,.8)',
-          }}
+          className={styles.pityFill}
+          style={{ width: `${pct * 100}%` }}
         />
       </span>
     </div>  )
-}
-
-// 高保真按钮文字：白字 + 粗深色描边（多方向 text-shadow 模拟描边）。
-function textStroke(color: string, shadow?: string) {
-  const dirs = [
-    [-2, -1], [2, -1], [-2, 1], [2, 1],
-    [-1, -2], [1, -2], [-1, 2], [1, 2],
-    [0, -2], [0, 2], [-2, 0], [2, 0],
-  ]
-  return [
-    ...dirs.map(([x, y]) => `${x}px ${y}px 0 ${color}`),
-    shadow || '0 3px 3px rgba(0,0,0,.28)',
-  ].join(',')
 }
 
 function DrawButton({
@@ -690,38 +521,15 @@ function DrawButton({
   onClick: () => void
 }) {
   const isSky = tone === 'sky'
-  const base: CSSProperties = {
-    position: 'relative',
-    height: 80, minWidth: 212, padding: isSky ? '0 34px 0 32px' : '0 30px',
-    border: 'none',
-    borderRadius: isSky ? 0 : R.pill,
-    color: '#fff',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.55 : 1,
-    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-    fontFamily: FONT.family, userSelect: 'none',
-    background: 'transparent',
-    filter: isSky
-      ? 'drop-shadow(0 6px 8px rgba(0,0,0,.38))'
-      : undefined,
-  }
+  const toneCls = isSky ? styles.drawBtnSky : styles.drawBtnSun
+  const strokeCls = isSky ? styles.strokeSky : styles.strokeSun
 
   const label = (
-    <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.12, position: 'relative', zIndex: 2 }}>
-      <span
-        style={{
-          fontSize: 25, fontWeight: 900, color: '#fff',
-          textShadow: textStroke(isSky ? '#1759A8' : '#A8620A'),
-        }}
-      >
+    <span className={styles.drawLabel}>
+      <span className={`${styles.drawTitle} ${strokeCls}`}>
         {title}
       </span>
-      <span
-        style={{
-          fontSize: 18, fontWeight: 800, color: '#fff',
-          textShadow: textStroke(isSky ? '#1759A8' : '#A8620A'),
-        }}
-      >
+      <span className={`${styles.drawCost} ${strokeCls}`}>
         {cost}贝壳
       </span>
     </span>
@@ -729,19 +537,22 @@ function DrawButton({
 
   if (isSky) {
     return (
-      <button className="mp-btn" disabled={disabled} onClick={onClick} style={base}>
+      <button
+        className={`mp-btn ${styles.drawBtn} ${toneCls}`}
+        disabled={disabled}
+        onClick={onClick}
+        // 禁用态透明度/指针为运行时状态，保留内联
+        style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1 }}
+      >
         {/* 金边蓝飘旗位图（左尖右燕尾） */}
         <img
           src={flagTen}
           alt=""
           aria-hidden
           draggable={false}
-          style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'fill', pointerEvents: 'none',
-          }}
+          className={styles.flagImg}
         />
-        <span style={{ position: 'relative', zIndex: 2, display: 'flex' }}>
+        <span className={styles.shellWrap}>
           <ShellIcon size={34} variant="warm" />
         </span>
         {label}
@@ -750,36 +561,22 @@ function DrawButton({
   }
 
   return (
-    <button className="mp-btn" disabled={disabled} onClick={onClick} style={base}>
+    <button
+      className={`mp-btn ${styles.drawBtn} ${toneCls}`}
+      disabled={disabled}
+      onClick={onClick}
+      style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1 }}
+    >
       {/* 亮金边（顶亮底暗斜面） */}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute', inset: 0, borderRadius: R.pill,
-          background: 'linear-gradient(180deg,#FFF3B0 0%,#FFD25A 42%,#E69A24 78%,#C47E16 100%)',
-        }}
-      />
+      <span aria-hidden className={styles.sunLayer1} />
       {/* 金色牌面 */}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute', inset: 6, borderRadius: R.pill,
-          background: 'linear-gradient(180deg,#FFE88F 0%,#FFCE3D 48%,#F5A623 100%)',
-        }}
-      />
+      <span aria-hidden className={styles.sunLayer2} />
       {/* 顶部内高光 */}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute', inset: 6, borderRadius: R.pill,
-          background: 'linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 40%)',
-        }}
-      />
-      <span style={{ position: 'relative', zIndex: 2, display: 'flex' }}>
+      <span aria-hidden className={styles.sunLayer3} />
+      <span className={styles.shellWrap}>
         <ShellIcon size={34} variant="warm" />
       </span>
       {label}
     </button>
   )
 }
-

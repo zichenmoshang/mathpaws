@@ -1,0 +1,153 @@
+/* PaperDollLookDev 样式（CSS Modules）—— 换装运行时验证页（#paperdoll）
+   font-family 取值与 @mathpaws/ui 的 FONT.family 一致。 */
+
+.root {
+  /* dev 工具页不进 LogicalStage，保留 fixed 全屏 */
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #bfe3f5, #9ccfec);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topBarTitle {
+  color: #fff;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.topBarHash {
+  color: rgba(255, 255, 255, .9);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.main {
+  position: absolute;
+  inset: 0;
+  top: 76px;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 左：娃娃舞台 */
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.dollBox {
+  width: min(100%, 78vh);
+  aspect-ratio: 1 / 1;
+}
+
+/* 右：调试控件 */
+.sideCol {
+  width: min(380px, 46vw);
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 900;
+  color: #1565C0;
+  margin: 14px 0 8px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 槽位选项按钮（基类 + 带图/选中变体组合） */
+.optionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 44px;
+  border-radius: 999px;
+  border: 3px solid rgba(0, 0, 0, .08);
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .12);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  color: #263238;
+  cursor: pointer;
+}
+
+.optionBtnIcon {
+  padding: 4px 12px 4px 6px;
+}
+
+.optionBtnActive {
+  border: 3px solid #1565C0;
+  background: #fff8e1;
+}
+
+.optionIcon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+/* 预览背景切换按钮 */
+.bgBtn {
+  padding: 0 14px;
+  height: 38px;
+  border-radius: 999px;
+  border: 3px solid rgba(0, 0, 0, .08);
+  background: rgba(255, 255, 255, .82);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  color: #263238;
+  cursor: pointer;
+}
+
+.bgBtnActive {
+  border: 3px solid #1565C0;
+  background: #fff8e1;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.comboTitle {
+  font-size: 14px;
+  font-weight: 900;
+  color: #263238;
+  line-height: 1.6;
+}
+
+.comboBody {
+  font-size: 13px;
+  color: #455a64;
+  line-height: 1.7;
+  margin-top: 4px;
+}
+
+.comboMeta {
+  font-size: 12px;
+  color: #78909C;
+  margin-top: 10px;
+  border-top: 1px dashed #cfd8dc;
+  padding-top: 8px;
+  line-height: 1.6;
+}

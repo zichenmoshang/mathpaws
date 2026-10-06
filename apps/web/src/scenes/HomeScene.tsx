@@ -10,13 +10,14 @@
 // 功能（不变）：顶栏（头像/名/连学/累计/齿轮→P13）；左列主角+兔+益智乐园→P5；
 //   右侧 3 卡手动轮播（练口算可进；真题/错题本"即将开放"）；连学卡弹 ChestPanel；
 //   已打卡不置灰练口算；滑动与点击不冲突。
-// 场景运行在 1024×768 逻辑舞台，原稿 2048×1536，坐标 ×K（K=.5）定位。
+// 内容包在 1024×768 LogicalStage 内（原稿 2048×1536，坐标 ×K(0.5) 折算的逻辑像素
+//   已固化到 HomeScene.module.css）；舞台外留边由 BackgroundBleed 以同背景 cover 填充。
 // ============================================================================
 import { PaperDoll } from '@mathpaws/paperdoll'
-import { FONT } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 
 import type { RouteId } from '../app/router'
+import { BackgroundBleed, LogicalStage } from '../app/viewport'
 import alarmBooks from '../assets/hifi/home/alarm-books.webp'
 import bg from '../assets/hifi/home/bg.jpg'
 import btnPlaza from '../assets/hifi/home/btn-plaza.webp'
@@ -34,40 +35,13 @@ import { useStreakStore } from '../stores/useStreakStore'
 import { dayKey } from '../utils/id'
 import { preloadIdle } from '../utils/preload'
 import { audio } from '../utils/audio'
+import styles from './HomeScene.module.css'
 // 拆层资产（台账见同目录 manifest.json）
 // 注意：topbar.webp / card-panel.webp 被模型重绘成"不透明灰"（alpha≈254），
 // 半透明玻璃必须前端 CSS 绘制（spec §2），故两者弃用不入渲染，仅留档。
 // 其余
 
-const K = 0.5
-/** 原稿绝对 bbox → 逻辑像素定位 */
-const place = (bbox: [number, number, number, number]): CSSProperties => {
-  const [x0, y0, x1, y1] = bbox
-  return { position: 'absolute', left: x0 * K, top: y0 * K, width: (x1 - x0) * K, height: (y1 - y0) * K }
-}
-
-// 顶栏毛玻璃（z1 形态：白色半透明 + 白边 + blur；模型重绘的灰位图弃用）
-const glassTopBarStyle: CSSProperties = {
-  borderRadius: 999,
-  background: 'linear-gradient(180deg,rgba(255,255,255,.72),rgba(232,246,255,.55))',
-  border: '3px solid rgba(255,255,255,.75)',
-  boxShadow: '0 8px 20px rgba(50,110,170,.18), inset 0 2px 6px rgba(255,255,255,.7)',
-  backdropFilter: 'blur(4px)',
-  pointerEvents: 'none',
-}
-
-// 学习卡毛玻璃（z11 形态：白色磨砂 + 白边高光；灰位图弃用）
-const glassCardStyle: CSSProperties = {
-  borderRadius: 30,
-  background: 'linear-gradient(180deg,rgba(255,255,255,.82),rgba(240,249,255,.66))',
-  border: '4px solid rgba(255,255,255,.85)',
-  boxShadow: '0 18px 36px rgba(50,100,160,.22), inset 0 2px 10px rgba(255,255,255,.8)',
-  backdropFilter: 'blur(3px)',
-}
-
 // 卡片叠放几何（逻辑像素，相对卡区视窗左上 = 白卡 z11 左上 553.5,182）
-const CARD_W = 368.5
-const CARD_H = 504.5
 // 堆叠参数在下方 VIEW/STACK_* 常量定义（纵向 deck，后方卡向下错位缩小）
 
 export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void }) {
@@ -88,32 +62,42 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   const studiedToday = lastStudyDate === dayKey()
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', fontFamily: FONT.family }}>
-      {/* z0 背景 */}
-      <img src={bg} alt="" draggable={false} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill' }} />
+    <div className={styles.scene}>
+      {/* 舞台外出血背景：同一张背景图 cover 填满视口留边（加载前以天空蓝兜底） */}
+      <BackgroundBleed background="#7dc9f2">
+        <img src={bg} alt="" aria-hidden draggable={false} className={styles.bleedImg} />
+      </BackgroundBleed>
 
-      {/* 顶栏：z1 玻璃底板（CSS 毛玻璃，重绘灰位图弃用）+ 前端排版内容 */}
-      <div aria-hidden style={{ ...place([80, 70, 1968, 261]), ...glassTopBarStyle }} />
-      <HomeTopBar
-        layers={layers}
-        heroName={heroName || '小朋友'}
-        streak={streak}
-        totalDays={totalDays}
-        onSettings={() => onNavigate('settings')}
-      />
+      <LogicalStage>
+        <div className={styles.stage}>
+          {/* z0 舞台内背景：铺满 1024×768 舞台，随舞台等比缩放不变形 */}
+          <img src={bg} alt="" draggable={false} className={styles.stageBg} />
 
-      {/* 左列：圆台 + PaperDoll 主角 + 脚边趴兔（不可点） */}
-      <HeroStage layers={layers} onEnterPlaza={() => onNavigate('plaza')} />
+          {/* 顶栏：z1 玻璃底板（CSS 毛玻璃，重绘灰位图弃用）+ 前端排版内容 */}
+          <div aria-hidden className={styles.glassTopBar} />
+          <HomeTopBar
+            layers={layers}
+            heroName={heroName || '小朋友'}
+            streak={streak}
+            totalDays={totalDays}
+            onSettings={() => onNavigate('settings')}
+          />
 
-      {/* 右侧：3 卡手动轮播 + 圆点 */}
-      <StudyCardCarousel
-        streak={streak}
-        claimedToday={claimedToday}
-        studiedToday={studiedToday}
-        onOpenChest={() => setChestOpen(true)}
-        onNavigate={onNavigate}
-      />
+          {/* 左列：圆台 + PaperDoll 主角 + 脚边趴兔（不可点） */}
+          <HeroStage layers={layers} onEnterPlaza={() => onNavigate('plaza')} />
 
+          {/* 右侧：3 卡手动轮播 + 圆点 */}
+          <StudyCardCarousel
+            streak={streak}
+            claimedToday={claimedToday}
+            studiedToday={studiedToday}
+            onOpenChest={() => setChestOpen(true)}
+            onNavigate={onNavigate}
+          />
+        </div>
+      </LogicalStage>
+
+      {/* 全屏弹层留在舞台外，保持原有覆盖行为 */}
       {chestOpen && <ChestPanel onClose={() => setChestOpen(false)} />}
     </div>
   )
@@ -133,60 +117,37 @@ function HomeTopBar({
 }) {
   return (
     <>
-      {/* 头像：圆形容器内裁出纸娃娃头肩（z2 bbox） */}
-      <div
-        style={{
-          ...place([113, 98, 247, 232]),
-          borderRadius: '50%', overflow: 'hidden',
-          background: '#eaf6ff', border: '3px solid #fff',
-          boxShadow: '0 3px 8px rgba(60,120,180,.25)',
-          pointerEvents: 'none',
-        }}
-      >
-        <div style={{ position: 'relative', width: '300%', aspectRatio: '1 / 1', top: '-48%', left: '-100%' }}>
+      {/* 头像：圆形容器内裁出纸娃娃头肩（z2 位） */}
+      <div className={styles.avatar}>
+        <div className={styles.avatarDoll}>
           <PaperDoll layers={layers} background="white" />
         </div>
       </div>
 
-      {/* 用户名（z3 bbox） */}
-      <span
-        style={{
-          position: 'absolute', left: 273 * K, top: 139 * K,
-          fontWeight: 900, color: '#3d3833', fontSize: 27, lineHeight: 1.2,
-          maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        }}
-      >
+      {/* 用户名（z3 位） */}
+      <span className={styles.heroName}>
         {heroName}
       </span>
 
-      {/* 连学 / 累计胶囊（z4/z5 bbox） */}
-      <TopPill text={`连学${streak}天`} bbox={[1236, 123, 1474, 210]} />
-      <TopPill text={`累计${totalDays}天`} bbox={[1516, 123, 1770, 210]} />
+      {/* 连学 / 累计胶囊（z4/z5 位） */}
+      <TopPill text={`连学${streak}天`} className={styles.topPillStreak} />
+      <TopPill text={`累计${totalDays}天`} className={styles.topPillTotal} />
 
-      {/* 齿轮（z6 bbox） */}
+      {/* 齿轮（z6 位） */}
       <button
         aria-label="设置"
-        className="mp-btn"
+        className={`mp-btn ${styles.gearBtn}`}
         onClick={() => { audio.playSfx('click'); onSettings() }}
-        style={{ ...place([1828, 119, 1918, 212]), border: 'none', background: 'transparent', padding: 0, cursor: 'pointer' }}
       >
-        <img src={gearIcon} alt="" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <img src={gearIcon} alt="" draggable={false} className={styles.gearIcon} />
       </button>
     </>
   )
 }
 
-function TopPill({ text, bbox }: { text: string; bbox: [number, number, number, number] }) {
+function TopPill({ text, className }: { text: string; className: string }) {
   return (
-    <span
-      style={{
-        ...place(bbox),
-        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        borderRadius: 999, background: 'rgba(255,255,255,.92)',
-        color: '#4a5a6a', fontWeight: 800, fontSize: 21,
-        boxShadow: '0 2px 6px rgba(60,110,160,.12)',
-      }}
-    >
+    <span className={`${styles.topPill} ${className}`}>
       {text}
     </span>
   )
@@ -202,45 +163,31 @@ function HeroStage({
   layers: ReturnType<typeof buildLayers>
   onEnterPlaza: () => void
 }) {
-  // PaperDoll 为 1:1 canvas；容器覆盖 z7 bbox（逻辑 237.5×410），取正方形边长 410 居中
-  const box = 410
-  const centerX = ((329 + 804) / 2) * K // 283.25
   return (
     <>
       {/* 圆台（旧资产 p16-platform，原稿 z7 底座形态近似） */}
       <img
         src={platform} alt="" aria-hidden draggable={false}
-        style={{
-          position: 'absolute', left: centerX - 119, top: 518,
-          width: 238, height: 'auto', zIndex: 1, pointerEvents: 'none',
-        }}
+        className={styles.platform}
       />
 
       {/* PaperDoll 主角（可随装扮变） */}
-      <div
-        className="mp-doll-bob-wrap"
-        style={{
-          position: 'absolute', left: centerX - box / 2, top: 168,
-          width: box, height: box, zIndex: 2, pointerEvents: 'none',
-          animation: 'mp-doll-bob 3.4s ease-in-out infinite',
-        }}
-      >
+      <div className={`mp-doll-bob-wrap ${styles.dollWrap}`}>
         <PaperDoll layers={layers} background="transparent" />
       </div>
 
       {/* 趴兔 z8 */}
       <img
         src={rabbitLie} alt="雪球兔" draggable={false}
-        style={{ ...place([127, 863, 410, 1173]), zIndex: 3, pointerEvents: 'none', animation: 'mp-float 3.8s ease-in-out infinite' }}
+        className={styles.rabbit}
       />
 
       {/* 益智乐园 z9：位图按钮（固定文案），透明按钮覆盖 */}
-      <img src={btnPlaza} alt="" aria-hidden draggable={false} style={{ ...place([178, 1163, 941, 1393]), zIndex: 4, pointerEvents: 'none' }} />
+      <img src={btnPlaza} alt="" aria-hidden draggable={false} className={styles.plazaBtnImg} />
       <button
         type="button" aria-label="进入益智乐园"
-        className="mp-btn"
+        className={`mp-btn ${styles.plazaBtn}`}
         onClick={() => { audio.playSfx('click'); onEnterPlaza() }}
-        style={{ ...place([178, 1163, 941, 1393]), zIndex: 5, border: 'none', background: 'transparent', padding: 0, cursor: 'pointer' }}
       />
     </>
   )
@@ -267,12 +214,17 @@ const STUDY_CARDS: StudyCardDef[] = [
   { id: 'wrong', tag: '错题本', tone: 'orange', cta: '去复习', target: null },
 ]
 
+// 各色调的标签 / CTA 样式类（静态渐变，原 TONE 常量迁入 CSS）
+const TONE_CLASS: Record<CardTone, { tag: string; cta: string }> = {
+  grass: { tag: styles.tagGrass, cta: styles.ctaGrass },
+  sky: { tag: styles.tagSky, cta: styles.ctaSky },
+  orange: { tag: styles.tagOrange, cta: styles.ctaOrange },
+}
+
 // 横向卡牌堆叠轮播（horizontal card stack/deck，coverflow 式）：
 // 前卡在左前排满，后面的卡在其右侧逐级右移+缩小+渐淡；
 // 左滑 → 前卡向左移出淡出，右后方卡逐级"滑"到前排；右滑 → 上一张从左侧滑回。
 // 视窗上移到 166（给顶部外凸标签留 16px，标签在卡顶上方 10.5px），右缘留 peek。
-const VIEW = { left: 553.5, top: 166, width: 417.5, height: 592 }
-const CARD_TOP = 16 // 卡在视窗内的 top（使卡顶仍在逻辑 182）
 const STACK_X = 46 // 后方每张卡向右错位（< 卡宽，形成叠压）
 const STACK_SCALE = 0.06 // 后方每张缩小
 const SWIPE_X = 96 // 横向左/右滑触发距离
@@ -379,11 +331,7 @@ function StudyCardCarousel({
         onPointerMove={onPointerMove}
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
-        style={{
-          position: 'absolute', left: VIEW.left, top: VIEW.top, width: VIEW.width, height: VIEW.height,
-          overflow: 'hidden', touchAction: 'pan-y', userSelect: 'none',
-          cursor: 'grab',
-        }}
+        className={styles.carousel}
       >
         {STUDY_CARDS.map((card, i) => {
           const d = i - index
@@ -394,10 +342,9 @@ function StudyCardCarousel({
           return (
             <div
               key={card.id}
+              className={styles.cardFrame}
               style={{
-                position: 'absolute', left: 0, top: CARD_TOP, width: CARD_W, height: CARD_H,
                 transform: `translateX(${f.x}px) scale(${f.scale})`,
-                transformOrigin: 'left center',
                 transition: moving ? 'none' : 'transform .34s cubic-bezier(.22,.9,.3,1), opacity .3s ease',
                 opacity: f.opacity, zIndex: z,
                 visibility: f.opacity <= 0.02 ? 'hidden' : 'visible',
@@ -418,45 +365,19 @@ function StudyCardCarousel({
         })}
       </div>
 
-      {/* 圆点指示器（z16 bbox：逻辑 left 688 / top 708 / 宽 91.5） */}
-      <div style={{ position: 'absolute', left: 688, top: 712, width: 91.5, display: 'flex', gap: 12, justifyContent: 'center' }}>
+      {/* 圆点指示器（z16 位） */}
+      <div className={styles.dots}>
         {STUDY_CARDS.map((c, i) => (
           <button
             key={c.id}
             aria-label={`第 ${i + 1} 张卡片`}
-            className="mp-btn"
+            className={`mp-btn ${styles.dot} ${i === index ? styles.dotActive : ''}`}
             onClick={() => { audio.playSfx('click'); setIndex(i) }}
-            style={{
-              width: i === index ? 24 : 12, height: 12, borderRadius: 999,
-              border: 'none', cursor: 'pointer', padding: 0,
-              background: i === index
-                ? 'linear-gradient(180deg,#86db6c,#46ac33)'
-                : 'rgba(255,255,255,.85)',
-              boxShadow: i === index ? '0 2px 5px rgba(60,140,50,.4)' : 'inset 0 0 0 2px rgba(180,210,235,.6)',
-            }}
           />
         ))}
       </div>
     </>
   )
-}
-
-const TONE: Record<CardTone, { tagBg: string; btnBg: string; btnShadow: string }> = {
-  grass: {
-    tagBg: 'linear-gradient(180deg,#ffe9a8,#ffd35e 60%,#f0b23a)',
-    btnBg: 'linear-gradient(180deg,#9be37c 0%,#70cc52 42%,#4cb838 72%,#3ba02c 100%)',
-    btnShadow: '0 7px 16px rgba(45,130,35,.34), inset 0 3px 6px rgba(255,255,255,.65), inset 0 -6px 10px rgba(30,110,20,.26)',
-  },
-  sky: {
-    tagBg: 'linear-gradient(180deg,#bfe8ff,#7cc4f2 60%,#4ea9e8)',
-    btnBg: 'linear-gradient(180deg,#8ed7fb 0%,#5cb6ee 42%,#40a2e4 72%,#3190d2 100%)',
-    btnShadow: '0 7px 16px rgba(40,120,180,.34), inset 0 3px 6px rgba(255,255,255,.65), inset 0 -6px 10px rgba(20,85,140,.26)',
-  },
-  orange: {
-    tagBg: 'linear-gradient(180deg,#ffd8a6,#ffa84d 60%,#f08a1e)',
-    btnBg: 'linear-gradient(180deg,#ffc890 0%,#ff9f55 42%,#fb8328 72%,#ec7017 100%)',
-    btnShadow: '0 7px 16px rgba(200,110,25,.34), inset 0 3px 6px rgba(255,255,255,.65), inset 0 -6px 10px rgba(150,70,10,.26)',
-  },
 }
 
 // 单卡以视窗左上为原点（白卡 0,0 368.5×504.5；底板为 CSS 毛玻璃，蓝边由轮播容器固定绘制）
@@ -475,7 +396,7 @@ function StudyCard({
   onOpenChest: () => void
   onNavigate: (id: RouteId) => void
 }) {
-  const tone = TONE[card.tone]
+  const tone = TONE_CLASS[card.tone]
 
   const bodyClick = () => {
     if (!interactive || wasDragging.current) return
@@ -499,23 +420,10 @@ function StudyCard({
     <div
       onClick={bodyClick}
       role={card.id === 'streak' ? 'button' : undefined}
-      style={{
-        ...glassCardStyle,
-        position: 'absolute', left: 0, top: 0, width: CARD_W, height: CARD_H,
-        boxSizing: 'border-box',
-        cursor: card.id === 'streak' ? 'pointer' : 'default',
-      }}
+      className={`${styles.card} ${card.id === 'streak' ? styles.cardClickable : ''}`}
     >
       {/* 顶部标签（z12 位） */}
-      <div
-        style={{
-          position: 'absolute', top: -10.5, left: '50%', transform: 'translateX(-50%)',
-          padding: '7px 24px', borderRadius: 999, whiteSpace: 'nowrap',
-          fontWeight: 900, fontSize: 21, color: '#7a5410',
-          background: tone.tagBg,
-          boxShadow: '0 4px 8px rgba(150,110,20,.25), inset 0 2px 3px rgba(255,255,255,.7)',
-        }}
-      >
+      <div className={`${styles.tag} ${tone.tag}`}>
         {card.tag}
       </div>
 
@@ -528,20 +436,13 @@ function StudyCard({
       {/* CTA（z15 位，CSS 渐变钮，3 卡文案不同） */}
       <button
         type="button"
-        className="mp-btn"
+        className={`mp-btn ${styles.cta} ${tone.cta}`}
         onClick={(e) => {
           e.stopPropagation()
           if (!interactive || wasDragging.current) return
           if (!card.target) { comingSoon(); return }
           audio.playSfx('click')
           onNavigate(card.target)
-        }}
-        style={{
-          position: 'absolute', left: 106, top: 405.5, width: 154, height: 62,
-          border: 'none', borderRadius: 999, cursor: 'pointer',
-          fontFamily: FONT.family, fontWeight: 900, fontSize: 24, color: '#fff',
-          textShadow: '0 1px 2px rgba(0,0,0,.2)',
-          background: tone.btnBg, boxShadow: tone.btnShadow, padding: 0,
         }}
       >
         {card.cta}
@@ -552,7 +453,7 @@ function StudyCard({
 
 function CardArt({ children }: { children: ReactNode }) {
   return (
-    <div style={{ position: 'absolute', left: 0, top: 66, width: 368.5, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className={styles.cardArt}>
       {children}
     </div>
   )
@@ -563,26 +464,26 @@ function CardStreakBody({ claimedToday, studiedToday, streak }: { claimedToday: 
     return (
       <>
         <CardArt>
-          <img src={chestIcon} alt="" draggable={false} style={{ height: 200, objectFit: 'contain', animation: 'mp-float 3s ease-in-out infinite' }} />
+          <img src={chestIcon} alt="" draggable={false} className={`${styles.artImg} ${styles.artImgFloat}`} />
         </CardArt>
-        <div style={{ position: 'absolute', top: 300, left: 0, width: 368.5, textAlign: 'center' }}>
-          <div style={{ fontWeight: 900, fontSize: 24, color: '#5a4a3a' }}>今日已打卡</div>
-          <div style={{ fontSize: 15, color: '#8a98a5', marginTop: 6 }}>奖励已领取，可以继续练习口算</div>
+        <div className={styles.textBlock}>
+          <div className={styles.doneTitle}>今日已打卡</div>
+          <div className={styles.doneDesc}>奖励已领取，可以继续练习口算</div>
         </div>
       </>
     )
   }
   return (
     <>
-      {/* 闹钟+书 z13（页内 bbox：left 71.5 top 66.5 231×220） */}
+      {/* 闹钟+书 z13（页内 left 71.5 top 66.5 231×220；未学习时半透明） */}
       <img src={alarmBooks} alt="" draggable={false}
-        style={{ position: 'absolute', left: 71.5, top: 66.5, width: 231, height: 220, objectFit: 'contain', pointerEvents: 'none', opacity: studiedToday ? 1 : 0.7 }} />
-      <div style={{ position: 'absolute', top: 315, left: 0, width: 368.5, textAlign: 'center', fontWeight: 900, fontSize: 24, color: '#5a4a3a' }}>
+        className={styles.alarmArt} style={{ opacity: studiedToday ? 1 : 0.7 }} />
+      <div className={styles.streakText}>
         {studiedToday
           ? (streak > 0 ? `已连续学习${streak}天` : '今天开始连学打卡吧')
           : '完成 1 轮口算后可打卡'}
       </div>
-      <div style={{ position: 'absolute', top: 352, left: 0, width: 368.5, display: 'flex', gap: 6, justifyContent: 'center' }}>
+      <div className={styles.starsRow}>
         {Array.from({ length: 5 }).map((_, i) => <GoldStar key={i} size={26} filled={studiedToday && i < Math.max(1, streak)} />)}
       </div>
     </>
@@ -593,26 +494,10 @@ function CardRealBody() {
   return (
     <>
       <CardArt>
-        <div
-          style={{
-            position: 'relative', width: 168, height: 112,
-            background: '#fff', borderRadius: 18,
-            boxShadow: '0 10px 20px rgba(80,120,170,.22), inset 0 0 0 3px #e8f1f8',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            transform: 'rotate(-3deg)',
-          }}
-        >
-          {['#7cc96a', '#59b2ec', '#ff9d4d'].map((c, i) => (
-            <span
-              key={c}
-              style={{
-                width: 42, height: 42, borderRadius: '50%',
-                background: c, color: '#fff', fontWeight: 900, fontSize: 22,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 3px 6px rgba(0,0,0,.15)',
-              }}
-            >
-              {['A', 'B', 'C'][i]}
+        <div className={styles.quizArt}>
+          {['A', 'B', 'C'].map(letter => (
+            <span key={letter} className={styles.quizLetter}>
+              {letter}
             </span>
           ))}
         </div>
@@ -626,7 +511,7 @@ function CardWrongBody() {
   return (
     <>
       <CardArt>
-        <img src={notebookIcon} alt="" draggable={false} style={{ height: 200, objectFit: 'contain' }} />
+        <img src={notebookIcon} alt="" draggable={false} className={styles.artImg} />
       </CardArt>
       <CardText title="错题本" desc="做错的题在这里，重做还能赢贝壳" />
     </>
@@ -635,9 +520,9 @@ function CardWrongBody() {
 
 function CardText({ title, desc }: { title: string; desc: string }) {
   return (
-    <div style={{ position: 'absolute', top: 300, left: 0, width: 368.5, textAlign: 'center' }}>
-      <div style={{ fontWeight: 900, fontSize: 24, color: '#3d4a57', marginBottom: 6 }}>{title}</div>
-      <div style={{ fontSize: 15, color: '#7c8b99' }}>{desc}</div>
+    <div className={styles.textBlock}>
+      <div className={styles.cardTitle}>{title}</div>
+      <div className={styles.cardDesc}>{desc}</div>
     </div>
   )
 }

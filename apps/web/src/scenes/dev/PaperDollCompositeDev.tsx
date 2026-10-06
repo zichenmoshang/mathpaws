@@ -9,6 +9,8 @@
 // A/B 必须肉眼不可辨、差异只允许出现在 1-2px 颈缝弧。
 //
 // 注意：B 走的就是 PaperDoll 组件同一套 composeLook，本页不重复实现算法。
+// 静态样式已迁入同目录 PaperDollCompositeDev.module.css（CSS Modules）；
+// style={{...}} 仅保留运行时动态值（小标题/统计值的判定配色）。
 // ============================================================================
 import {
   composeLook,
@@ -18,6 +20,8 @@ import {
   type SeamSpec,
 } from '@mathpaws/paperdoll'
 import { useEffect, useRef, useState } from 'react'
+
+import { HAT_OPTIONS } from '../../paperdoll/catalog'
 
 import truthHatDefault from '../../assets/paperdoll/_truth/hats/hat-wizard-on-default@2x.webp'
 import truthHatElf from '../../assets/paperdoll/_truth/hats/hat-wizard-on-elf@2x.webp'
@@ -42,13 +46,18 @@ import truthWizard from '../../assets/paperdoll/_truth/outfits/outfit-wizard-for
 import wizardHeadUrl from '../../assets/paperdoll/layers/heads/head-wizard@2x.webp'
 import shoeUrl from '../../assets/paperdoll/layers/shoes/shoe-default@2x.webp'
 
+import styles from './PaperDollCompositeDev.module.css'
+
 const N = 2048
 
-// 与 catalog.ts 的 WIZARD_SEAM 保持一致（源自 manifest v5 gear.seam）
-const SEAM: SeamSpec = {
-  y0: 1003, cut: 1078, overlap: 12, sigma: 8,
-  relitSrc: 0.28, relitNeck: 0.72, skinSampleRows: 80,
-}
+// seam 与 catalog.ts 同源（manifest.json gear.seam）：直接取 wizard 头饰的运行时定义，
+// 不再本地手抄常量（catalog 由 seamOf('wizard') 从 manifest 读取）
+const SEAM: SeamSpec = (() => {
+  const gear = HAT_OPTIONS.find(g => g.id === 'wizard')?.gear
+  const seam = gear?.kind === 'head' ? gear.seam : undefined
+  if (!seam) throw new Error('catalog 缺少 wizard 头饰 seam（manifest gear.seam）')
+  return seam
+})()
 
 const ZOOM = { x: 560, y: 900, w: 930, h: 280 }
 
@@ -215,8 +224,8 @@ export function PaperDollCompositeDev() {
       const fa = refs.current[`${r.id}-fa`]; const fb = refs.current[`${r.id}-fb`]
       const za = refs.current[`${r.id}-za`]; const zb = refs.current[`${r.id}-zb`]
       const hc = refs.current[`${r.id}-h`]
-      if (fa && fa.width !== FULL) { fa.width = fa.height = FULL; fb!.width = fb!.height = FULL }
-      if (za && za.width !== ZOOM_W) { za.width = zb!.width = hc!.width = ZOOM_W; za.height = zb!.height = hc!.height = ZOOM_H }
+      if (fa && fb && fa.width !== FULL) { fa.width = fa.height = FULL; fb.width = fb.height = FULL }
+      if (za && zb && hc && za.width !== ZOOM_W) { za.width = zb.width = hc.width = ZOOM_W; za.height = zb.height = hc.height = ZOOM_H }
       if (fa) paint(fa, r.A)
       if (fb) paint(fb, r.B)
       if (za) paint(za, r.A, ZOOM)
@@ -225,52 +234,41 @@ export function PaperDollCompositeDev() {
     }
   }, [rows])
 
-  const cap = (color: string): React.CSSProperties => ({
-    fontSize: 13, fontWeight: 900, color, textAlign: 'center', margin: '0 0 4px',
-  })
-
   return (
-    <div style={{
-      position: 'fixed', inset: 0, overflow: 'auto',
-      background: 'linear-gradient(180deg,#e8f5fd,#c8e6f8)',
-      fontFamily: 'system-ui, "PingFang SC", sans-serif', padding: 18,
-    }}>
-      <h2 style={{ margin: '0 0 4px', color: '#0d47a1', fontSize: 20 }}>
+    <div className={styles.root}>
+      <h2 className={styles.heading}>
         运行时合成回归 —— 生产 composeLook 与离线真值 A/B（wizard 头 × 6 身体）
       </h2>
-      <div style={{ fontSize: 13, color: '#37474f', marginBottom: 14, lineHeight: 1.7 }}>
+      <div className={styles.intro}>
         A=离线烘焙真值（_truth）　B=生产路径（PaperDoll 同款 composeLook + 运行时 relit）。
         判定：6 行颈部放大不可辨、热图无结构性亮斑（允许 1-2px 接缝弧）。
       </div>
-      {err ? <pre style={{ color: '#c62828' }}>{err}</pre> : null}
-      {!rows && !err ? <div style={{ fontSize: 15, color: '#1565C0', fontWeight: 700 }}>{progress}</div> : null}
+      {err ? <pre className={styles.err}>{err}</pre> : null}
+      {!rows && !err ? <div className={styles.progress}>{progress}</div> : null}
 
       {rows?.map(r => (
-        <div key={r.id} style={{
-          background: 'rgba(255,255,255,.92)', borderRadius: 14, padding: '12px 14px',
-          marginBottom: 14, display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'wrap',
-          boxShadow: '0 2px 10px rgba(0,0,0,.08)',
-        }}>
-          <div style={{ width: 150, flexShrink: 0, paddingTop: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 900, color: '#0d47a1', lineHeight: 1.5 }}>{r.label}</div>
-            <div style={{ fontSize: 12, color: '#78909C', marginTop: 6 }}>{r.id}</div>
+        <div key={r.id} className={styles.rowCard}>
+          <div className={styles.labelCol}>
+            <div className={styles.labelTitle}>{r.label}</div>
+            <div className={styles.labelId}>{r.id}</div>
           </div>
           <div>
-            <div style={cap('#546e7a')}>A 真值<canvas ref={el => { refs.current[`${r.id}-fa`] = el }} style={{ borderRadius: 8, display: 'block' }} /></div>
+            {/* 小标题配色随列类型动态注入 */}
+            <div className={styles.cap} style={{ color: '#546e7a' }}>A 真值<canvas ref={el => { refs.current[`${r.id}-fa`] = el }} className={styles.canvas} /></div>
           </div>
           <div>
-            <div style={cap('#1565C0')}>B 生产 composeLook<canvas ref={el => { refs.current[`${r.id}-fb`] = el }} style={{ borderRadius: 8, display: 'block' }} /></div>
+            <div className={styles.cap} style={{ color: '#1565C0' }}>B 生产 composeLook<canvas ref={el => { refs.current[`${r.id}-fb`] = el }} className={styles.canvas} /></div>
           </div>
           <div>
-            <div style={cap('#546e7a')}>颈部 A<canvas ref={el => { refs.current[`${r.id}-za`] = el }} style={{ borderRadius: 8, display: 'block' }} /></div>
+            <div className={styles.cap} style={{ color: '#546e7a' }}>颈部 A<canvas ref={el => { refs.current[`${r.id}-za`] = el }} className={styles.canvas} /></div>
           </div>
           <div>
-            <div style={cap('#1565C0')}>颈部 B<canvas ref={el => { refs.current[`${r.id}-zb`] = el }} style={{ borderRadius: 8, display: 'block' }} /></div>
+            <div className={styles.cap} style={{ color: '#1565C0' }}>颈部 B<canvas ref={el => { refs.current[`${r.id}-zb`] = el }} className={styles.canvas} /></div>
           </div>
           <div>
-            <div style={cap('#b71c1c')}>热图 ×8<canvas ref={el => { refs.current[`${r.id}-h`] = el }} style={{ borderRadius: 8, display: 'block' }} /></div>
+            <div className={styles.cap} style={{ color: '#b71c1c' }}>热图 ×8<canvas ref={el => { refs.current[`${r.id}-h`] = el }} className={styles.canvas} /></div>
           </div>
-          <div style={{ fontSize: 12.5, color: '#263238', lineHeight: 1.75, minWidth: 210, paddingTop: 14 }}>
+          <div className={styles.statsCol}>
             颈色 RGB({r.stats.neck.map(v => Math.round(v)).join(', ')})<br />
             全图 均值 {r.stats.meanAll.toFixed(2)} / P95 {r.stats.p95All} / &gt;25px {r.stats.over25All}<br />
             颈部 均值 <b style={{ color: r.stats.meanBand > 4 ? '#c62828' : '#2e7d32' }}>{r.stats.meanBand.toFixed(2)}</b>

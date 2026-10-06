@@ -3,10 +3,13 @@
 // （z0 背景 + 数字符号 3 组 + 彩虹进度条 + logo + 白雏鸟），
 // 层在 1024×768 逻辑舞台内按 bbox×K 定位（K=1024/2364），回贴已与原稿比对验收。
 // 进度条为满格位图，按加载进度用 clipPath 从左揭示；其下垫 CSS 空轨道。
+// 自适应接线：内容置于 1024×768 LogicalStage 随舞台等比缩放；
+// 舞台外留边由 BackgroundBleed 以同一背景图 cover 出血填充。
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import type { RouteId } from '../../app/router'
+import { BackgroundBleed, LogicalStage } from '../../app/viewport'
 import bg from '../../assets/hifi/splash/bg.jpg'
 import bird from '../../assets/hifi/splash/bird.webp'
 import logo from '../../assets/hifi/splash/logo.webp'
@@ -18,6 +21,8 @@ import { usePlayerStore } from '../../stores/usePlayerStore'
 import { audio } from '../../utils/audio'
 // 资产台账：assets/hifi/splash/manifest.json
 import { preloadCritical } from '../../utils/preload'
+
+import styles from './SplashScene.module.css'
 
 const K = 1024 / 2364
 const MIN_VISIBLE_MS = 1400
@@ -39,11 +44,10 @@ const LAYERS: LayerDef[] = [
 // 换算值 [480,1488,1887,1595]（x0=480），否则进度条偏左遮挡数字"1"。
 const BAR_BBOX: [number, number, number, number] = [480, 1488, 1887, 1595]
 
-/** 原稿 bbox → 逻辑像素定位 */
+/** 原稿 bbox → 逻辑像素定位（position:absolute 由 styles.layer 提供） */
 const place = (bbox: [number, number, number, number]): CSSProperties => {
   const [x0, y0, x1, y1] = bbox
   return {
-    position: 'absolute',
     left: x0 * K, top: y0 * K,
     width: (x1 - x0) * K, height: (y1 - y0) * K,
   }
@@ -104,57 +108,32 @@ export function SplashScene({ onNavigate }: { onNavigate: (id: RouteId) => void 
   }, [onNavigate])
 
   return (
-    <div style={sceneStyle}>
-      {/* z0 重绘背景 */}
-      <img src={bg} alt="" draggable={false} style={bgStyle} />
+    <>
+      {/* 舞台外留边：同一背景图 cover 出血铺满 */}
+      <BackgroundBleed background={`url(${bg}) center / cover no-repeat`} />
+      <LogicalStage>
+        <div className={styles.scene}>
+          {/* z0 重绘背景 */}
+          <img src={bg} alt="" draggable={false} className={styles.bg} />
 
-      {/* 数字符号组 → logo → 雏鸟（z 序） */}
-      {LAYERS.map(l => (
-        <img key={l.z} src={l.src} alt="" draggable={false} style={place(l.bbox)} />
-      ))}
+          {/* 数字符号组 → logo → 雏鸟（z 序） */}
+          {LAYERS.map(l => (
+            <img key={l.z} src={l.src} alt="" draggable={false} className={styles.layer} style={place(l.bbox)} />
+          ))}
 
-      {/* 进度条：CSS 空轨道垫底，满格位图按进度从左揭示 */}
-      <div style={place(BAR_BBOX)}>
-        <div style={barTrackStyle}>
-          <div style={barSlotStyle} />
+          {/* 进度条：CSS 空轨道垫底，满格位图按进度从左揭示 */}
+          <div className={styles.layer} style={place(BAR_BBOX)}>
+            <div className={styles.barTrack}>
+              <div className={styles.barSlot} />
+            </div>
+            <img
+              src={bar} alt="" draggable={false}
+              className={styles.barFill}
+              style={{ clipPath: `inset(0 ${(1 - shown) * 100}% 0 0)` }}
+            />
+          </div>
         </div>
-        <img
-          src={bar} alt="" draggable={false}
-          style={{
-            ...barFillStyle,
-            clipPath: `inset(0 ${(1 - shown) * 100}% 0 0)`,
-          }}
-        />
-      </div>
-    </div>
+      </LogicalStage>
+    </>
   )
-}
-
-const sceneStyle: CSSProperties = {
-  position: 'absolute', inset: 0, overflow: 'hidden',
-}
-
-const bgStyle: CSSProperties = {
-  position: 'absolute', inset: 0,
-  width: '100%', height: '100%', objectFit: 'fill',
-}
-
-// 空轨道：白底外框 + 浅蓝内槽（进度未满时露出）
-const barTrackStyle: CSSProperties = {
-  position: 'absolute', inset: 0,
-  borderRadius: 999,
-  background: '#ffffff',
-  overflow: 'hidden',
-}
-
-const barSlotStyle: CSSProperties = {
-  position: 'absolute',
-  top: 8, right: 8, bottom: 8, left: 8,
-  borderRadius: 999,
-  background: 'linear-gradient(180deg,#dcecfa,#c7e1f7)',
-}
-
-const barFillStyle: CSSProperties = {
-  position: 'absolute', inset: 0,
-  width: '100%', height: '100%',
 }

@@ -4,11 +4,15 @@
 // → 采用 13 层落 assets/hifi/farm + manifest.json。
 // 资源牌/倒计时牌烘焙数字已擦除，数字与 mm:ss 倒计时前端排版；
 // 地块热点 = z9 层 4 块土壤实测矩形（PIL 测量，非 bbox 四等分）；一期固定 4 块地（扩地转二期）。
-import { FONT, BackButton, Modal, Tabs, Tag, ProgressBar } from '@mathpaws/ui'
+// 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
+// 舞台外留边由 BackgroundBleed 以同一背景 cover 出血填充；
+// 静态样式已迁移至 FarmScene.module.css，内联仅保留运行时动态值。
+import { BackButton, Modal, Tabs, Tag, ProgressBar } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import type { RouteId } from '../app/router'
+import { BackgroundBleed, LogicalStage } from '../app/viewport'
 import bg from '../assets/hifi/farm/bg.jpg'
 import btnPlant from '../assets/hifi/farm/btn-plant.webp'
 import bushLeft from '../assets/hifi/farm/bush-left.webp'
@@ -18,7 +22,7 @@ import fenceRight from '../assets/hifi/farm/fence-right.webp'
 import fieldFence from '../assets/hifi/farm/field-fence.webp'
 import pillFlower from '../assets/hifi/farm/pill-flower.webp'
 import sun from '../assets/hifi/farm/sun.webp'
-import { GuideTip } from '../components/GuideB'
+import { GuideTip } from '../components/GuideTip'
 import {
   CROPS, CROP_MAP, farmLevelFromExp, nextFarmLevelXp,
   getPlotStage, type CropId,
@@ -43,6 +47,7 @@ import fruitPotato from '../assets/img/farm/fruit-potato@2x.webp'
 import fruitCarrot from '../assets/img/farm/fruit-carrot@2x.webp'
 import fruitTomato from '../assets/img/farm/fruit-tomato@2x.webp'
 import fruitStrawberry from '../assets/img/farm/fruit-strawberry@2x.webp'
+import styles from './FarmScene.module.css'
 
 const SEED_IMG: Record<CropId, string> = {
   corn: seedCorn, pumpkin: seedPumpkin, potato: seedPotato,
@@ -163,98 +168,101 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   ), [farmExp, seedInventory, plots])
 
   return (
-    <div style={sceneStyle}>
-      {/* z0 重绘背景 */}
-      <img src={bg} alt="" draggable={false} style={bgStyle} />
+    <BackgroundBleed background="#8ecdf2">
+      {/* 舞台外留边：同一背景 cover 出血填充 */}
+      <img src={bg} alt="" draggable={false} className={styles.bleedBg} />
+      <LogicalStage>
+        <div className={styles.scene}>
+          {/* z0 重绘背景（铺满舞台随缩放） */}
+          <img src={bg} alt="" draggable={false} className={styles.bg} />
 
-      {/* 静态展示层 */}
-      {LAYERS.map(l => (
-        <img key={l.z} src={l.src} alt="" draggable={false} style={place(l.bbox)} />
-      ))}
+          {/* 静态展示层 */}
+          {LAYERS.map(l => (
+            <img key={l.z} src={l.src} alt="" draggable={false} style={place(l.bbox)} />
+          ))}
 
-      {/* 左上返回（原稿顶部干净区） */}
-      <BackButton size={58} onClick={() => go('plaza')} style={{ position: 'absolute', left: 14, top: 10 }} />
+          {/* 左上返回（原稿顶部干净区） */}
+          <BackButton size={58} onClick={() => go('plaza')} style={{ position: 'absolute', left: 14, top: 10 }} />
 
-      {/* 资源牌 + 前端数字 */}
-      <img src={pillFlower} alt="" draggable={false} style={place(PILL_FLOWER_BBOX)} />
-      <span style={{ ...pillNumStyle, ...pillNumPlace(PILL_FLOWER_BBOX) }}>{flowerCoins}</span>
-      <img src={pillShell} alt="" draggable={false} style={place(PILL_SHELL_BBOX)} />
-      <span style={{ ...pillNumStyle, ...pillNumPlace(PILL_SHELL_BBOX) }}>{shells}</span>
+          {/* 资源牌 + 前端数字 */}
+          <img src={pillFlower} alt="" draggable={false} style={place(PILL_FLOWER_BBOX)} />
+          <span className={styles.pillNum} style={pillNumPlace(PILL_FLOWER_BBOX)}>{flowerCoins}</span>
+          <img src={pillShell} alt="" draggable={false} style={place(PILL_SHELL_BBOX)} />
+          <span className={styles.pillNum} style={pillNumPlace(PILL_SHELL_BBOX)}>{shells}</span>
 
-      {/* 农场等级条（前端，标题横幅下方） */}
-      <div style={levelWrapStyle}>
-        <span style={lvStyle}>Lv.{level}</span>
-        <div style={{ flex: 1 }}>
-          <ProgressBar ratio={xpRatio} height={14} />
-        </div>
-        <span style={xpTextStyle}>{nextXp ? `${farmExp - prevXp}/${nextXp - prevXp}` : '已满级'}</span>
-      </div>
+          {/* 农场等级条（前端，标题横幅下方） */}
+          <div className={styles.levelWrap}>
+            <span className={styles.lv}>Lv.{level}</span>
+            <div className={styles.progressGrow}>
+              <ProgressBar ratio={xpRatio} height={14} />
+            </div>
+            <span className={styles.xpText}>{nextXp ? `${farmExp - prevXp}/${nextXp - prevXp}` : '已满级'}</span>
+          </div>
 
-      {/* 4 块地：z9 bbox 四等分热点 */}
-      {[0, 1, 2, 3].map(i => {
-        const cell = cellOf(i)
-        const plot = plots[i]
-        const st = plot ? getPlotStage(plot, now) : { stage: 'empty' as const, remainSeconds: 0 }
-        return (
+          {/* 4 块地：z9 bbox 四等分热点 */}
+          {[0, 1, 2, 3].map(i => {
+            const cell = cellOf(i)
+            const plot = plots[i]
+            const st = plot ? getPlotStage(plot, now) : { stage: 'empty' as const, remainSeconds: 0 }
+            return (
+              <button
+                key={i}
+                type="button"
+                className={`mp-btn ${styles.plotBtn}`}
+                onClick={() => clickPlot(i)}
+                style={place(cell)}
+              >
+                {st.stage === 'empty' && (
+                  <img src={btnPlant} alt="种植" draggable={false} className={styles.plantBtnImg} />
+                )}
+                {st.stage === 'growing' && (
+                  <>
+                    <img src={sprouts} alt="" draggable={false} className={styles.sproutsImg} />
+                    {/* 倒计时小气泡（不挡植物） */}
+                    <span className={styles.cdBubble}>{fmt(st.remainSeconds)}</span>
+                  </>
+                )}
+                {st.stage === 'ready' && plot?.seedId && (
+                  <>
+                    <img
+                      src={FRUIT_IMG[plot.seedId]} alt={CROP_MAP[plot.seedId].name} draggable={false}
+                      className={`${styles.fruitImg} ${styles.fruitReady}`}
+                    />
+                    <span className={styles.readyTag}>点击收获</span>
+                  </>
+                )}
+              </button>
+            )
+          })}
+
+          {/* 仓库入口（右下角，橙色胶囊） */}
           <button
-            key={i}
             type="button"
-            className="mp-btn"
-            onClick={() => clickPlot(i)}
-            style={{ ...place(cell), border: 'none', background: 'transparent', padding: 0, cursor: 'pointer' }}
+            className={`mp-btn ${styles.warehouseBtn}`}
+            onClick={() => { audio.playSfx('click'); setWarehouseOpen(true) }}
           >
-            {st.stage === 'empty' && (
-              <img src={btnPlant} alt="种植" draggable={false} style={plantBtnImgStyle} />
-            )}
-            {st.stage === 'growing' && (
-              <>
-                <img src={sprouts} alt="" draggable={false} style={sproutsImgStyle} />
-                {/* 倒计时小气泡（不挡植物） */}
-                <span style={cdBubbleStyle}>{fmt(st.remainSeconds)}</span>
-              </>
-            )}
-            {st.stage === 'ready' && plot?.seedId && (
-              <>
-                <img
-                  src={FRUIT_IMG[plot.seedId]} alt={CROP_MAP[plot.seedId].name} draggable={false}
-                  className="mp-farm-ready"
-                  style={fruitImgStyle}
-                />
-                <span style={readyTagStyle}>点击收获</span>
-              </>
-            )}
+            仓库
           </button>
-        )
-      })}
 
-      {/* 仓库入口（右下角，橙色胶囊） */}
-      <button
-        type="button" className="mp-btn"
-        onClick={() => { audio.playSfx('click'); setWarehouseOpen(true) }}
-        style={warehouseBtnStyle}
-      >
-        仓库
-      </button>
+          {/* 冷启动提示气泡 */}
+          {showColdHint && <div className={styles.coldHint}>点空地，播下玉米种子吧！</div>}
 
-      {/* 冷启动提示气泡 */}
-      {showColdHint && <div style={coldHintStyle}>点空地，播下玉米种子吧！</div>}
+          {/* 收获飘字 */}
+          {fly && <div className={styles.fly}>{fly}</div>}
 
-      {/* 收获飘字 */}
-      {fly && <div style={flyStyle}>{fly}</div>}
+          {/* 新手引导 B：农场选种提示（可跳过、不重播） */}
+          <GuideTip id="farm-seed" text="点空地，选种子播种；成熟了记得回来收获" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 96 }} />
 
-      {/* 新手引导 B：农场选种提示（可跳过、不重播） */}
-      <GuideTip id="farm-seed" text="点空地，选种子播种；成熟了记得回来收获" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 96 }} />
+          {/* 种子袋 */}
+          {seedBagFor !== null && (
+            <SeedBagPanel plotIndex={seedBagFor} onClose={() => setSeedBagFor(null)} onPlanted={showFly} />
+          )}
 
-      {/* 种子袋 */}
-      {seedBagFor !== null && (
-        <SeedBagPanel plotIndex={seedBagFor} onClose={() => setSeedBagFor(null)} onPlanted={showFly} />
-      )}
-
-      {/* 仓库 */}
-      {warehouseOpen && <WarehousePanel onClose={() => setWarehouseOpen(false)} />}
-
-      <style>{FARM_CSS}</style>
-    </div>
+          {/* 仓库 */}
+          {warehouseOpen && <WarehousePanel onClose={() => setWarehouseOpen(false)} />}
+        </div>
+      </LogicalStage>
+    </BackgroundBleed>
   )
 }
 
@@ -272,8 +280,10 @@ function SeedBagPanel({
   const level = farmLevelFromExp(farmExp)
 
   const buy = (crop: CropId): boolean => {
-    audio.playSfx('click')
-    return useFarmStore.getState().buySeeds(crop, 1, n => useEconomyStore.getState().spendFlowerCoins(n))
+    // 先购买后播音效：失败（余额不足等）不出声
+    const ok = useFarmStore.getState().buySeeds(crop, 1, n => useEconomyStore.getState().spendFlowerCoins(n))
+    if (ok) audio.playSfx('click')
+    return ok
   }
 
   const plant = (crop: CropId) => {
@@ -287,43 +297,43 @@ function SeedBagPanel({
 
   return (
     <Modal onClose={onClose} width={620}>
-      <div style={panelStyle}>
-        <div style={panelTitleStyle}>种子袋</div>
-        <div style={panelListStyle}>
+      <div className={styles.panel}>
+        <div className={styles.panelTitle}>种子袋</div>
+        <div className={styles.panelList}>
           {CROPS.map(c => {
             const locked = level < c.unlockLevel
             const owned = seedInventory[c.id] ?? 0
             const affordable = flowerCoins >= c.seedPrice
             return (
-              <div key={c.id} style={{ ...cropRowStyle, opacity: locked ? 0.55 : 1 }}>
+              <div key={c.id} className={styles.cropRow} style={{ opacity: locked ? 0.55 : 1 }}>
                 <img
                   src={SEED_IMG[c.id]} alt={c.name} draggable={false}
-                  style={{ width: 52, height: 52, objectFit: 'contain', filter: locked ? 'grayscale(1)' : 'none' }}
+                  className={styles.cropIcon}
+                  style={{ filter: locked ? 'grayscale(1)' : 'none' }}
                 />
-                <div style={cropMetaStyle}>
-                  <span style={cropNameStyle}>{c.name}</span>
-                  <span style={cropSubStyle}>{c.growMinutes} 分钟成熟 · 持有 ×{owned}</span>
+                <div className={styles.cropMeta}>
+                  <span className={styles.cropName}>{c.name}</span>
+                  <span className={styles.cropSub}>{c.growMinutes} 分钟成熟 · 持有 ×{owned}</span>
                 </div>
                 {locked && <Tag tone="gray">Lv.{c.unlockLevel} 解锁</Tag>}
                 {!locked && (
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div className={styles.rowActions}>
                     <button
-                      type="button" className="mp-btn"
+                      type="button" className={`mp-btn ${styles.smallBuyBtn}`}
                       disabled={!affordable}
                       onClick={() => buy(c.id)}
-                      style={{ ...smallBuyBtnStyle, opacity: affordable ? 1 : 0.5, cursor: affordable ? 'pointer' : 'not-allowed' }}
+                      style={{ opacity: affordable ? 1 : 0.5, cursor: affordable ? 'pointer' : 'not-allowed' }}
                     >
                       买1份 {c.seedPrice}
                     </button>
                     <button
-                      type="button" className="mp-btn"
+                      type="button" className={`mp-btn ${styles.plantBtn}`}
                       disabled={owned < 1 && !affordable}
                       onClick={() => {
                         if (owned >= 1) plant(c.id)
                         else if (buy(c.id)) plant(c.id)
                       }}
                       style={{
-                        ...plantBtnStyle,
                         opacity: owned < 1 && !affordable ? 0.5 : 1,
                         cursor: owned < 1 && !affordable ? 'not-allowed' : 'pointer',
                       }}
@@ -368,48 +378,48 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal onClose={onClose} width={620}>
-      <div style={panelStyle}>
-        <div style={panelTitleStyle}>仓库</div>
+      <div className={styles.panel}>
+        <div className={styles.panelTitle}>仓库</div>
         <Tabs
           tabs={[{ id: 'fruits', label: '果实' }, { id: 'seeds', label: '种子' }]}
           active={tab}
           onChange={setTab}
         />
         {tab === 'seeds' && (
-          <div style={seedGridStyle}>
+          <div className={styles.seedGrid}>
             {CROPS.map(c => {
               const n = seedInventory[c.id] ?? 0
               return (
-                <div key={c.id} style={{ ...whCellStyle, opacity: n > 0 ? 1 : 0.45 }}>
-                  <img src={SEED_IMG[c.id]} alt={c.name} draggable={false} style={{ width: 48, height: 48, objectFit: 'contain' }} />
-                  <span style={cropNameStyle}>{c.name}</span>
-                  <span style={cropSubStyle}>×{n}</span>
+                <div key={c.id} className={styles.whCell} style={{ opacity: n > 0 ? 1 : 0.45 }}>
+                  <img src={SEED_IMG[c.id]} alt={c.name} draggable={false} className={styles.whIcon} />
+                  <span className={styles.cropName}>{c.name}</span>
+                  <span className={styles.cropSub}>×{n}</span>
                 </div>
               )
             })}
           </div>
         )}
         {tab === 'fruits' && (
-          <div style={panelListStyle}>
+          <div className={styles.panelList}>
             {CROPS.map(c => {
               const n = cropInventory[c.id] ?? 0
               return (
-                <div key={c.id} style={{ ...cropRowStyle, opacity: n > 0 ? 1 : 0.45 }}>
-                  <img src={FRUIT_IMG[c.id]} alt={c.name} draggable={false} style={{ width: 52, height: 52, objectFit: 'contain' }} />
-                  <div style={cropMetaStyle}>
-                    <span style={cropNameStyle}>{c.name}</span>
-                    <span style={cropSubStyle}>×{n} · 单价 {c.sellPrice}</span>
+                <div key={c.id} className={styles.cropRow} style={{ opacity: n > 0 ? 1 : 0.45 }}>
+                  <img src={FRUIT_IMG[c.id]} alt={c.name} draggable={false} className={styles.cropIcon} />
+                  <div className={styles.cropMeta}>
+                    <span className={styles.cropName}>{c.name}</span>
+                    <span className={styles.cropSub}>×{n} · 单价 {c.sellPrice}</span>
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div className={styles.rowActions}>
                     <button
-                      type="button" className="mp-btn" disabled={n < 1} onClick={() => sell(c.id, 1)}
-                      style={{ ...smallBuyBtnStyle, opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
+                      type="button" className={`mp-btn ${styles.smallBuyBtn}`} disabled={n < 1} onClick={() => sell(c.id, 1)}
+                      style={{ opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
                     >
                       卖1个
                     </button>
                     <button
-                      type="button" className="mp-btn" disabled={n < 1} onClick={() => sell(c.id, n)}
-                      style={{ ...plantBtnStyle, opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
+                      type="button" className={`mp-btn ${styles.plantBtn}`} disabled={n < 1} onClick={() => sell(c.id, n)}
+                      style={{ opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
                     >
                       全卖
                     </button>
@@ -419,34 +429,16 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
             })}
           </div>
         )}
-        <div style={whFootStyle}>
-          <span style={whFlowerStyle}>花朵币 {flowerCoins}</span>
-          {sellFly && <span style={sellFlyStyle}>{sellFly}</span>}
+        <div className={styles.whFoot}>
+          <span className={styles.whFlower}>花朵币 {flowerCoins}</span>
+          {sellFly && <span className={styles.sellFly}>{sellFly}</span>}
         </div>
       </div>
     </Modal>
   )
 }
 
-/* ---------- 样式（逻辑像素） ---------- */
-/* 注意：mp-farm-ready 动画的 transform 会覆盖内联 transform，
-   必须把 translate(-50%,-50%) 写进 keyframes，否则果实锚点失效向右下偏移 */
-const FARM_CSS = `
-@keyframes mp-farm-ready {
-  0%,100% { transform: translate(-50%,-50%) scale(1); }
-  50% { transform: translate(-50%,-50%) scale(1.08); }
-}
-.mp-farm-ready { animation: mp-farm-ready 1.2s ease-in-out infinite; }
-`
-
-const sceneStyle: CSSProperties = {
-  position: 'absolute', inset: 0, overflow: 'hidden',
-  fontFamily: FONT.family,
-}
-const bgStyle: CSSProperties = {
-  position: 'absolute', inset: 0,
-  width: '100%', height: '100%', objectFit: 'fill',
-}
+/* ---------- 动态定位辅助（运行时计算，保留内联） ---------- */
 
 /* 资源牌数字（牌右半区居中） */
 const pillNumPlace = (bbox: [number, number, number, number]): CSSProperties => ({
@@ -455,134 +447,3 @@ const pillNumPlace = (bbox: [number, number, number, number]): CSSProperties => 
   width: (bbox[2] - bbox[0]) * 0.43 * K,
   height: (bbox[3] - bbox[1]) * K,
 })
-const pillNumStyle: CSSProperties = {
-  position: 'absolute',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  fontWeight: 900, fontSize: 28, color: '#9a6a24',
-  textShadow: '0 2px 0 rgba(255,255,255,.8)',
-}
-
-/* 等级条：标题横幅（z2 y280-525）下方 */
-const levelWrapStyle: CSSProperties = {
-  position: 'absolute', top: 236, left: '50%', transform: 'translateX(-50%)',
-  width: 380, display: 'flex', alignItems: 'center', gap: 10,
-}
-const lvStyle: CSSProperties = {
-  padding: '3px 12px', borderRadius: 999,
-  background: '#7ed957', color: '#fff', fontWeight: 900, fontSize: 17,
-  boxShadow: '0 3px 0 #4e9c33',
-}
-const xpTextStyle: CSSProperties = {
-  fontWeight: 900, fontSize: 14, color: '#fff',
-  textShadow: '0 1px 2px rgba(60,110,180,.6)',
-}
-
-/* 地块内容（相对地块热点定位） */
-const plantBtnImgStyle: CSSProperties = {
-  position: 'absolute', left: '50%', top: '50%',
-  width: '42%', transform: 'translate(-50%,-50%)',
-  objectFit: 'contain',
-}
-const sproutsImgStyle: CSSProperties = {
-  position: 'absolute', left: '50%', top: '14%',
-  width: '58%', transform: 'translateX(-50%)',
-  objectFit: 'contain',
-}
-/* 倒计时小气泡：地块右上角，不挡植物 */
-const cdBubbleStyle: CSSProperties = {
-  position: 'absolute', top: '10%', right: '8%',
-  padding: '3px 12px', borderRadius: 999,
-  background: 'rgba(255,255,255,.95)', border: '2px solid #6fb3e8',
-  color: '#2b6cb0', fontWeight: 900, fontSize: 14,
-  boxShadow: '0 3px 6px rgba(40,90,160,.25)',
-  whiteSpace: 'nowrap',
-}
-const fruitImgStyle: CSSProperties = {
-  position: 'absolute', left: '50%', top: '46%',
-  width: '52%', transform: 'translate(-50%,-50%)',
-  objectFit: 'contain',
-  filter: 'drop-shadow(0 6px 8px rgba(60,30,10,.35))',
-}
-const readyTagStyle: CSSProperties = {
-  position: 'absolute', left: '50%', bottom: '6%', transform: 'translateX(-50%)',
-  padding: '2px 14px', borderRadius: 999,
-  background: '#ffec99', color: '#8a6d1d',
-  fontWeight: 900, fontSize: 14, whiteSpace: 'nowrap',
-  boxShadow: '0 3px 6px rgba(60,30,10,.25)',
-}
-
-/* 仓库按钮：右下角橙色胶囊 */
-const warehouseBtnStyle: CSSProperties = {
-  position: 'absolute', right: 28, bottom: 24,
-  height: 60, padding: '0 34px', borderRadius: 999, border: 'none',
-  background: 'linear-gradient(180deg,#ffd83d,#ffb020)',
-  color: '#7a4a12', fontWeight: 900, fontSize: 22,
-  boxShadow: '0 5px 0 #e08f00',
-  fontFamily: FONT.family, cursor: 'pointer',
-}
-
-const coldHintStyle: CSSProperties = {
-  position: 'absolute', bottom: 118, left: '50%', transform: 'translateX(-50%)',
-  padding: '8px 22px', borderRadius: 999,
-  background: '#fff', border: '3px solid #cdeab6',
-  color: '#5da23f', fontWeight: 900, fontSize: 17,
-  boxShadow: '0 6px 12px rgba(90,150,80,.2)',
-  fontFamily: FONT.family, whiteSpace: 'nowrap',
-}
-const flyStyle: CSSProperties = {
-  position: 'absolute', top: 240, left: '50%', transform: 'translateX(-50%)',
-  padding: '8px 20px', borderRadius: 999,
-  background: '#e8f5e9', border: '2px solid #7ed957',
-  color: '#3e9c4c', fontWeight: 900, fontSize: 19, whiteSpace: 'nowrap',
-  fontFamily: FONT.family, zIndex: 30,
-}
-
-/* 面板内部 */
-const panelStyle: CSSProperties = {
-  display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center',
-  width: '100%', fontFamily: FONT.family,
-}
-const panelTitleStyle: CSSProperties = { fontSize: 24, fontWeight: 900, color: '#3f4d5c' }
-const panelListStyle: CSSProperties = {
-  display: 'flex', flexDirection: 'column', gap: 10,
-  width: '100%', maxHeight: 440, overflowY: 'auto', padding: 2,
-}
-const cropRowStyle: CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: 12,
-  padding: '8px 12px', borderRadius: 16,
-  background: '#f7faf4', border: '2px solid #e3eee0',
-}
-const cropMetaStyle: CSSProperties = {
-  flex: 1, display: 'flex', flexDirection: 'column', gap: 2,
-}
-const cropNameStyle: CSSProperties = { fontWeight: 900, fontSize: 18, color: '#3f4d5c' }
-const cropSubStyle: CSSProperties = { fontWeight: 800, fontSize: 13, color: '#8a97a3' }
-const smallBuyBtnStyle: CSSProperties = {
-  height: 40, padding: '0 14px', borderRadius: 999, border: 'none',
-  background: '#fff3e0', color: '#ad6800', fontWeight: 900, fontSize: 14,
-  fontFamily: FONT.family,
-}
-const plantBtnStyle: CSSProperties = {
-  height: 40, padding: '0 18px', borderRadius: 999, border: 'none',
-  background: 'linear-gradient(180deg,#9be15d,#6cc24a)',
-  color: '#fff', fontWeight: 900, fontSize: 15,
-  boxShadow: '0 4px 0 #4e9c33',
-  fontFamily: FONT.family,
-}
-const seedGridStyle: CSSProperties = {
-  display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, width: '100%',
-}
-const whCellStyle: CSSProperties = {
-  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-  padding: 12, borderRadius: 16,
-  background: '#f7faf4', border: '2px solid #e3eee0',
-}
-const whFootStyle: CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'center',
-}
-const whFlowerStyle: CSSProperties = {
-  fontWeight: 900, fontSize: 18, color: '#ad6800',
-}
-const sellFlyStyle: CSSProperties = {
-  fontWeight: 900, fontSize: 17, color: '#3e9c4c',
-}

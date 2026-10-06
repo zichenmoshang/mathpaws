@@ -1,0 +1,132 @@
+/* P3 领养（拆自 AdoptScene.tsx 内联样式，数值不变）。
+   内容置于 SkyBackdrop 的 1024×768 LogicalStage 内，随舞台等比缩放。
+   卡片状态（选中 / 未解锁）用叠加变体类表达：基线类在前，
+   .cardActive / .cardLocked 等同特异度变体靠后定义覆盖对应属性。 */
+
+.titleWrap {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  font-size: 50px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow:
+    0 0 0 #4aa8e8, -3px 0 0 #4aa8e8, 3px 0 0 #4aa8e8, 0 -3px 0 #4aa8e8,
+    0 3px 0 #4aa8e8, -3px -3px 0 #4aa8e8, 3px -3px 0 #4aa8e8,
+    -3px 3px 0 #4aa8e8, 3px 3px 0 #4aa8e8, 0 8px 12px rgba(40, 110, 180, .3);
+}
+
+.cardsWrap {
+  position: absolute;
+  top: 170px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 36px;
+}
+
+/* 宠物卡基线：未选白卡 */
+.card {
+  position: relative;
+  width: 252px;
+  height: 372px;
+  border-radius: 30px;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  transition: background .15s ease;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(60, 130, 190, .16);
+  cursor: pointer;
+}
+
+/* 选中：实心蓝底白字 */
+.cardActive {
+  background: #4aa8f0;
+  box-shadow: 0 14px 26px rgba(40, 130, 220, .4), 0 0 0 6px rgba(140, 200, 255, .45);
+}
+
+/* 未解锁：更淡、不可点 */
+.cardLocked {
+  opacity: .66;
+  cursor: default;
+}
+
+.petImg {
+  width: 214px;
+  height: 262px;
+  object-fit: contain;
+  margin-top: 26px;
+}
+
+/* 未解锁宠物图去色 */
+.petImgLocked {
+  filter: grayscale(1) opacity(.85);
+}
+
+/* 名字胶囊基线：可领未选（蓝底白字） */
+.nameBar {
+  margin-top: 10px;
+  width: 176px;
+  height: 54px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, .12);
+  background: #4aa8f0;
+  color: #ffffff;
+}
+
+/* 选中卡：名字为白底蓝字胶囊 */
+.nameBarActive {
+  background: #ffffff;
+  color: #4aa8f0;
+}
+
+/* 未解锁：灰底 */
+.nameBarLocked {
+  background: #b6c2cc;
+}
+
+/* 未解锁："即将开放"浮层盖在卡面 */
+.lockOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 22px;
+  pointer-events: none;
+}
+
+.lockTag {
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(84, 110, 122, .92);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 17px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .18);
+}
+
+.btnZone {
+  position: absolute;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+}

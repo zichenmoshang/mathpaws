@@ -6,6 +6,7 @@ import {
 import type { PointerEvent } from 'react'
 
 import { recognizeRegion } from '../utils/mnist'
+import styles from './WritingBoard.module.css'
 
 export interface WritingBoardHandle {
   /** 清板并解锁所有区（答错重写） */
@@ -48,13 +49,21 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
       }))
     }
 
-    const setup = () => {
+    const setup = (preserveInk = false) => {
       const wrap = wrapRef.current
       const canvas = canvasRef.current
       if (!wrap || !canvas) return
       const dpr = Math.max(1, window.devicePixelRatio || 1)
       const w = wrap.clientWidth
       const h = wrap.clientHeight
+      // 重设 canvas 尺寸会清空位图：resize 前把当前墨迹快照到离屏 canvas，之后回贴
+      let snapshot: HTMLCanvasElement | null = null
+      if (preserveInk && canvas.width > 0 && canvas.height > 0) {
+        snapshot = document.createElement('canvas')
+        snapshot.width = canvas.width
+        snapshot.height = canvas.height
+        snapshot.getContext('2d')!.drawImage(canvas, 0, 0)
+      }
       sizeRef.current = { w, h }
       canvas.width = w * dpr
       canvas.height = h * dpr
@@ -64,7 +73,12 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
       c.lineJoin = 'round'
       c.strokeStyle = '#263238'
       c.lineWidth = Math.max(9, Math.min(24, w * 0.035))
-      c.clearRect(0, 0, w, h)
+      if (snapshot) {
+        // 旧位图整体缩放回贴到新画布（目标坐标为 CSS 像素，dpr 由 setTransform 处理）
+        c.drawImage(snapshot, 0, 0, snapshot.width, snapshot.height, 0, 0, w, h)
+      } else {
+        c.clearRect(0, 0, w, h)
+      }
     }
 
     /** 抬笔停顿：识别所有有墨迹但未锁定的区 */
@@ -114,10 +128,14 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
     useEffect(() => {
       locked.current = Array(regions).fill(false)
       setup()
-      const onResize = () => setup()
+      // resize / 横竖屏切换：重设画布尺寸但保留用户墨迹；
+      // locked 识别状态不重置（仅挂载 / 分区数变化时重置）
+      const onResize = () => setup(true)
       window.addEventListener('resize', onResize)
+      window.addEventListener('orientationchange', onResize)
       return () => {
         window.removeEventListener('resize', onResize)
+        window.removeEventListener('orientationchange', onResize)
         if (timer.current) clearTimeout(timer.current)
       }
        
@@ -125,7 +143,14 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
 
     const pos = (e: PointerEvent<HTMLCanvasElement>) => {
       const rect = e.currentTarget.getBoundingClientRect()
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+      const { w, h } = sizeRef.current
+      // 比例式换算：rect 是 CSS 缩放后的屏幕尺寸，笔迹坐标系是未缩放的画布 CSS px
+      // （dpr 已由 ctx.setTransform 处理，此处不重复计入）；按两者比例还原，
+      // 祖先带任意 CSS scale（如 LogicalStage）时笔迹位置仍准确
+      return {
+        x: (e.clientX - rect.left) * (w / rect.width),
+        y: (e.clientY - rect.top) * (h / rect.height),
+      }
     }
 
     const onDown = (e: PointerEvent<HTMLCanvasElement>) => {
@@ -155,7 +180,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
     }
 
     return (
-      <div ref={wrapRef} style={{ position: 'absolute', inset: 0 }}>
+      <div ref={wrapRef} className={styles.wrap}>
         {/* 位间分隔：小数点位置画圆点，其余画竖虚线（不进 canvas，避免被识别成墨迹） */}
         {Array.from({ length: regions - 1 }, (_, k) => {
           const i = k + 1
@@ -163,24 +188,16 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
             return (
               <span
                 key={`s${i}`}
-                style={{
-                  position: 'absolute', left: `${(i / regions) * 100}%`,
-                  top: '50%', transform: 'translate(-50%,-50%)',
-                  width: 12, height: 12, borderRadius: '50%',
-                  background: 'rgba(96,125,139,.5)', pointerEvents: 'none',
-                }}
+                className={styles.dot}
+                style={{ left: `${(i / regions) * 100}%` }}
               />
             )
           }
           return (
             <span
               key={`s${i}`}
-              style={{
-                position: 'absolute', left: `${(i / regions) * 100}%`,
-                top: '5%', bottom: '5%',
-                borderLeft: '2px dashed rgba(96,125,139,.45)',
-                pointerEvents: 'none',
-              }}
+              className={styles.sep}
+              style={{ left: `${(i / regions) * 100}%` }}
             />
           )
         })}
@@ -191,7 +208,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
           onPointerMove={onMove}
           onPointerUp={finish}
           onPointerCancel={finish}
-          style={{ width: '100%', height: '100%', touchAction: 'none', display: 'block' }}
+          className={styles.board}
         />
       </div>
     )

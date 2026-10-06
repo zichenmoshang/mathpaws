@@ -1,0 +1,594 @@
+/* GachaScene 样式（CSS Modules）
+   注意：本文件引用 styles/global.css 的全局 mp-* keyframes，不重复定义。
+   动画名必须写成 var(--mp-kf, mp-xxx)——CSS Modules 会把 animation 里的裸动画名
+   局部化导致引用失效；var() 包裹可跳过局部化，变量永不定义、恒取 fallback。
+   font-family 取值与 @mathpaws/ui 的 FONT.family 一致；
+   999px 圆角即 R.pill；#78909C 即 C.inkSoft。 */
+
+/* ---- 场景骨架 ---- */
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+.shellPill {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .28);
+  border: 2px solid rgba(255, 255, 255, .25);
+}
+
+.shellCount {
+  color: #fff;
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.pityRow {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 12px;
+  z-index: 9;
+}
+
+.chestWrap {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  translate: -50% -50%;
+}
+
+.bottomBar {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 0 20px;
+}
+
+/* ---- 中央学盒 ---- */
+.chest {
+  position: relative;
+  width: clamp(210px, 34vmin, 330px);
+  aspect-ratio: 640 / 660;
+  animation: var(--mp-kf, mp-chest-bob) 3s ease-in-out infinite;
+}
+
+.chestGlow {
+  position: absolute;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
+  animation: var(--mp-kf, mp-glow-pulse) 2.6s ease-in-out infinite;
+}
+
+.chestImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity .28s;
+}
+
+/* 开盒态：多一个 transform 过渡（源顺序在 .chestImg 之后，覆盖其 transition） */
+.chestImgOpen {
+  transition: opacity .28s, transform .28s;
+}
+
+/* ---- 四角浮动金环 ---- */
+.floatRing {
+  position: absolute;
+  width: clamp(88px, 13vmin, 130px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: clamp(9px, 1.4vmin, 13px);
+  /* 立体金环：顶亮 -> 中部金 -> 底部深金 */
+  background: linear-gradient(160deg, #FFF6C4 0%, #FFD968 30%, #F2A51C 62%, #B9760A 100%);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, .38),
+    0 0 14px rgba(255, 214, 90, .45),
+    inset 0 2px 3px rgba(255, 255, 255, .85),
+    inset 0 -3px 6px rgba(120, 70, 0, .55);
+  animation: var(--mp-kf, mp-float) 3.4s ease-in-out infinite;
+}
+
+.floatRingInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  /* 内圈透明，透出深蓝星空背景；仅加内阴影与极淡径向暗角增加凹陷感 */
+  background: radial-gradient(circle at 50% 45%, rgba(20, 46, 120, 0), rgba(8, 20, 64, .28));
+  box-shadow: inset 0 2px 4px rgba(255, 240, 180, .35),
+    inset 0 -4px 8px rgba(6, 14, 46, .55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floatRingImg {
+  width: 84%;
+  height: 84%;
+  object-fit: contain;
+}
+
+/* ---- 稀有度大卡 ---- */
+.featuredCard {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  animation: var(--mp-kf, mp-card-float) 3.6s ease-in-out infinite;
+}
+
+/* 旋转放射光芒（conic-gradient 背景按稀有度动态注入，叠在大卡背后） */
+.rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 135%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(circle, #000 18%, rgba(0, 0, 0, .55) 52%, transparent 72%);
+  mask-image: radial-gradient(circle, #000 18%, rgba(0, 0, 0, .55) 52%, transparent 72%);
+  opacity: .5;
+  animation: var(--mp-kf, mp-rays-spin) 22s linear infinite;
+}
+
+.cardFrame {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  padding: 6px;
+}
+
+.cardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 17px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 14px 10px 12px;
+}
+
+.cardStarA {
+  position: absolute;
+  opacity: .9;
+}
+
+.cardStarB {
+  position: absolute;
+  opacity: .8;
+}
+
+.cardImg {
+  position: absolute;
+  top: 16%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 72%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.cardName {
+  font-weight: 900;
+  line-height: 1.15;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  text-align: center;
+}
+
+.cardSlot {
+  color: #78909C; /* C.inkSoft */
+  font-weight: 800;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* ---- 十连小格 ---- */
+.miniCard {
+  position: relative;
+  border-radius: 13px;
+  padding: 3px;
+  animation: var(--mp-kf, mp-pop-in) .35s both;
+}
+
+.miniDup {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 2;
+  background: #eceff1;
+  color: #546e7a;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+.miniImgWrap {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.miniImg {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.miniName {
+  font-weight: 900;
+  font-size: 10px;
+  line-height: 1.1;
+  text-align: center;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  padding: 2px 1px 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- 结果弹窗 ---- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: radial-gradient(circle at 50% 30%, rgba(60, 40, 120, .66), rgba(6, 12, 42, .8));
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: var(--mp-kf, mp-fade-in) .25s both;
+}
+
+.panel {
+  position: relative;
+  max-height: 94vh;
+  animation: var(--mp-kf, mp-panel-in) .42s cubic-bezier(.2, 1.2, .4, 1) both;
+}
+
+.decoStarMain {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 3;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .3));
+}
+
+.decoStarLeft {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 64px);
+  z-index: 2;
+}
+
+.decoStarRight {
+  position: absolute;
+  top: -6px;
+  left: calc(50% + 44px);
+  z-index: 2;
+}
+
+.decoStarSmall {
+  opacity: .95;
+}
+
+.goldBead {
+  position: absolute;
+  top: 30px;
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF6BF, #E6A23C);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .3);
+}
+
+.goldBeadLeft {
+  left: -8px;
+}
+
+.goldBeadRight {
+  right: -8px;
+}
+
+.panelFrame {
+  border-radius: 30px;
+  padding: 7px;
+  background: linear-gradient(180deg, #FFF3B0 0%, #FFD25A 40%, #E69A24 80%, #C47E16 100%);
+  box-shadow: 0 0 26px rgba(255, 210, 90, .5),
+    0 22px 50px rgba(0, 0, 0, .5),
+    inset 0 2px 3px rgba(255, 255, 255, .8);
+}
+
+.panelBody {
+  border-radius: 24px;
+  max-height: calc(94vh - 14px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(180deg, #FFFDF6 0%, #FFF6E2 60%, #FFF1D4 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62%;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFD866 0%, #F5A623 100%);
+  box-shadow: 0 4px 8px rgba(180, 110, 10, .4), inset 0 2px 2px rgba(255, 255, 255, .7);
+}
+
+.bannerText {
+  color: #fff;
+  font-weight: 900;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.tenGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.goBackpackBtn {
+  min-width: 150px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #9fd0f5, #6fb3e8);
+  color: #fff;
+  font-weight: 900;
+  font-size: 19px;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  box-shadow: 0 4px 0 #4a8fc4;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(40, 90, 140, .5);
+}
+
+.okBtn {
+  position: relative;
+  min-width: 190px;
+  border: none;
+  background: transparent;
+}
+
+.okBtnLayer1 {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFF3B0 0%, #FFD25A 42%, #E69A24 80%, #C47E16 100%);
+}
+
+.okBtnLayer2 {
+  position: absolute;
+  inset: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFD866 0%, #F5A623 100%);
+}
+
+.okBtnLayer3 {
+  position: absolute;
+  inset: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .65), rgba(255, 255, 255, 0) 45%);
+}
+
+.okBtnStarLeft {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+}
+
+.okBtnStarRight {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+}
+
+.okBtnText {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-weight: 900;
+  font-size: 22px;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* ---- 顶部保底胶囊 ---- */
+.pity {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #3E9BEF 0%, #2E86DE 52%, #1F63B8 100%);
+  box-shadow: 0 0 0 2px #E8A93A,
+    0 3px 6px rgba(0, 0, 0, .3),
+    inset 0 1px 2px rgba(255, 255, 255, .5);
+  white-space: nowrap;
+}
+
+.pityLabel {
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .35);
+}
+
+.pityTrack {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 4px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(9, 40, 92, .55);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .45);
+}
+
+.pityFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFF3B0, #FFD24A 55%, #F0A824);
+  box-shadow: 0 0 5px rgba(255, 210, 80, .8);
+}
+
+/* ---- 底部抽卡按钮 ---- */
+.drawBtn {
+  position: relative;
+  height: 80px;
+  min-width: 212px;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  user-select: none;
+  background: transparent;
+}
+
+.drawBtnSun {
+  padding: 0 30px;
+  border-radius: 999px;
+}
+
+.drawBtnSky {
+  padding: 0 34px 0 32px;
+  border-radius: 0;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .38));
+}
+
+.drawLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.12;
+  position: relative;
+  z-index: 2;
+}
+
+.drawTitle {
+  font-size: 25px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.drawCost {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.flagImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.shellWrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+}
+
+.sunLayer1 {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFF3B0 0%, #FFD25A 42%, #E69A24 78%, #C47E16 100%);
+}
+
+.sunLayer2 {
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFE88F 0%, #FFCE3D 48%, #F5A623 100%);
+}
+
+.sunLayer3 {
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 40%);
+}
+
+/* ---- 高保真按钮文字描边（原 tsx textStroke() 的多方向 text-shadow，逐方向展开） ---- */
+.strokeSun {
+  text-shadow: -2px -1px 0 #A8620A, 2px -1px 0 #A8620A, -2px 1px 0 #A8620A, 2px 1px 0 #A8620A,
+    -1px -2px 0 #A8620A, 1px -2px 0 #A8620A, -1px 2px 0 #A8620A, 1px 2px 0 #A8620A,
+    0 -2px 0 #A8620A, 0 2px 0 #A8620A, -2px 0 0 #A8620A, 2px 0 0 #A8620A,
+    0 3px 3px rgba(0, 0, 0, .28);
+}
+
+.strokeSky {
+  text-shadow: -2px -1px 0 #1759A8, 2px -1px 0 #1759A8, -2px 1px 0 #1759A8, 2px 1px 0 #1759A8,
+    -1px -2px 0 #1759A8, 1px -2px 0 #1759A8, -1px 2px 0 #1759A8, 1px 2px 0 #1759A8,
+    0 -2px 0 #1759A8, 0 2px 0 #1759A8, -2px 0 0 #1759A8, 2px 0 0 #1759A8,
+    0 3px 3px rgba(0, 0, 0, .28);
+}
+
+.strokeGold {
+  text-shadow: -2px -1px 0 #B06A0C, 2px -1px 0 #B06A0C, -2px 1px 0 #B06A0C, 2px 1px 0 #B06A0C,
+    -1px -2px 0 #B06A0C, 1px -2px 0 #B06A0C, -1px 2px 0 #B06A0C, 1px 2px 0 #B06A0C,
+    0 -2px 0 #B06A0C, 0 2px 0 #B06A0C, -2px 0 0 #B06A0C, 2px 0 0 #B06A0C,
+    0 3px 3px rgba(0, 0, 0, .28);
+}

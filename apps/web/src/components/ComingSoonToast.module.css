@@ -1,0 +1,39 @@
+/* ComingSoonToast 静态样式（自 tsx 内联迁入）；字体栈等同 @mathpaws/ui 的 FONT.family。
+   注意：本文件引用 styles/global.css 的全局 mp-* keyframes，不重复定义。
+   动画名必须写成 var(--mp-kf, mp-xxx)——CSS Modules 会把 animation 里的裸动画名
+   局部化导致引用失效；var() 包裹可跳过局部化，变量永不定义、恒取 fallback。 */
+
+/* 全屏背板不拦截指针（1.6s 自动消失期间不吞下层点击） */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 60, 100, .18);
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  animation: var(--mp-kf, mp-pop-in) .18s ease-out;
+  pointer-events: none;
+}
+
+/* 提示气泡本身可点击提前关闭 */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 34px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff, #eef6ff);
+  border: 4px solid rgba(255, 255, 255, .9);
+  box-shadow: 0 14px 34px rgba(30, 70, 130, .3);
+  font-weight: 900;
+  font-size: clamp(18px, 2.6vh, 26px);
+  color: #3f6ea3;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.emoji {
+  font-size: 1.2em;
+}

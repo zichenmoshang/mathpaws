@@ -1,0 +1,414 @@
+/* PetPanelScene 局部样式（自 PetPanelScene.tsx 内联样式常量与 PET_CSS 注入迁移；1024×768 逻辑像素） */
+
+/* 舞台外出血背景：cover 铺满视口留边 */
+.bleedBg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 场景根：LogicalStage 内的 1024×768 逻辑画布 */
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+/* 舞台内背景：铺满舞台随缩放（img 默认 object-fit 即 fill，不再显式声明） */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 资源牌数字（牌右半区居中，位置由内联 pillNumPlace 给） */
+.pillNum {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 24px;
+  color: #9a6a24;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .8);
+}
+.pkBtn {
+  position: absolute;
+  right: 40px;
+  top: 92px;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(180deg, #ffb35c, #ff9f33);
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
+  box-shadow: 0 4px 0 #e07f1a;
+  cursor: pointer;
+}
+
+/* 中心立绘按钮（位置由内联 place(BBOX.hero) 给） */
+.heroBtn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px rgba(120, 80, 40, .25));
+}
+.petBounce {
+  animation: mp-pet-bounce 1.8s ease-in-out infinite;
+}
+@keyframes mp-pet-bounce {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  30% { transform: translateY(-14px) scaleY(1.02); }
+  55% { transform: translateY(0) scaleY(.96); }
+  75% { transform: translateY(-6px) scaleY(1); }
+}
+.cheer {
+  position: absolute;
+  top: -6px;
+  right: -30px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fff0f5;
+  border: 2px solid #ffb3c8;
+  color: #e0638f;
+  font-weight: 900;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* 名字（立绘与进度条之间） */
+.name {
+  position: absolute;
+  left: 224px;
+  top: 415px;
+  width: 418px; /* 面板居中（非舞台居中） */
+  text-align: center;
+  font-weight: 900;
+  font-size: 22px;
+  color: #8a6d3b;
+  pointer-events: none;
+}
+
+.lvBadge {
+  position: absolute;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f6b929;
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
+  box-shadow: 0 3px 0 #d4940a;
+}
+/* 等级进度条容器（位置由内联 place(BBOX.expBar) 给） */
+.expBar {
+  display: flex;
+  align-items: center;
+}
+.expText {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  font-weight: 900;
+  font-size: 15px;
+  color: #a08a5a;
+}
+
+/* 进化提示（进度条与相框之间） */
+.evoHint {
+  position: absolute;
+  left: 224px;
+  top: 467px;
+  width: 418px; /* 进度条（底 465）与相框（顶 481）之间 */
+  text-align: center;
+  font-weight: 900;
+  font-size: 13px;
+  color: #e0638f;
+  pointer-events: none;
+}
+
+/* 进化轨道相框（外框缩至 92% 居中：给上方进化提示留出可视间隙） */
+.evoFrame {
+  position: absolute;
+  inset: 4%;
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+}
+.evoStageImg {
+  position: absolute;
+  left: 20%;
+  top: 12%;
+  width: 60%;
+  height: 56%;
+  object-fit: contain;
+}
+.evoLock {
+  position: absolute;
+  right: 10%;
+  bottom: 10%;
+  width: 24%;
+  height: 24%;
+  object-fit: contain;
+}
+.frameLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9%;
+  text-align: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: #b08d4a;
+  pointer-events: none;
+}
+
+/* 圆形图钮（喂食 / 改名） */
+.roundBtn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 78%;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.roundBtnImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.foodBubble {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #ffd9e6;
+  font-weight: 900;
+  font-size: 14px;
+  color: #e0638f;
+  white-space: nowrap;
+  box-shadow: 0 3px 6px rgba(200, 100, 140, .18);
+  z-index: 2;
+}
+/* 按钮名标签：容器内底部（不再负偏移贴面板边） */
+.btnLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  font-weight: 900;
+  font-size: 15px;
+  color: #a08a5a;
+  pointer-events: none;
+}
+
+/* 右侧宠物格 */
+.gridCell {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.gridImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.gridCore {
+  position: absolute;
+  left: 20%;
+  top: 18%;
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+.gridLock {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  width: 22%;
+  height: 22%;
+  object-fit: contain;
+}
+.gridLockLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4%;
+  text-align: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: #9aa6b0;
+}
+.gridOwn {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #7ed957;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.feedFly {
+  position: absolute;
+  top: 380px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  border: 2px solid #7ed957;
+  color: #3e9c4c;
+  font-weight: 900;
+  font-size: 18px;
+  white-space: nowrap;
+  z-index: 30;
+}
+
+/* 改名弹窗 */
+.renameBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  min-width: 300px;
+}
+.renameTitle {
+  font-size: 22px;
+  font-weight: 900;
+  color: #3f4d5c;
+}
+.renameActions {
+  display: flex;
+  gap: 12px;
+}
+/* 注意：Btn ghost 变体是白字+近透明白底，白 Modal 上不可见，禁用 */
+.renameCancel {
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 14px;
+  border: none;
+  background: #eceff1;
+  color: #546e7a;
+  font-weight: 900;
+  font-size: 20px;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/* 进化仪式全屏层 */
+.ceremonyMask {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, rgba(80, 60, 160, .55), rgba(20, 30, 80, .78));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+.evoBeam {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 160%;
+  aspect-ratio: 1;
+  background: conic-gradient(from 0deg, rgba(255, 236, 150, .5) 0deg 14deg, transparent 14deg 36deg, rgba(255, 236, 150, .5) 36deg 50deg, transparent 50deg 72deg, rgba(255, 236, 150, .5) 72deg 86deg, transparent 86deg 108deg, rgba(255, 236, 150, .5) 108deg 122deg, transparent 122deg 144deg, rgba(255, 236, 150, .5) 144deg 158deg, transparent 158deg 180deg, rgba(255, 236, 150, .5) 180deg 194deg, transparent 194deg 216deg, rgba(255, 236, 150, .5) 216deg 230deg, transparent 230deg 252deg, rgba(255, 236, 150, .5) 252deg 266deg, transparent 266deg 288deg, rgba(255, 236, 150, .5) 288deg 302deg, transparent 302deg 324deg, rgba(255, 236, 150, .5) 324deg 338deg, transparent 338deg 360deg);
+  mask-image: radial-gradient(circle, #000 12%, rgba(0, 0, 0, .5) 46%, transparent 68%);
+  -webkit-mask-image: radial-gradient(circle, #000 12%, rgba(0, 0, 0, .5) 46%, transparent 68%);
+  animation: mp-evo-beam-spin 9s linear infinite;
+}
+@keyframes mp-evo-beam-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.evoConfetti {
+  position: absolute;
+  top: -6%;
+  width: 12px;
+  height: 20px;
+  border-radius: 3px;
+  animation: mp-evo-fall 2.6s ease-in infinite;
+}
+@keyframes mp-evo-fall {
+  0% { top: -6%; transform: rotate(0deg); opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 104%; transform: rotate(540deg); opacity: 0; }
+}
+.orbitIcon {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .3));
+  animation: mp-evo-orbit-pop 1.4s ease-in-out infinite;
+}
+@keyframes mp-evo-orbit-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+.ceremonyCard {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.ceremonyTitle {
+  font-size: 44px;
+  font-weight: 900;
+  color: #ffe98a;
+  text-shadow: 0 3px 0 rgba(150, 90, 10, .6), 0 8px 18px rgba(0, 0, 0, .4);
+}
+.ceremonyImg {
+  width: 260px;
+  height: 260px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, .45));
+  animation: mp-evo-pet-in .6s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+@keyframes mp-evo-pet-in {
+  0% { transform: scale(.2); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.ceremonyForm {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+}
+.ceremonyBtn {
+  margin-top: 8px;
+  height: 54px;
+  padding: 0 40px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(180deg, #ffd83d, #ffb020);
+  color: #7a4a12;
+  font-weight: 900;
+  font-size: 21px;
+  box-shadow: 0 6px 0 #e08f00;
+  cursor: pointer;
+}

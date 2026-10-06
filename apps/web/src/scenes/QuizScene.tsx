@@ -6,7 +6,7 @@
 //   错误 → 红字回写、停留本题、清板可重写。
 // 整轮结束 → 结果写入内存 lastRound store，跳转独立结算场景 result（见 ResultScene.tsx）。
 import {
-  BackButton, ProgressBar, ConfirmDialog, C, FONT,
+  BackButton, ProgressBar, ConfirmDialog, C,
 } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import {
@@ -17,7 +17,7 @@ import type { RouteId } from '../app/router'
 import { useStreakStore } from '../stores/useStreakStore'
 import { WritingBoard } from '../components/WritingBoard'
 import type { WritingBoardHandle } from '../components/WritingBoard'
-import { GuideTip } from '../components/GuideB'
+import { GuideTip } from '../components/GuideTip'
 import { useRouter } from '../app/router'
 import pageLeftImg from '../assets/hifi/quiz/page-left.webp'
 import pageRightImg from '../assets/hifi/quiz/page-right.webp'
@@ -34,12 +34,14 @@ import { QUESTIONS_PER_ROUND } from '../config/quiz'
 import { KNOWLEDGE_PATH } from '../content/knowledgePath'
 import { generateOralRound } from '../content/oral'
 import type { QuizQuestion } from '../content/types'
+import { wrongKey } from '../stores'
 import { useEconomyStore } from '../stores/useEconomyStore'
 import { useLastRoundStore } from '../stores/useLastRoundStore'
 import { useMasteryStore } from '../stores/useMasteryStore'
 import { useWrongbookStore } from '../stores/useWrongbookStore'
 import { audio } from '../utils/audio'
 import { warmupModel } from '../utils/mnist'
+import styles from './QuizScene.module.css'
 
 type Verdict = 'none' | 'correct' | 'wrong'
 
@@ -62,18 +64,17 @@ const onlySingleDigit = (): boolean => {
   try { return localStorage.getItem('mp_oral_digits') === '1' } catch { return false }
 }
 
-// 进入答题的来源页（退出时"从哪来回哪去"）：
-// 仅在上一页是 plaza/home 时改写；result 往返（再练一轮）不覆盖来源。
-let quizOrigin: 'plaza' | 'home' = 'home'
-
 export function QuizScene(
   { onNavigate }: { onNavigate: (id: RouteId) => void },
 ) {
-  useState(() => {
+  // 进入答题的来源页（退出时"从哪来回哪去"）：挂载后在 effect 中读取一次上一路由，
+  // 仅在上一页是 plaza/home 时记录；result 往返（再练一轮）不覆盖来源。
+  // （原实现为模块级可变变量 + useState 初始化器里的渲染期副作用，已改为 ref/effect）
+  const originRef = useRef<'plaza' | 'home'>('home')
+  useEffect(() => {
     const p = useRouter.getState().previous
-    if (p === 'plaza' || p === 'home') quizOrigin = p
-    return null
-  })
+    if (p === 'plaza' || p === 'home') originRef.current = p
+  }, [])
 
   const buildRound = (): QuizQuestion[] => {
     const unlockedIds = useMasteryStore.getState()
@@ -234,9 +235,7 @@ export function QuizScene(
         useEconomyStore.getState().addShells(REWARD.oralPerQuestion)
         shellsEarnedRef.current += REWARD.oralPerQuestion
       }
-      useWrongbookStore.getState().removeIfCorrect(
-        `${question.knowledgeId}#${question.kind}`, true,
-      )
+      useWrongbookStore.getState().removeIfCorrect(wrongKey(question), true)
       audio.playSfx('correct')
       setVerdict('correct')
       advanceTimer.current = setTimeout(goNext, NEXT_DELAY)
@@ -268,50 +267,50 @@ export function QuizScene(
   const promptWidth = ((1080 - 300) / ORIG.w) * 100
 
   return (
-    <div style={sceneBgStyle}>
+    <div className={styles.scene}>
       {/* 顶部栏：返回 / 标题 / 进度+宝箱，同一层级 */}
-      <div style={topBarStyle}>
+      <div className={styles.topBar}>
         <BackButton onClick={() => { audio.playSfx('click'); setConfirmExit(true) }} />
         <img
           src={titleImg} alt="计算正确答案" draggable={false}
-          style={titleImgStyle}
+          className={styles.titleImg}
         />
-        <div style={progressWrapStyle}>
+        <div className={styles.progressWrap}>
           <ProgressBar ratio={progress} base="#ffffff" deep="rgba(255,255,255,.95)" height={16} />
-          <img src={chestIcon} alt="" draggable={false} style={chestInBarStyle} />
+          <img src={chestIcon} alt="" draggable={false} className={styles.chestInBar} />
         </div>
       </div>
 
       {/* 笔记本舞台 */}
-      <div style={bookAreaStyle}>
-        <div ref={stageRef} style={stageStyle}>
-          <img src={pageLeftImg} alt="" draggable={false} style={{ ...box(177, 331, 1173, 1661), objectFit: 'fill' }} />
-          <img src={pageRightImg} alt="" draggable={false} style={{ ...box(1203, 333, 2196, 1660), objectFit: 'fill' }} />
-          <img src={ringsImg} alt="" draggable={false} style={{ ...box(1099, 506, 1275, 1476), pointerEvents: 'none' }} />
+      <div className={styles.bookArea}>
+        <div ref={stageRef} className={styles.stage}>
+          <img src={pageLeftImg} alt="" draggable={false}
+            className={styles.fillImg} style={box(177, 331, 1173, 1661)} />
+          <img src={pageRightImg} alt="" draggable={false}
+            className={styles.fillImg} style={box(1203, 333, 2196, 1660)} />
+          <img src={ringsImg} alt="" draggable={false}
+            className={styles.peNone} style={box(1099, 506, 1275, 1476)} />
 
-          {/* 题目（前端排版，自适应单行） */}
+          {/* 题目（前端排版，自适应单行；fontPx 为运行时自适应字号） */}
           <div
             ref={promptRef}
+            className={styles.prompt}
             style={{
-              position: 'absolute',
               left: `${promptLeft}%`,
               width: `${promptWidth}%`,
               top: `${promptTop}%`,
-              transform: 'translateY(-50%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: '0.3em', whiteSpace: 'nowrap',
-              fontWeight: 800, color: C.ink, fontFamily: FONT.family,
-              fontSize: fontPx, lineHeight: 1,
+              fontSize: fontPx,
             }}
           >
-            <span style={{ letterSpacing: '0.02em' }}>{question.prompt}</span>
+            <span className={styles.promptText}>{question.prompt}</span>
             <span>=</span>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              minWidth: '1.18em', height: '1.18em', padding: '0 .06em',
-              border: `0.055em dashed ${verdict === 'none' ? 'rgba(110,128,146,.6)' : boxColor}`,
-              borderRadius: '0.18em', color: boxColor, boxSizing: 'border-box',
-            }}
+            {/* 边框/文字颜色随判定状态变化，保留内联 */}
+            <span
+              className={styles.answerBox}
+              style={{
+                border: `0.055em dashed ${verdict === 'none' ? 'rgba(110,128,146,.6)' : boxColor}`,
+                color: boxColor,
+              }}
             >
               {verdict === 'none' ? '?' : recognizedText}
             </span>
@@ -320,7 +319,7 @@ export function QuizScene(
           {/* 手写框底板 + 标签 */}
           <img src={writingBoxImg} alt="" draggable={false} style={box(1335, 501, 2058, 1446)} />
           <img src={tagImg} alt="" draggable={false}
-            style={{ ...box(1514, 319, 1880, 459), pointerEvents: 'none' }} />
+            className={styles.peNone} style={box(1514, 319, 1880, 459)} />
 
           {/* 手写板：按实际手写区域大小（内缩对齐虚线框），高度 70% */}
           <div style={box(1347, 513, 2046, 1458)}>
@@ -339,39 +338,22 @@ export function QuizScene(
           {!hasInput && (
             <>
               <img src={hintTextImg} alt="" draggable={false}
-                style={{ ...box(1548, 840, 1847, 897), pointerEvents: 'none' }} />
+                className={styles.peNone} style={box(1548, 840, 1847, 897)} />
               <img src={pencilImg} alt="" draggable={false}
-                style={{ ...box(1654, 947, 1751, 1052), pointerEvents: 'none' }} />
+                className={styles.peNone} style={box(1654, 947, 1751, 1052)} />
             </>
           )}
 
           {/* 答对提示：右上角 +奖励贝壳 + 太棒啦 */}
           {verdict === 'correct' && (
-            <div style={{
-              ...box(1820, 350, 2120, 560),
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'flex-end', pointerEvents: 'none',
-              animation: 'mp-pop-in .35s ease-out',
-            }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{
-                  fontSize: 'clamp(22px,3.4vh,40px)', fontWeight: 900,
-                  color: '#ff6d1f', textShadow: '0 2px 0 #fff', lineHeight: 1,
-                }}
-                >
+            <div className={styles.correctHint} style={box(1820, 350, 2120, 560)}>
+              <div className={styles.correctRow}>
+                <span className={styles.correctPlus}>
                   +{REWARD.oralPerQuestion}
                 </span>
-                <img src={shellIcon} alt="贝壳" style={{ height: '1.9em', width: 'auto' }} />
+                <img src={shellIcon} alt="贝壳" className={styles.correctShell} />
               </div>
-              <span style={{
-                fontSize: 'clamp(20px,3vh,36px)', fontWeight: 900, lineHeight: 1.1,
-                marginTop: 4,
-                background: 'linear-gradient(180deg,#ff8a3d,#ff4f9a)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                textShadow: '0 2px 0 rgba(255,255,255,.5)',
-              }}
-              >
+              <span className={styles.cheerText}>
                 太棒啦！
               </span>
             </div>
@@ -379,21 +361,15 @@ export function QuizScene(
 
           {/* 答错提示：落笔重写即消失（左侧错误数字与红框仍保留） */}
           {verdict === 'wrong' && !hasInput && (
-            <div style={{
-              position: 'absolute',
-              left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
-              top: `${((519 - ORIG.y) / ORIG.h) * 100}%`,
-              width: `${(723 / ORIG.w) * 100}%`,
-              textAlign: 'center', pointerEvents: 'none',
-            }}
-            >
-              <span style={{
-                display: 'inline-block', padding: '0.5em 1.1em',
-                borderRadius: 999, background: 'rgba(255,255,255,.92)',
-                fontSize: 'clamp(13px,1.7vh,20px)', fontWeight: 800, color: C.redDeep,
-                boxShadow: '0 4px 12px rgba(200,60,60,.2)',
+            <div
+              className={styles.floatHint}
+              style={{
+                left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
+                top: `${((519 - ORIG.y) / ORIG.h) * 100}%`,
+                width: `${(723 / ORIG.w) * 100}%`,
               }}
-              >
+            >
+              <span className={styles.floatHintTag}>
                 答错了，再写一次吧
               </span>
             </div>
@@ -401,21 +377,15 @@ export function QuizScene(
 
           {/* 识别服务不可用提示（模型/后端加载失败时由 WritingBoard 上报），位于书写区下缘 */}
           {recogError && (
-            <div style={{
-              position: 'absolute',
-              left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
-              top: `${((1470 - ORIG.y) / ORIG.h) * 100}%`,
-              width: `${(723 / ORIG.w) * 100}%`,
-              textAlign: 'center', pointerEvents: 'none',
-            }}
-            >
-              <span style={{
-                display: 'inline-block', padding: '0.5em 1.1em',
-                borderRadius: 999, background: 'rgba(255,255,255,.92)',
-                fontSize: 'clamp(13px,1.7vh,20px)', fontWeight: 800, color: C.redDeep,
-                boxShadow: '0 4px 12px rgba(200,60,60,.2)',
+            <div
+              className={styles.floatHint}
+              style={{
+                left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
+                top: `${((1470 - ORIG.y) / ORIG.h) * 100}%`,
+                width: `${(723 / ORIG.w) * 100}%`,
               }}
-              >
+            >
+              <span className={styles.floatHintTag}>
                 识别暂时不可用，请刷新重试
               </span>
             </div>
@@ -430,7 +400,7 @@ export function QuizScene(
           confirmText="退出"
           cancelText="继续答题"
           danger
-          onConfirm={() => { setConfirmExit(false); onNavigate(quizOrigin) }}
+          onConfirm={() => { setConfirmExit(false); onNavigate(originRef.current) }}
           onCancel={() => setConfirmExit(false)}
         />
       )}
@@ -439,52 +409,6 @@ export function QuizScene(
       <GuideTip id="quiz-writing" text="在右侧手写区写出答案，抬笔自动识别" style={{ right: '6%', bottom: '8%' }} />
     </div>
   )
-}
-
-/* ---------------- 样式 ---------------- */
-
-const sceneBgStyle: CSSProperties = {
-  position: 'absolute', inset: 0, overflow: 'hidden',
-  // 贴合高保真蓝底：顶部中心偏亮、中部偏深、向底部变浅
-  background:
-    'radial-gradient(130% 72% at 50% -12%, rgba(133,205,252,.9) 0%, rgba(63,150,247,0) 55%),' +
-    'linear-gradient(180deg,#57a6f6 0%,#3796f6 36%,#43acf9 66%,#60d0fb 100%)',
-  fontFamily: FONT.family,
-}
-
-const topBarStyle: CSSProperties = {
-  position: 'absolute', top: 0, left: 0, right: 0,
-  height: '11vh', minHeight: 64,
-  display: 'flex', alignItems: 'center', gap: 18,
-  padding: '0 22px', boxSizing: 'border-box', zIndex: 10,
-}
-
-const titleImgStyle: CSSProperties = {
-  height: '46%', maxHeight: 54, minHeight: 34,
-  width: 'auto', objectFit: 'contain',
-  filter: 'drop-shadow(0 2px 6px rgba(20,80,150,.3))',
-}
-
-const progressWrapStyle: CSSProperties = {
-  marginLeft: 'auto',
-  display: 'flex', alignItems: 'center',
-  width: 'min(280px, 30vw)', flexShrink: 0,
-}
-
-const chestInBarStyle: CSSProperties = {
-  height: '5.4vh', maxHeight: 56, minHeight: 38,
-  width: 'auto', marginLeft: -8, objectFit: 'contain',
-}
-
-const bookAreaStyle: CSSProperties = {
-  position: 'absolute', top: '11vh', left: 0, right: 0, bottom: 0,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-}
-
-const stageStyle: CSSProperties = {
-  position: 'relative',
-  aspectRatio: '2030 / 1350',
-  height: 'min(97%, calc(96vw * 1350 / 2030))',
 }
 
 

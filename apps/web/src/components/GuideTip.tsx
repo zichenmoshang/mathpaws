@@ -1,10 +1,10 @@
 // 新手引导 B（M4-P13+G，简化版）：仅两个点——答题手写区（quiz）、农场选种（farm）。
 // 可跳过、不重播（guideDone 持久化于 profile 表）；3D 摇杆/转视角引导已随广场 2D 化删除。
-import { FONT } from '@mathpaws/ui'
 import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import { usePlayerStore } from '../stores/usePlayerStore'
+import styles from './GuideTip.module.css'
 
 /** 会话内已展示的引导点（两个点都看过即收尾） */
 const shown = new Set<string>()
@@ -53,35 +53,13 @@ export function GuideTip({
   }
 
   return (
-    <div style={{ ...wrapStyle, ...style }}>
-      <span style={textStyle}>{text}</span>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="button" className="mp-btn" onClick={() => close(false)} style={okBtnStyle}>知道了</button>
-        <button type="button" className="mp-btn" onClick={() => close(true)} style={skipBtnStyle}>跳过引导</button>
+    // 定位由调用方经 style prop 内联传入（覆盖 module.css 中的静态样式）
+    <div className={styles.wrap} style={style}>
+      <span className={styles.text}>{text}</span>
+      <div className={styles.actions}>
+        <button type="button" className={`mp-btn ${styles.okBtn}`} onClick={() => close(false)}>知道了</button>
+        <button type="button" className={`mp-btn ${styles.skipBtn}`} onClick={() => close(true)}>跳过引导</button>
       </div>
     </div>
   )
-}
-
-const wrapStyle: CSSProperties = {
-  position: 'absolute', zIndex: 70,
-  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-  padding: '14px 18px', borderRadius: 20,
-  background: 'rgba(255,255,255,.98)', border: '3px solid #ffd9e6',
-  boxShadow: '0 10px 24px rgba(60,120,180,.3)',
-  fontFamily: FONT.family,
-}
-const textStyle: CSSProperties = {
-  fontWeight: 900, fontSize: 17, color: '#3f4d5c', whiteSpace: 'nowrap',
-}
-const okBtnStyle: CSSProperties = {
-  height: 38, padding: '0 20px', borderRadius: 999, border: 'none',
-  background: 'linear-gradient(180deg,#ffd83d,#ffb020)',
-  color: '#7a4a12', fontWeight: 900, fontSize: 15,
-  boxShadow: '0 4px 0 #e08f00', cursor: 'pointer',
-}
-const skipBtnStyle: CSSProperties = {
-  height: 38, padding: '0 16px', borderRadius: 999, border: 'none',
-  background: '#eceff1', color: '#78909c', fontWeight: 800, fontSize: 14,
-  cursor: 'pointer',
 }
