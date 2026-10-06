@@ -16,7 +16,7 @@ export default tseslint.config(
       '**/coverage/**',
       'design/.venv-art/**',
       'ml/mnist/venv312/**',
-      'design/paperdoll-spike/_tmp/**',
+      '**/_tmp/**',
       '**/ref_assets/**',
       'apps/web/dev-dist/**',
     ],

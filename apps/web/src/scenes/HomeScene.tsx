@@ -1,7 +1,7 @@
 // ============================================================================
 // HomeScene —— P4 首页（纯学习枢纽，M2 样板页 / 高保真拆层重建）
 //
-// 视觉按 design/high-fi/home.png 经 layer_decomposition 拆层重建：
+// 视觉按 design/high-fi/home/home.png 经 layer_decomposition 拆层重建：
 //   z0 草地天空背景 / z1 顶栏玻璃底板 / z8 趴兔 / z9 益智乐园钮 /
 //   z10 卡蓝底 / z11 玻璃白卡 / z13 闹钟书 —— 见 assets/hifi/home/manifest.json
 // 主角仍为 PaperDoll 运行时合成（换装依赖，拆层人物 z7 丢弃，仅取其 bbox 定位）；

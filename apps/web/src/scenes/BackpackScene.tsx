@@ -18,7 +18,7 @@ import { useGachaStore } from '../stores/useGachaStore'
 import { audio } from '../utils/audio'
 
 // ============================================================================
-// BackpackScene —— P16 背包 / 换装页（对齐 design/high-fi/backpack.png）
+// BackpackScene —— P16 背包 / 换装页（对齐 design/high-fi/backpack/backpack.png）
 //
 // 顶部「换装书房」位图艺术字；左：小岛立绘舞台（无货币 / 无套装名）；
 // 右：位图 Tab（套装/头饰/鞋子）+ 半透明磨砂面板内的圆形物品格；

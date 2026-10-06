@@ -1,5 +1,5 @@
 {
-  "source": "design/high-fi/daily-chest.jpg",
+  "source": "design/high-fi/daily-chest/daily-chest.jpg",
   "source_size": [2364, 1773],
   "pipeline": "layer_decomposition (doubao-seedream-5.0-pro)",
   "note": "scroll/card-shell/card-food 的烘焙文字已在图层上擦除（保留羊皮纸质感），真实文案由前端排版（config/streak）",

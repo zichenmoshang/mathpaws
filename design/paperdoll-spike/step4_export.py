@@ -1,25 +1,30 @@
-"""Step 4: freeze anchors.json + export production paperdoll assets.
+"""Step 4: export staging paperdoll assets (pre-QC staging, NOT for the app).
 
 Runs AFTER step2_layers.py (which writes layers/{outfits,hats,heads,masks,shoes}).
 
 v5 runtime N+M layout (2026-10-03): the app composes body + shoe + ONE gear
 layer at runtime, so the N outfits x M hats forhat matrix is no longer shipped
-to production. Outputs (design/paperdoll-assets/):
+to production. Outputs (design/paperdoll-spike/_step4_export/, gitignored staging):
 
-  anchors.json                         frozen geometry (seam/splice/cut params)
   layers/bodies/body-<o>@2x.webp            one per character (nohat)
   layers/heads/head-<h>@2x.webp             head-cut gear (frog/elf/wizard)
   layers/hats/hat-<h>@2x.webp               item hats (explorer/scientist)
   layers/masks/hole-<h>@2x.webp             item-hat erase mask (alpha channel)
   layers/shoes/shoe-default@2x.webp
   icons/<id>-icon.webp                      512^ item thumbnail (bbox-fit)
-  manifest.json                             bodies / gear / shoes
+  manifest.json                             bodies / gear / shoes (full, incl.
+                                            prompt_doc / master_image provenance)
   _truth/                                   OFFLINE REGRESSION ONLY:
     outfits/outfit-<o>-forhat-<h>@2x.webp   per-body baked truth bodies
     hats/hat-wizard-on-<o>@2x.webp          per-body relit wizard truth heads
 
-Everything is derived from the step2 OUTFITS / HATS registries so anchors.json
-and the manifest never drift from the masks that actually produced the layers.
+Staging is QC-ed by step5_verify_export.py; only after acceptance does
+step6_publish.py copy layers/icons + a slimmed manifest + the _truth subset
+into apps/web/src/assets/paperdoll/. Geometry constants SSOT = step2_layers.py
+registries; no separate anchors.json is emitted anymore.
+
+Everything is derived from the step2 OUTFITS / HATS registries so the manifest
+never drifts from the masks that actually produced the layers.
 Outfits or hats whose layers were skipped in step2 (inputs not ready) are also
 skipped here, keeping the script runnable mid-batch.
 """
@@ -31,7 +36,7 @@ from PIL import Image
 import step2_layers as s2
 
 SPIKE = s2.BASE
-OUT = os.path.abspath(os.path.join(SPIKE, "..", "paperdoll-assets"))
+OUT = os.path.join(SPIKE, "_step4_export")
 LDIR_OUT = os.path.join(OUT, "layers")
 TRUTH_OUT = os.path.join(OUT, "_truth")
 IDIR_OUT = os.path.join(OUT, "icons")
@@ -44,9 +49,6 @@ for _d in (os.path.join(LDIR_OUT, "bodies"),
            os.path.join(TRUTH_OUT, "hats"),
            IDIR_OUT):
     os.makedirs(_d, exist_ok=True)
-
-ANCHORS_VER = "anchors-v5-runtime"
-
 
 def export_layer(src_path, out_rel, base=LDIR_OUT):
     im = Image.open(src_path).convert("RGBA")
@@ -91,99 +93,6 @@ def main():
                os.path.join(TRUTH_OUT, "hats"),
                IDIR_OUT):
         os.makedirs(_d, exist_ok=True)
-
-    # ---- freeze anchors: per-hat exclusive bands + shoe cut ----
-    anchors = {
-        "version": ANCHORS_VER,
-        "canvas": 2048,
-        "units": "original-2048-space",
-        "reference_pose": "core-ip front A-pose",
-        "points": {"cx": 1024, "ground_y": 1888},
-        "slots": ["body", "gear", "shoe"],
-        "z_order": ["body", "shoe", "gear"],
-        "runtime_model": (
-            "v5 (2026-10-03): one body per character + one gear layer; item "
-            "gear (explorer/scientist) erases the body through its exported "
-            "hole mask; head gear (frog/elf/wizard) overlaps at the neck seam "
-            "and wizard is relit toward the body neck colour at runtime. The "
-            "per-outfit forhat matrix is retained only as _truth/ for the "
-            "PaperDollCompositeDev offline-equivalence regression."),
-        "hat_splice": {
-            "method": (
-                "Three cut modes. 'color': hat footprint segmented from the "
-                "hatted source - hat-coloured pixels (skin/hair HSV bands "
-                "excluded) region-grown from seeds inside the ellipse "
-                "guides through strong-alpha pixels, closing + fill holes + "
-                "alpha-gated collar; hole = footprint eroded + feathered. "
-                "'ellipse': validated tight R intersect source alpha. "
-                "'head' (frog/elf/wizard v2): horizontal neck cut - body "
-                "rows above the cut are replaced wholesale by the source "
-                "head (no hair bulge survives), a 40px transition follows "
-                "source alpha so wide body collars are kept, and the source "
-                "neck band overlaps 12px. All modes guarantee zero "
-                "internal gaps."),
-            "params": {
-                "strong_alpha": s2.HAT_STRONG_ALPHA,
-                "seed_erode": s2.HAT_SEED_ERODE,
-                "allow_dilate": s2.HAT_ALLOW_DIL,
-                "open": s2.HAT_OPEN_R,
-                "close": s2.HAT_CLOSE_R,
-                "min_component": s2.HAT_MIN_COMP,
-                "collar": s2.HAT_COLLAR_R,
-                "hole_erode": s2.HAT_HOLE_ERODE,
-                "feather": s2.HAT_FEATHER,
-                "head_cut": {
-                    "cut_y": s2.HEAD_CUTS,
-                    "overlap": s2.HEAD_OVERLAP,
-                    "transition": s2.HEAD_TRANSITION,
-                    "transitions_override": s2.HEAD_TRANSITIONS,
-                    "feather_override": s2.HEAD_FEATHERS,
-                    # pair hats (wizard): one hat layer per outfit, source
-                    # skin relit (0.28 src + 0.72 body neck colour), hair
-                    # only over body skin/hair; never over clothing/air
-                    "pair_gate": sorted(s2.HEAD_PAIR_GATE),
-                },
-                "skin": {"h": s2.SKIN_H, "s": s2.SKIN_S,
-                         "v_min": s2.SKIN_V_MIN},
-                "hair": {"h": s2.HAIR_H, "s_min": s2.HAIR_S_MIN,
-                         "v_max": s2.HAIR_V_MAX},
-            },
-            "cut_modes": {
-                hid: h.get("cut_mode", "color") for hid, h in s2.HATS.items()
-            },
-        },
-        "hat_seed_bands": {
-            hid: {
-                "ellipses": h["band"],
-                "note": "Seed GUIDE ellipses only - no longer the cut shape. "
-                        "color mode: growth seeds + allow bound; ellipse mode "
-                        "(explorer): hole = R intersect source alpha. Every "
-                        "edge stays above the eyes (~y600).",
-            }
-            for hid, h in s2.HATS.items()
-        },
-        "shoe_cut": {
-            "split": "single horizontal cut, native alpha (no shape fitting)",
-            "cut_y": s2.SHOE_CUT, "overlap_px": s2.SHOE_OVERLAP,
-            "fit": {"y_min": s2.SHOE_FIT_YMIN, "radius": s2.SHOE_FIT_RADIUS,
-                    "note": "shoe edge colour extended onto bare-foot-only pixels "
-                            "in the toe box so no bare toe shows at the sides"},
-            "note": "shoe layer starts cut_y-overlap so the collar wraps the ankle; "
-                    "new shoes must keep the foot shape + ground_y, no tall boots",
-        },
-        "cutout": {"tool": "rembg(birefnet-general-lite)", "post_process_mask": True,
-                   "since": "2026-10-03 (u2net kept as fallback via step1 argv)",
-                   "note": "rembg removes the white background, contact shadow and "
-                           "enclosed white between legs; subject pixels are untouched"},
-        "removed_slots": {
-            "acc": "chest-mounted props are semantically coupled to a specific "
-                   "outfit and look broken when cross-mixed",
-            "top/bottom": "merged into a single outfit; splitting torso from legs "
-                          "caused 1px seams and broken telescope x clothes mixes",
-        },
-    }
-    with open(os.path.join(OUT, "anchors.json"), "w", encoding="utf-8") as f:
-        json.dump(anchors, f, ensure_ascii=False, indent=2)
 
     # ---- production: one body per character (nohat full-canvas) ----
     body_records = []
@@ -310,14 +219,13 @@ def main():
             "cn_name": "暖白软底小鞋",
             "icon_file": "icons/shoe-default-icon.webp",
             "layer": "layers/shoes/shoe-default@2x.webp",
-            "master_image": s2.CORE_URL,
+            "master_image": s2.CORE_SHOD_MASTER,
             "prompt_doc": "dress-default-barefoot.md",
         })
 
     # ---- manifest (v5 runtime) ----
     manifest = {
         "schema": "paperdoll-manifest-v5-runtime",
-        "anchors_version": ANCHORS_VER,
         "canvas": 2048, "icon_size": 512, "format": "webp-lossless-alpha",
         "slots": ["body", "gear", "shoe"],
         "z_order": ["body", "shoe", "gear"],

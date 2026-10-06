@@ -1,5 +1,5 @@
 // 启动动线（P1–P3）共享背景：蓝天 + 多圆拼云朵 + 星点 + 底部彩虹，纯 CSS 绘制。
-// 云朵不再用单条胶囊，用中心圆+两侧小圆+底部平垫拼出蓬松感（对齐 design/high-fi/splash.png）。
+// 云朵不再用单条胶囊，用中心圆+两侧小圆+底部平垫拼出蓬松感（对齐 design/high-fi/splash/splash.png）。
 import type { CSSProperties, ReactNode } from 'react'
 
 export function SkyBackdrop({ children }: { children?: ReactNode }) {

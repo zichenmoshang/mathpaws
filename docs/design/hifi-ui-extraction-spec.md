@@ -2,7 +2,7 @@
 
 > 版本：v1.1　|　最后更新：2026-10-05（新增 §9 实测案例：擦烘焙数字/形象的 PIL 方法、热点勿四等分、EPERM 绕行）
 > 适用问题：**设计稿（高保真 PNG/JPEG）里已经画好的拟物 UI 元素，如何切成透明素材给前端用。**
-> 配套实测档案：`design/paperdoll-spike/_tmp/decomp-quiz/`（quiz-page 拆层全产物）；入口脚本：`design/paperdoll-spike/decomp.js`。
+> 配套实测档案：`decomp-quiz`（quiz-page 拆层全产物；ad-hoc 工作区内容按约定可随时清理，拆层产物以 `apps/web/src/assets/hifi/quiz/` 与 §9 描述为准）；入口脚本：`design/high-fi/decomp.js`。
 > 与其他切图通道的分工见文末"通道选择表"；角色换装类需求不要用本文通道，见 [character-generation-spec.md](./character-generation-spec.md)。
 
 ---
@@ -63,9 +63,9 @@
 ```powershell
 # 1) 输入稿放临时目录（高保真原稿只读，不修改）
 # 2) 调用（Key 已在环境变量；脚本不打印 Key / URL / 长 JSON）
-node design/paperdoll-spike/decomp.js `
-  design/high-fi/<page>.png `
-  design/paperdoll-spike/_tmp/decomp-<page>
+node design/high-fi/decomp.js `
+  design/high-fi/<page>/<page>.png `
+  design/high-fi/_tmp/decomp-<page>
 # 产物：layer_zNN_*.png/jpg + layers.json（名称/描述/bbox/尺寸台账）
 ```
 
@@ -104,7 +104,7 @@ node design/paperdoll-spike/decomp.js `
 - 发现的问题：右页虚线手写框未被识别为独立层且在重绘中消失；默认参数出图带水印（已改为必传 `watermark:false`）；层尺寸与 bbox 不一致（§4 已给处理）；
 - 白底角色戴帽图（festival-elf）对照实验：自动模式把整个人物归为单层、prompt 强拆被 400 拒绝——据此确认本通道不用于换装（§2 / §7）。
 
-## 9. 实测案例档案（2026-10-05，farm-v2 / settings-v2 / pet-v2）
+## 9. 实测案例档案（2026-10-05，farm / settings / pet）
 
 - 三稿均为 Seedream Pro 文生图新出（2364×1773）后拆层：farm 14 层采用 11、settings 16 层采用 5、pet 15 层采用 11；absolute↔normalized 交叉校验全部 maxdiff≤2，PIL 全层回贴与原稿并排一致（`_tmp/decomp-{farm,settings,pet}-v2/`）。
 - **烘焙数字擦除（资源牌 / 倒计时牌）**：纯色补丁在渐变底上必显眼 → 用"逐行采样干净列带均值填充"（脚本 `_tmp/export_farm_settings_layers.py`），擦后数字前端排版。

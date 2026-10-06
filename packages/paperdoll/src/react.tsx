@@ -14,8 +14,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 // 整体只经历一次缩放，避免分层缝隙。
 //
 // 组件只接收「已解析好的图片 URL + gear 规格」，不耦合资产路径 / 库存；
-// 穿戴映射由 app 侧 catalog/store 负责。资产规范见 paperdoll-assets 的
-// manifest.json(v5) / anchors.json。
+// 穿戴映射由 app 侧 catalog/store 负责。资产规范见 app 侧发布版 manifest.json(v5)。
 // ============================================================================
 
 import {

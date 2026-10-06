@@ -23,7 +23,7 @@
 ```
 AI 文生图高保真原稿 (design/high-fi/<page>.png)
    │
-   ▼  layer_decomposition 语义拆层 (design/paperdoll-spike/decomp.js)
+   ▼  layer_decomposition 语义拆层 (design/high-fi/decomp.js)
 z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
    │
    ▼  逐元素验收（棋盘格 / 对比原稿 / bbox 交叉校验）
@@ -41,7 +41,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 ## 3. 拆层：layer_decomposition 的本质与边界
 
-拆层用的是 doubao-seedream-5.0-pro 的 `layer_decomposition` 能力：输入一张图，输出 `z0` 背景 + 若干语义对象的透明 PNG，每层带名称、描述和 bounding box，并自动补全被遮挡的部分。入口脚本 `design/paperdoll-spike/decomp.js`，拆层规格全文在 `docs/design/hifi-ui-extraction-spec.md`。
+拆层用的是 doubao-seedream-5.0-pro 的 `layer_decomposition` 能力：输入一张图，输出 `z0` 背景 + 若干语义对象的透明 PNG，每层带名称、描述和 bounding box，并自动补全被遮挡的部分。入口脚本 `design/high-fi/decomp.js`，拆层规格全文在 `docs/design/hifi-ui-extraction-spec.md`。
 
 要用好它，先接受三条本质属性：
 
@@ -67,7 +67,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 ```json
 {
-  "source": "design/high-fi/quiz-page.png",
+  "source": "design/high-fi/quiz/quiz-page.png",
   "via": "seedream-5.0-pro layer_decomposition (watermark:false)",
   "canvas": [2364, 1773],
   "note": "蓝底未采用 z00 重绘背景，前端用 CSS 渐变近似；题目文字前端排版",
@@ -79,7 +79,7 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 
 `note` 字段同样重要：哪些层**没采用**、为什么（如重绘背景被 CSS 渐变替代以避免缩放色差）、文字是否前端重排——这些决策不记下来，下次维护就会重蹈覆辙。
 
-**系统级 anchors**（换装系统，见 §6）：`design/paperdoll-assets/anchors.json` 是锚点参数的**单一事实源**——由导出脚本从切层常量直接生成，不手抄、不维护第二份。
+**系统级 anchors**（换装系统，见 §6）：`design/paperdoll-spike/step2_layers.py` 的切层常量注册表是锚点参数的**单一事实源**——运行时所需 seam 由管线随瘦身 manifest 发布，不手抄、不维护第二份。
 
 台账的价值在于：运行时回贴、离线回归、资产管理三方消费同一份坐标，任何一方发现不一致都是可定位的台账问题，而不是玄学视觉偏差。
 
@@ -136,11 +136,11 @@ z0 重绘背景 + z1..zN 透明图层（名称 / 描述 / bounding_box）
 ## 相关链接
 
 - 拆层规格（layer_decomposition 方法、验收清单、实测档案）：`docs/design/hifi-ui-extraction-spec.md`
-- 拆层入口脚本：`design/paperdoll-spike/decomp.js`
+- 拆层入口脚本：`design/high-fi/decomp.js`
 - 高保真原稿：`design/high-fi/`
 - 页面资产与坐标台账：`apps/web/src/assets/hifi/<page>/manifest.json`
 - 运行时回贴示例：`apps/web/src/components/ChestPanel.tsx`
 - 纸娃娃系统规范与 SOP：`docs/design/paperdoll-system.md`
-- 纸娃娃切层流水线（step1–5）：`design/paperdoll-spike/README.md`
-- 纸娃娃冻结资产与锚点台账：`design/paperdoll-assets/`（`manifest.json`、`anchors.json`）
+- 纸娃娃切层流水线（step1–6）：`design/paperdoll-spike/README.md`
+- 纸娃娃管线与资产：staging `design/paperdoll-spike/_step4_export/`（全量 manifest）；发布版 `apps/web/src/assets/paperdoll/`（瘦身 manifest + layers/icons）
 - 运行时合成实现：`packages/paperdoll/src/compose.ts`

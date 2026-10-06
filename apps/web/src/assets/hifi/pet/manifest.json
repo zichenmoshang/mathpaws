@@ -3,7 +3,7 @@
     2364,
     1773
   ],
-  "source": "design/high-fi/pet-v2.png",
+  "source": "design/high-fi/pet/pet.png",
   "decomp": "_tmp/decomp-pet-v2",
   "unused": [
     "z5 黄白进度条（填充为动态，前端 ProgressBar 放同 bbox）",

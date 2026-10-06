@@ -1,5 +1,5 @@
 // P9 宠物面板（M4-P9-01/02/03/04）— 按 hifi-ui-extraction-spec 拆层重建：
-// 高保真 design/high-fi/pet-v2.png（Seedream 出稿：去红心/装备/玩耍，加进化相框/宠物格）
+// 高保真 design/high-fi/pet/pet.png（Seedream 出稿：去红心/装备/玩耍，加进化相框/宠物格）
 // → layer_decomposition 15 层（_tmp/decomp-pet-v2，交叉校验 maxdiff≤2，PIL 回贴一致）
 // → 采用 11 层落 assets/hifi/pet + manifest.json。
 // 相框内兔/卡片内动物/资源牌数字已 PIL 擦除，全部前端动态替换；

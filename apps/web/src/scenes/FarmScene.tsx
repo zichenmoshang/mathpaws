@@ -1,5 +1,5 @@
 // P8 农场（M4-P8-01/02、M4-P14+WH）— 按 hifi-ui-extraction-spec 拆层重建：
-// 高保真 design/high-fi/farm-v2.png（Seedream 出稿、去水滴）→ layer_decomposition
+// 高保真 design/high-fi/farm/farm.png（Seedream 出稿、去水滴）→ layer_decomposition
 // 14 层（_tmp/decomp-farm-v2，absolute/normalized 交叉校验 maxdiff≤2，PIL 全层回贴通过）
 // → 采用 13 层落 assets/hifi/farm + manifest.json。
 // 资源牌/倒计时牌烘焙数字已擦除，数字与 mm:ss 倒计时前端排版；

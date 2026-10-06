@@ -13,16 +13,16 @@ baked regression truth instead:
 The runtime path itself (erase mask + neck relight) is regression-tested in
 the app at #paperdoll-rt against these same truth images.
 
-Also lays out all icons. Output: _tmp/qc/export-verify.png
+Also lays out all icons. Output: _step5_export/export-verify.png
 """
 import os
 import json
 from PIL import Image, ImageDraw
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.abspath(os.path.join(BASE, "..", "paperdoll-assets"))
+OUT = os.path.join(BASE, "_step4_export")
 I = os.path.join(OUT, "icons")
-QDIR = os.path.join(BASE, "_tmp", "qc")
+QDIR = os.path.join(BASE, "_step5_export")
 os.makedirs(QDIR, exist_ok=True)
 
 with open(os.path.join(OUT, "manifest.json"), encoding="utf-8") as f:
