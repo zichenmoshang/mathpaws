@@ -25,9 +25,18 @@ const pwaManifest = {
   ],
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   // GitHub Pages 等项目站点需要 '/<repo>/' 前缀；本地 dev / 正式 CDN 用 '/'
   base: process.env.BASE_PATH ?? '/',
+  css: {
+    modules: {
+      // dev：类名带文件名前缀，DevTools 调试直观；生产：只留 hash，压体积
+      generateScopedName:
+        command === 'serve'
+          ? '[name]__[local]__[hash:base64:5]'
+          : '_[hash:base64:8]',
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -62,4 +71,4 @@ export default defineConfig({
       '@tensorflow/tfjs-backend-wasm',
     ],
   },
-})
+}))
