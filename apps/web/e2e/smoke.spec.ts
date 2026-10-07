@@ -5,13 +5,14 @@ import { test, expect } from '@playwright/test'
 // 新设备 onboardingDone=false，自动进 P2 亮相起名页。
 
 test('冒烟一：应用启动后非白屏，进入引导首屏', async ({ page }) => {
-  await page.goto('/')
+  // 用 './' 而非 '/'：保留 baseURL 路径前缀（部署后冒烟时 Pages 站点带 /<repo>/ 前缀）
+  await page.goto('./')
   // P2 标题文案出现即证明渲染成功（含 Splash 过渡，放宽超时）
   await expect(page.getByText('你好呀，小朋友')).toBeVisible({ timeout: 15_000 })
 })
 
 test('冒烟二：黄金路径 起名 → 领养雪球兔 → 进入广场', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('./')
 
   // P2：填名字（可留空），点"下一步"
   await expect(page.getByText('你好呀，小朋友')).toBeVisible({ timeout: 15_000 })

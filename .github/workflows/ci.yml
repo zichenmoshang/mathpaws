@@ -26,7 +26,24 @@ jobs:
 
       - run: pnpm test
 
+      # 覆盖率基线报告（仅打标，不设门槛；失败仍视为测试失败）
+      - run: corepack pnpm --filter mathpaws-client test:coverage
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: apps/web/coverage
+          if-no-files-found: ignore
+          retention-days: 7
+
       - run: pnpm build
+
+      # 浏览器二进制按 lockfile 缓存，命中后 install 秒级完成
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
 
       # E2E 冒烟：preview 依赖上一步 build 产物
       - run: corepack pnpm --filter mathpaws-client exec playwright install --with-deps chromium
