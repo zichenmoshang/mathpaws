@@ -4,7 +4,7 @@
 // 舞台外留边由 BackgroundBleed 以同一渐变 cover 出血填充。被引用方 API 不变。
 import type { ReactNode } from 'react'
 
-import { BackgroundBleed, LogicalStage } from '../../app/viewport'
+import { BackgroundBleed, LogicalStage } from '../../../app/viewport'
 
 import styles from './SkyBackdrop.module.css'
 

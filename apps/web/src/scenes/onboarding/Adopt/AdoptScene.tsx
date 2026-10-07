@@ -4,18 +4,18 @@
 import { PrimaryButton } from '@mathpaws/ui'
 import { useState } from 'react'
 
-import type { RouteId } from '../../app/router'
-import catImg from '../../assets/img/core/pet-cat-core@2x.png'
-import dogImg from '../../assets/img/core/pet-dog-core@2x.png'
-import rabbitImg from '../../assets/img/core/pet-rabbit@2x.png'
-import { comingSoon } from '../../components/ComingSoonToast'
-import { PET_SPECIES, type PetTypeId } from '../../config/pets'
-import { usePetStore } from '../../stores/usePetStore'
-import { usePlayerStore } from '../../stores/usePlayerStore'
-import { audio } from '../../utils/audio'
+import type { RouteId } from '../../../app/router'
+import catImg from '../../../assets/img/core/pet-cat-core@2x.png'
+import dogImg from '../../../assets/img/core/pet-dog-core@2x.png'
+import rabbitImg from '../../../assets/img/core/pet-rabbit@2x.png'
+import { comingSoon } from '../../../components/ComingSoonToast/ComingSoonToast'
+import { PET_SPECIES, type PetTypeId } from '../../../config/pets'
+import { usePetStore } from '../../../stores/usePetStore'
+import { usePlayerStore } from '../../../stores/usePlayerStore'
+import { audio } from '../../../utils/audio'
 
 import styles from './AdoptScene.module.css'
-import { SkyBackdrop } from './SkyBackdrop'
+import { SkyBackdrop } from '../SkyBackdrop/SkyBackdrop'
 
 const IMG: Record<PetTypeId, string> = {
   rabbit: rabbitImg,

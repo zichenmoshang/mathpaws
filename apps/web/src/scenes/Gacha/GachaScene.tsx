@@ -11,21 +11,21 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
-import gachaBg from '../assets/gacha/gacha-bg-starry@2x.webp'
-import gachaBoxOpen from '../assets/gacha/gacha-box-open@2x.webp'
-import gachaBox from '../assets/gacha/gacha-box@2x.webp'
-import flagTen from '../assets/gacha/gacha-flag-ten@2x.webp'
-import glowLegendary from '../assets/gacha/glow-legendary.png'
+import gachaBg from '../../assets/gacha/gacha-bg-starry@2x.webp'
+import gachaBoxOpen from '../../assets/gacha/gacha-box-open@2x.webp'
+import gachaBox from '../../assets/gacha/gacha-box@2x.webp'
+import flagTen from '../../assets/gacha/gacha-flag-ten@2x.webp'
+import glowLegendary from '../../assets/gacha/glow-legendary.png'
 import {
   RARITY_META, COSMETIC_SLOT_LABEL, type Rarity, type CosmeticSlot,
-} from '../config/cosmetics'
+} from '../../config/cosmetics'
 import {
   SINGLE_COST, TEN_COST, RARE_PITY, LEGEND_PITY, GACHA_ITEM_MAP, GACHA_POOL,
-} from '../config/gachaPool'
-import { performDraw, type DrawOutcome } from '../stores'
-import { useEconomyStore } from '../stores/useEconomyStore'
-import { useGachaStore } from '../stores/useGachaStore'
-import { audio } from '../utils/audio'
+} from '../../config/gachaPool'
+import { performDraw, type DrawOutcome } from '../../stores'
+import { useEconomyStore } from '../../stores/useEconomyStore'
+import { useGachaStore } from '../../stores/useGachaStore'
+import { audio } from '../../utils/audio'
 
 import styles from './GachaScene.module.css'
 

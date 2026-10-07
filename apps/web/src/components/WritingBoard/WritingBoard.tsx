@@ -5,7 +5,7 @@ import {
 } from 'react'
 import type { PointerEvent } from 'react'
 
-import { recognizeRegion } from '../utils/mnist'
+import { recognizeRegion } from '../../utils/mnist'
 import styles from './WritingBoard.module.css'
 
 export interface WritingBoardHandle {

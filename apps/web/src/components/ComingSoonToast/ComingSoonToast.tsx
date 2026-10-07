@@ -4,7 +4,7 @@
 import { useEffect } from 'react'
 import { create } from 'zustand'
 
-import { audio } from '../utils/audio'
+import { audio } from '../../utils/audio'
 import styles from './ComingSoonToast.module.css'
 
 interface ToastState {

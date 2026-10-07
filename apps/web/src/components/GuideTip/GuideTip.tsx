@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 
-import { usePlayerStore } from '../stores/usePlayerStore'
+import { usePlayerStore } from '../../stores/usePlayerStore'
 import styles from './GuideTip.module.css'
 
 /** 会话内已展示的引导点（两个点都看过即收尾） */

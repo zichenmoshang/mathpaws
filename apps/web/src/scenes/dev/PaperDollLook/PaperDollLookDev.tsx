@@ -7,7 +7,7 @@ import {
 } from '@mathpaws/ui'
 import { useEffect, useState } from 'react'
 
-import { useRouter } from '../../app/router'
+import { useRouter } from '../../../app/router'
 import {
   SLOT_LABEL,
   OUTFIT_OPTIONS,
@@ -19,7 +19,7 @@ import {
   optionLabel,
   type OutfitSelection,
   type SlotId,
-} from '../../paperdoll/catalog'
+} from '../../../paperdoll/catalog'
 
 import styles from './PaperDollLookDev.module.css'
 

@@ -6,13 +6,13 @@ import { PaperDoll } from '@mathpaws/paperdoll'
 import { CloudInput, PrimaryButton } from '@mathpaws/ui'
 import { useState } from 'react'
 
-import type { RouteId } from '../../app/router'
-import { buildLayers, DEFAULT_SELECTION } from '../../paperdoll/catalog'
-import { usePlayerStore } from '../../stores/usePlayerStore'
-import { audio } from '../../utils/audio'
+import type { RouteId } from '../../../app/router'
+import { buildLayers, DEFAULT_SELECTION } from '../../../paperdoll/catalog'
+import { usePlayerStore } from '../../../stores/usePlayerStore'
+import { audio } from '../../../utils/audio'
 
 import styles from './HeroIntroScene.module.css'
-import { SkyBackdrop } from './SkyBackdrop'
+import { SkyBackdrop } from '../SkyBackdrop/SkyBackdrop'
 
 const layers = buildLayers(DEFAULT_SELECTION)
 

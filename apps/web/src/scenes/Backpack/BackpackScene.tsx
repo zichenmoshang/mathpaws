@@ -2,8 +2,8 @@ import { PaperDoll } from '@mathpaws/paperdoll'
 import { BackButton, PrimaryButton, BitmapTabs } from '@mathpaws/ui'
 import { useMemo, useState, type ReactNode } from 'react'
 
-import dressingTitle from '../assets/ui/p16-dressing-title.webp'
-import platform from '../assets/ui/p16-platform.webp'
+import dressingTitle from '../../assets/ui/p16-dressing-title.webp'
+import platform from '../../assets/ui/p16-platform.webp'
 import {
   OUTFIT_OPTIONS,
   HAT_OPTIONS,
@@ -12,10 +12,10 @@ import {
   equippedToSelection,
   type OutfitSelection,
   type SlotId,
-} from '../paperdoll/catalog'
-import { useEquippedStore } from '../stores/useEquippedStore'
-import { useGachaStore } from '../stores/useGachaStore'
-import { audio } from '../utils/audio'
+} from '../../paperdoll/catalog'
+import { useEquippedStore } from '../../stores/useEquippedStore'
+import { useGachaStore } from '../../stores/useGachaStore'
+import { audio } from '../../utils/audio'
 
 import styles from './BackpackScene.module.css'
 
