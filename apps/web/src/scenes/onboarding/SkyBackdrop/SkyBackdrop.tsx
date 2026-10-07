@@ -6,7 +6,7 @@ import type { ReactNode } from 'react'
 
 import { BackgroundBleed, LogicalStage } from '../../../app/viewport'
 
-import styles from './SkyBackdrop.module.css'
+import * as s from './SkyBackdrop.css'
 
 /** 天空渐变：舞台根背景与舞台外出血层共用同一来源（避免字面量双写漂移） */
 const SKY_GRADIENT = 'linear-gradient(180deg,#8fd4ff 0%,#a8defd 46%,#bfe8fc 100%)'
@@ -17,17 +17,17 @@ export function SkyBackdrop({ children }: { children?: ReactNode }) {
       {/* 舞台外留边：同一渐变出血铺满 */}
       <BackgroundBleed background={SKY_GRADIENT} />
       <LogicalStage>
-        <div className={styles.root} style={{ background: SKY_GRADIENT }}>
+        <div className={s.root} style={{ background: SKY_GRADIENT }}>
           {CLOUDS.map((c, i) => (
-            <Cloud key={i} x={c.x} y={c.y} s={c.s} />
+            <Cloud key={i} x={c.x} y={c.y} size={c.s} />
           ))}
-          {STARS.map((s, i) => (
-            <span key={i} className={styles.star} style={{ left: s.x, top: s.y, fontSize: s.s }}>
-              {s.tone ? '✦' : '✧'}
+          {STARS.map((star, i) => (
+            <span key={i} className={s.star} style={{ left: star.x, top: star.y, fontSize: star.s }}>
+              {star.tone ? '✦' : '✧'}
             </span>
           ))}
           {/* 底部细彩虹弧 */}
-          <div className={styles.rainbow} />
+          <div className={s.rainbow} />
           {children}
         </div>
       </LogicalStage>
@@ -35,19 +35,20 @@ export function SkyBackdrop({ children }: { children?: ReactNode }) {
   )
 }
 
-function Cloud({ x, y, s }: { x: string; y: string; s: number }) {
+// 云朵缩放系数 prop 原名 s，与样式模块命名空间 s 冲突，更名 size（语义不变）
+function Cloud({ x, y, size }: { x: string; y: string; size: number }) {
   return (
-    <div className={styles.cloud} style={{ left: x, top: y, width: s * 2.4, height: s * 1.1 }}>
+    <div className={s.cloud} style={{ left: x, top: y, width: size * 2.4, height: size * 1.1 }}>
       {/* 左小圆 */}
-      <div className={styles.puff} style={{ width: s * 0.9, height: s * 0.9, left: s * 0.1, bottom: 0 }} />
+      <div className={s.puff} style={{ width: size * 0.9, height: size * 0.9, left: size * 0.1, bottom: 0 }} />
       {/* 中大圆 */}
-      <div className={styles.puff} style={{ width: s * 1.3, height: s * 1.3, left: s * 0.55, bottom: 0 }} />
+      <div className={s.puff} style={{ width: size * 1.3, height: size * 1.3, left: size * 0.55, bottom: 0 }} />
       {/* 右小圆 */}
-      <div className={styles.puff} style={{ width: s * 0.95, height: s * 0.95, left: s * 1.45, bottom: 0 }} />
+      <div className={s.puff} style={{ width: size * 0.95, height: size * 0.95, left: size * 1.45, bottom: 0 }} />
       {/* 底部平垫（把三圆底边连成平地） */}
       <div
-        className={`${styles.puff} ${styles.puffBase}`}
-        style={{ width: s * 1.9, height: s * 0.55, left: s * 0.25, bottom: 0 }}
+        className={`${s.puff} ${s.puffBase}`}
+        style={{ width: size * 1.9, height: size * 0.55, left: size * 0.25, bottom: 0 }}
       />
     </div>
   )

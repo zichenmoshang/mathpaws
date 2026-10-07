@@ -6,7 +6,7 @@ import {
 import type { PointerEvent } from 'react'
 
 import { recognizeRegion } from '../../utils/mnist'
-import styles from './WritingBoard.module.css'
+import * as s from './WritingBoard.css'
 
 export interface WritingBoardHandle {
   /** 清板并解锁所有区（答错重写） */
@@ -94,7 +94,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
           for (let i = 0; i < rects.length; i++) {
             if (locked.current[i]) continue
             try {
-               
+
               const digit = await recognizeRegion(canvas, rects[i])
               console.info(`[mnist] 识别数字: ${digit}`)
               locked.current[i] = true
@@ -138,7 +138,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
         window.removeEventListener('orientationchange', onResize)
         if (timer.current) clearTimeout(timer.current)
       }
-       
+
     }, [regions])
 
     const pos = (e: PointerEvent<HTMLCanvasElement>) => {
@@ -180,7 +180,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
     }
 
     return (
-      <div ref={wrapRef} className={styles.wrap}>
+      <div ref={wrapRef} className={s.wrap}>
         {/* 位间分隔：小数点位置画圆点，其余画竖虚线（不进 canvas，避免被识别成墨迹） */}
         {Array.from({ length: regions - 1 }, (_, k) => {
           const i = k + 1
@@ -188,7 +188,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
             return (
               <span
                 key={`s${i}`}
-                className={styles.dot}
+                className={s.dot}
                 style={{ left: `${(i / regions) * 100}%` }}
               />
             )
@@ -196,7 +196,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
           return (
             <span
               key={`s${i}`}
-              className={styles.sep}
+              className={s.sep}
               style={{ left: `${(i / regions) * 100}%` }}
             />
           )
@@ -208,7 +208,7 @@ export const WritingBoard = forwardRef<WritingBoardHandle, Props>(
           onPointerMove={onMove}
           onPointerUp={finish}
           onPointerCancel={finish}
-          className={styles.board}
+          className={s.board}
         />
       </div>
     )

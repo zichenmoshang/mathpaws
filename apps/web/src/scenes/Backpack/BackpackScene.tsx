@@ -1,5 +1,5 @@
 import { PaperDoll } from '@mathpaws/paperdoll'
-import { BackButton, PrimaryButton, BitmapTabs } from '@mathpaws/ui'
+import { BackButton, PrimaryButton, BitmapTabs, btn as uiBtn } from '@mathpaws/ui'
 import { useMemo, useState, type ReactNode } from 'react'
 
 import dressingTitle from '../../assets/ui/p16-dressing-title.webp'
@@ -17,7 +17,7 @@ import { useEquippedStore } from '../../stores/useEquippedStore'
 import { useGachaStore } from '../../stores/useGachaStore'
 import { audio } from '../../utils/audio'
 
-import styles from './BackpackScene.module.css'
+import * as s from './BackpackScene.css'
 
 // ============================================================================
 // BackpackScene —— P16 背包 / 换装页（对齐 design/high-fi/backpack/backpack.png）
@@ -29,7 +29,7 @@ import styles from './BackpackScene.module.css'
 //         未拥有 = 灰+（点击去学盒）。
 // 默认套装 / 默认鞋是基线装扮（不进池、owned 为空也始终可穿）。
 //
-// 静态样式已迁入同目录 BackpackScene.module.css（CSS Modules）；
+// 静态样式已迁入同目录 BackpackScene.css.ts（vanilla-extract）；
 // style={{...}} 仅保留 ui 组件 style prop 等无法以类表达的部分。
 // ============================================================================
 
@@ -103,7 +103,7 @@ export function BackpackScene({
   }
 
   return (
-    <div className={styles.root}>
+    <div className={s.root}>
       <Clouds />
       <Decorations />
 
@@ -116,9 +116,9 @@ export function BackpackScene({
       {/* 右上 去学盒 */}
       <button
         onClick={() => { audio.playSfx('click'); onGoGacha() }}
-        className={`mp-btn ${styles.gachaEntry}`}
+        className={`${uiBtn} ${s.gachaEntry}`}
       >
-        <span className={styles.gachaEntryIcon}>📖</span>
+        <span className={s.gachaEntryIcon}>📖</span>
         去学盒
       </button>
 
@@ -127,33 +127,33 @@ export function BackpackScene({
         src={dressingTitle}
         alt="换装书房"
         draggable={false}
-        className={styles.title}
+        className={s.title}
       />
 
-      <div className={styles.layout}>
+      <div className={s.layout}>
         {/* 左：立绘舞台（人物垂直居中） */}
-        <div className={styles.stage}>
-          <div className={styles.dollWrap}>
+        <div className={s.stage}>
+          <div className={s.dollWrap}>
             {/* 脚下平台位图 */}
             <img
               src={platform}
               alt=""
               aria-hidden
               draggable={false}
-              className={styles.platform}
+              className={s.platform}
             />
 
             {/* 立绘 */}
-            <div className={styles.doll}>
+            <div className={s.doll}>
               <PaperDoll layers={layers} background="transparent" />
             </div>
           </div>
         </div>
 
         {/* 右：槽位 + 库存（整列垂直居中；面板固定高度，切 Tab 不抖动） */}
-        <div className={styles.sideCol}>
+        <div className={s.sideCol}>
           {/* 位图 Tab */}
-          <div className={styles.tabsWrap}>
+          <div className={s.tabsWrap}>
             <BitmapTabs
               tabs={SLOT_TABS}
               active={tab}
@@ -163,8 +163,8 @@ export function BackpackScene({
           </div>
 
           {/* 磨砂面板：固定较短高度，内容从顶部开始排列 */}
-          <div className={styles.panel}>
-            <div className={styles.grid}>
+          <div className={s.panel}>
+            <div className={s.grid}>
               {SLOT_VIEW[tab].map(o => {
                 const gid = toGachaId(tab, o.id)
                 const canWear = gid === null || (gid ? isWearable(gid) : false)
@@ -188,7 +188,7 @@ export function BackpackScene({
       </div>
 
       {/* 底部标准主按钮「穿戴」 */}
-      <div className={styles.bottomBar}>
+      <div className={s.bottomBar}>
         <PrimaryButton
           disabled={!dirty}
           style={{ width: 240 }}
@@ -209,13 +209,13 @@ export function BackpackScene({
 // ---------------------------------------------------------------------------
 // 背景：柔白云朵
 // ---------------------------------------------------------------------------
-const CLOUD_CLASSES = [styles.cloud1, styles.cloud2, styles.cloud3, styles.cloud4, styles.cloud5]
+const CLOUD_CLASSES = [s.cloud1, s.cloud2, s.cloud3, s.cloud4, s.cloud5]
 
 function Clouds() {
   return (
-    <div aria-hidden className={styles.cloudsWrap}>
+    <div aria-hidden className={s.cloudsWrap}>
       {CLOUD_CLASSES.map((c, i) => (
-        <div key={i} className={`${styles.cloud} ${c}`} />
+        <div key={i} className={`${s.cloud} ${c}`} />
       ))}
     </div>
   )
@@ -240,18 +240,18 @@ function GoldStar({ size, className }: { size: number; className?: string }) {
 
 function Decorations() {
   const items: ReactNode[] = [
-    <GoldStar key="s1" size={30} className={styles.decoStar1} />,
-    <GoldStar key="s2" size={22} className={styles.decoStar2} />,
-    <GoldStar key="s3" size={26} className={styles.decoStar3} />,
-    <GoldStar key="s4" size={18} className={styles.decoStar4} />,
-    <span key="h1" className={styles.decoHeart1}>💗</span>,
-    <span key="h2" className={styles.decoHeart2}>💗</span>,
-    <span key="b1" className={styles.decoBlock} />,
-    <span key="d1" className={styles.decoDot1} />,
-    <span key="d2" className={styles.decoDot2} />,
-    <GoldStar key="s5" size={18} className={styles.decoStar5} />,
+    <GoldStar key="s1" size={30} className={s.decoStar1} />,
+    <GoldStar key="s2" size={22} className={s.decoStar2} />,
+    <GoldStar key="s3" size={26} className={s.decoStar3} />,
+    <GoldStar key="s4" size={18} className={s.decoStar4} />,
+    <span key="h1" className={s.decoHeart1}>💗</span>,
+    <span key="h2" className={s.decoHeart2}>💗</span>,
+    <span key="b1" className={s.decoBlock} />,
+    <span key="d1" className={s.decoDot1} />,
+    <span key="d2" className={s.decoDot2} />,
+    <GoldStar key="s5" size={18} className={s.decoStar5} />,
   ]
-  return <div aria-hidden className={styles.decoWrap}>{items}</div>
+  return <div aria-hidden className={s.decoWrap}>{items}</div>
 }
 
 // ---------------------------------------------------------------------------
@@ -268,25 +268,25 @@ function CircleCell({
     <button
       onClick={onClick}
       title={entry.label}
-      className={`mp-btn ${styles.cell}${state === 'locked' ? ` ${styles.cellLocked}` : ''}`}
+      className={`${uiBtn} ${s.cell}${state === 'locked' ? ` ${s.cellLocked}` : ''}`}
     >
       {entry.icon ? (
         <img
           src={entry.icon}
           alt={entry.label}
           draggable={false}
-          className={styles.cellImg}
+          className={s.cellImg}
         />
       ) : (
-        <span className={styles.cellNone}>➖</span>
+        <span className={s.cellNone}>➖</span>
       )}
 
       {/* 角标徽章：badge 基类 + 金/灰变体（对应原 badgeCheck / badgePlusLocked 继承） */}
       {state === 'equipped' && (
-        <span className={`${styles.badge} ${styles.badgeGold}`}>✓</span>
+        <span className={`${s.badge} ${s.badgeGold}`}>✓</span>
       )}
       {state !== 'equipped' && (
-        <span className={`${styles.badge} ${state === 'locked' ? styles.badgeLocked : styles.badgeGold}`}>+</span>
+        <span className={`${s.badge} ${state === 'locked' ? s.badgeLocked : s.badgeGold}`}>+</span>
       )}
     </button>
   )

@@ -3,11 +3,13 @@
 // 四角浮动的中性装扮（整身/头饰）+ 底部单抽/十连。
 // 规则对齐 config：单抽 50 / 十连 450；每次必出一件；重复仅提示"已有 XX"、
 // 不返还贝壳。结果卡品质色由 RARITY_META 驱动。
-// 静态样式已迁入同目录 GachaScene.module.css（CSS Modules）；
-// style={{...}} 仅保留运行时动态值（开盒状态、稀有度配色、延迟/进度等）。
+// 静态样式已迁入同目录 GachaScene.css.ts（vanilla-extract），稀有度配色走 styleVariants；
+// style={{...}} 仅保留运行时动态值（开盒状态、尺寸切换、进度等值通道）。
 import {
   BackButton,
+  btn as uiBtn,
 } from '@mathpaws/ui'
+import { assignInlineVars } from '@vanilla-extract/dynamic'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
@@ -27,7 +29,7 @@ import { useEconomyStore } from '../../stores/useEconomyStore'
 import { useGachaStore } from '../../stores/useGachaStore'
 import { audio } from '../../utils/audio'
 
-import styles from './GachaScene.module.css'
+import * as s from './GachaScene.css'
 
 // 四角浮动展示：从卡池定义派生代表（稀有整身 → 普通帽 → 普通整身 → 稀有帽），不再手抄 id
 const pickFloat = (rarity: Rarity, slot: CosmeticSlot): string | undefined =>
@@ -99,27 +101,27 @@ function ShellIcon({ size = 26, variant = 'gold' }: { size?: number; variant?: '
 /** 中央学盒（透明切图；开启时关闭态淡出、开盒溢光态淡入 + 轻微回弹） */
 function Chest({ opening }: { opening: boolean }) {
   return (
-    <div className={styles.chest}>
+    <div className={s.chest}>
       {/* 传说金色光晕（垫在学盒后） */}
       <img
         src={glowLegendary}
         alt=""
         aria-hidden
-        className={styles.chestGlow}
+        className={s.chestGlow}
       />
       <img
         src={gachaBox}
         alt=""
         aria-hidden
         draggable={false}
-        className={styles.chestImg}
+        className={s.chestImg}
         style={{ opacity: opening ? 0 : 1 }}
       />
       <img
         src={gachaBoxOpen}
         alt="魔法学盒"
         draggable={false}
-        className={`${styles.chestImg} ${styles.chestImgOpen}`}
+        className={`${s.chestImg} ${s.chestImgOpen}`}
         style={{
           opacity: opening ? 1 : 0,
           transform: opening ? 'scale(1.05)' : 'scale(.96)',
@@ -140,22 +142,21 @@ function FloatRing({
   if (!item) return null
   return (
     <div
-      className={styles.floatRing}
-      // 位置与动画延迟为运行时派生值，保留内联
-      style={{ ...pos, animationDelay: `${delay}s` }}
+      className={s.floatRing}
+      // 位置与动画延迟为运行时派生值，经 createVar 插槽注入（未给的方向回退 auto）
+      style={assignInlineVars({
+        [s.floatTop]: pos.top ?? 'auto',
+        [s.floatBottom]: pos.bottom ?? 'auto',
+        [s.floatLeft]: pos.left ?? 'auto',
+        [s.floatRight]: pos.right ?? 'auto',
+        [s.floatDelay]: `${delay}s`,
+      })}
     >
-      <div className={styles.floatRingInner}>
-        <img src={item.icon} alt={item.name} className={styles.floatRingImg} />
+      <div className={s.floatRingInner}>
+        <img src={item.icon} alt={item.name} className={s.floatRingImg} />
       </div>
     </div>
   )
-}
-
-// 稀有度发光配色（用于结果弹框的大卡与小格）。
-const GLOW: Record<Rarity, { edge: string; glow: string; soft: string }> = {
-  normal: { edge: '#4EA8F5', glow: 'rgba(90,176,255,.65)', soft: '#EAF4FE' },
-  rare: { edge: '#A85CF5', glow: 'rgba(177,92,245,.72)', soft: '#F6ECFD' },
-  legendary: { edge: '#FFB300', glow: 'rgba(255,206,61,.82)', soft: '#FFF8E3' },
 }
 
 const RARITY_RANK: Record<Rarity, number> = { normal: 0, rare: 1, legendary: 2 }
@@ -184,58 +185,45 @@ function GoldStar({
   )
 }
 
-// 旋转放射光芒（conic-gradient 实现，叠在大卡背后；颜色随稀有度动态注入）。
-function Rays({ color }: { color: string }) {
+// 旋转放射光芒（conic-gradient 底色由稀有度变体类注入，叠在大卡背后）。
+function Rays({ toneCls }: { toneCls: string }) {
   return (
     <div
       aria-hidden
-      className={styles.rays}
-      style={{
-        background: `conic-gradient(from 0deg, ${color} 0deg 12deg, transparent 12deg 30deg, ${color} 30deg 42deg, transparent 42deg 60deg, ${color} 60deg 72deg, transparent 72deg 90deg, ${color} 90deg 102deg, transparent 102deg 120deg, ${color} 120deg 132deg, transparent 132deg 150deg, ${color} 150deg 162deg, transparent 162deg 180deg)`,
-      }}
+      className={`${s.rays} ${toneCls}`}
     />
   )
 }
 
 // 中央发光大卡。
 function FeaturedCard({ o, compact = false }: { o: DrawOutcome; compact?: boolean }) {
-  const g = GLOW[o.item.rarity]
-  const meta = RARITY_META[o.item.rarity]
+  const tone = o.item.rarity
+  const meta = RARITY_META[tone]
   return (
     <div
-      className={styles.featuredCard}
+      className={s.featuredCard}
       style={{ width: compact ? 'min(38vw, 168px)' : 'min(52vw, 220px, 38vh)' }}
     >
-      <Rays color={g.edge} />
+      <Rays toneCls={s.raysTone[tone]} />
       {/* 卡框（稀有度色发光） */}
-      <div
-        className={styles.cardFrame}
-        style={{
-          background: `linear-gradient(160deg, ${g.edge}, #fff 40%, ${g.edge})`,
-          boxShadow: `0 0 26px ${g.glow}, 0 16px 30px rgba(0,0,0,.28)`,
-        }}
-      >
-        <div
-          className={styles.cardInner}
-          style={{ background: `radial-gradient(circle at 50% 32%, #fff, ${g.soft} 78%)` }}
-        >
+      <div className={`${s.cardFrame} ${s.cardFrameTone[tone]}`}>
+        <div className={`${s.cardInner} ${s.cardInnerTone[tone]}`}>
           {/* 内顶高光星点 */}
-          <GoldStar size={compact ? 12 : 16} className={styles.cardStarA} style={{ top: compact ? 9 : 12, left: compact ? 12 : 16 }} />
-          <GoldStar size={compact ? 10 : 12} className={styles.cardStarB} style={{ top: compact ? 22 : 30, right: compact ? 13 : 18 }} />
+          <GoldStar size={compact ? 12 : 16} className={s.cardStarA} style={{ top: compact ? 9 : 12, left: compact ? 12 : 16 }} />
+          <GoldStar size={compact ? 10 : 12} className={s.cardStarB} style={{ top: compact ? 22 : 30, right: compact ? 13 : 18 }} />
           <img
             src={o.item.icon}
             alt={o.item.name}
-            className={styles.cardImg}
-            style={{ filter: `drop-shadow(0 8px 10px ${g.glow})` }}
+            className={`${s.cardImg} ${s.cardImgTone[tone]}`}
           />
           <div
-            className={styles.cardName}
-            style={{ color: meta.color, fontSize: compact ? 15 : 19 }}
+            className={`${s.cardName} ${s.cardNameTone[tone]}`}
+            style={{ fontSize: compact ? 15 : 19 }}
           >
             {o.item.name}
           </div>
           <div
-            className={styles.cardSlot}
+            className={s.cardSlot}
             style={{ fontSize: compact ? 10 : 12 }}
           >
             {COSMETIC_SLOT_LABEL[o.item.slot]}·{meta.label}
@@ -248,32 +236,26 @@ function FeaturedCard({ o, compact = false }: { o: DrawOutcome; compact?: boolea
 
 // 十连小格奖励卡。
 function MiniRewardCard({ o, i, featured }: { o: DrawOutcome; i: number; featured: boolean }) {
-  const g = GLOW[o.item.rarity]
+  const tone = o.item.rarity
   return (
     <div
-      className={styles.miniCard}
-      style={{
-        background: `linear-gradient(160deg, ${g.edge}, ${g.soft})`,
-        boxShadow: featured ? `0 0 0 2px #fff, 0 0 10px ${g.glow}` : '0 3px 6px rgba(0,0,0,.18)',
-        // 逐格弹出延迟（随序号递增），保留内联
-        animationDelay: `${Math.min(i * 0.05, 0.45)}s`,
-      }}
+      className={
+        `${s.miniCard} ${s.miniCardTone[tone]}${featured ? ` ${s.miniCardFeaturedTone[tone]}` : ''}`
+      }
+      // 逐格弹出延迟（随序号递增），经 createVar 插槽注入
+      style={assignInlineVars({
+        [s.miniDelay]: `${Math.min(i * 0.05, 0.45)}s`,
+      })}
     >
       {!o.isNew && (
-        <span className={styles.miniDup}>
+        <span className={s.miniDup}>
           已有
         </span>
       )}
-      <div
-        className={styles.miniImgWrap}
-        style={{ background: `radial-gradient(circle at 50% 38%, #fff, ${g.soft} 80%)` }}
-      >
-        <img src={o.item.icon} alt={o.item.name} className={styles.miniImg} />
+      <div className={`${s.miniImgWrap} ${s.miniImgWrapTone[tone]}`}>
+        <img src={o.item.icon} alt={o.item.name} className={s.miniImg} />
       </div>
-      <div
-        className={styles.miniName}
-        style={{ color: RARITY_META[o.item.rarity].color }}
-      >
+      <div className={`${s.miniName} ${s.miniNameTone[tone]}`}>
         {o.item.name}
       </div>
     </div>
@@ -299,30 +281,30 @@ function ResultModal({
   })
 
   return (
-    <div onClick={onClose} className={styles.overlay}>
+    <div onClick={onClose} className={s.overlay}>
       <div
         onClick={e => e.stopPropagation()}
-        className={styles.panel}
+        className={s.panel}
         style={{ width: isTen ? 'min(96vw, 560px)' : 'min(90vw, 380px)' }}
       >
         {/* 顶部装饰：大星 + 飘带 + 小星 + 两侧金珠 */}
-        <div aria-hidden className={styles.decoStarMain}>
+        <div aria-hidden className={s.decoStarMain}>
           <GoldStar size={46} />
         </div>
-        <div aria-hidden className={styles.decoStarLeft}>
-          <GoldStar size={20} className={styles.decoStarSmall} />
+        <div aria-hidden className={s.decoStarLeft}>
+          <GoldStar size={20} className={s.decoStarSmall} />
         </div>
-        <div aria-hidden className={styles.decoStarRight}>
-          <GoldStar size={20} className={styles.decoStarSmall} />
+        <div aria-hidden className={s.decoStarRight}>
+          <GoldStar size={20} className={s.decoStarSmall} />
         </div>
         {/* 金珠 */}
-        <div aria-hidden className={`${styles.goldBead} ${styles.goldBeadLeft}`} />
-        <div aria-hidden className={`${styles.goldBead} ${styles.goldBeadRight}`} />
+        <div aria-hidden className={`${s.goldBead} ${s.goldBeadLeft}`} />
+        <div aria-hidden className={`${s.goldBead} ${s.goldBeadRight}`} />
 
         {/* 金色厚边框面板 */}
-        <div className={styles.panelFrame}>
+        <div className={s.panelFrame}>
           <div
-            className={styles.panelBody}
+            className={s.panelBody}
             style={{
               padding: isTen ? '28px 16px 16px' : '30px 18px 20px',
               gap: isTen ? 10 : 14,
@@ -330,11 +312,11 @@ function ResultModal({
           >
             {/* 标题金横幅 */}
             <div
-              className={styles.banner}
+              className={s.banner}
               style={{ height: isTen ? 38 : 42 }}
             >
               <span
-                className={`${styles.bannerText} ${styles.strokeGold}`}
+                className={`${s.bannerText} ${s.strokeGold}`}
                 style={{ fontSize: isTen ? 19 : 21 }}
               >
                 {anyNew ? '获得新装扮！' : '本次收获'}
@@ -345,7 +327,7 @@ function ResultModal({
 
             {/* 十连网格 */}
             {isTen && (
-              <div className={styles.tenGrid}>
+              <div className={s.tenGrid}>
                 {outcomes.map((o, i) => (
                   <MiniRewardCard
                     key={`${o.item.id}-${i}`}
@@ -357,10 +339,10 @@ function ResultModal({
             )}
 
             {/* 金胶囊确认按钮 + 新装扮引导去背包 */}
-            <div className={styles.actions}>
+            <div className={s.actions}>
               {anyNew && onGoBackpack && (
                 <button
-                  className={`mp-btn ${styles.goBackpackBtn}`}
+                  className={`${uiBtn} ${s.goBackpackBtn}`}
                   onClick={() => { audio.playSfx('click'); onGoBackpack() }}
                   style={{ height: isTen ? 50 : 56 }}
                 >
@@ -368,16 +350,16 @@ function ResultModal({
                 </button>
               )}
               <button
-                className={`mp-btn ${styles.okBtn}`}
+                className={`${uiBtn} ${s.okBtn}`}
                 onClick={() => { audio.playSfx('click'); onClose() }}
                 style={{ height: isTen ? 50 : 56 }}
               >
-                <span aria-hidden className={styles.okBtnLayer1} />
-                <span aria-hidden className={styles.okBtnLayer2} />
-                <span aria-hidden className={styles.okBtnLayer3} />
-                <GoldStar size={18} className={styles.okBtnStarLeft} />
-                <GoldStar size={18} className={styles.okBtnStarRight} />
-                <span className={`${styles.okBtnText} ${styles.strokeGold}`}>
+                <span aria-hidden className={s.okBtnLayer1} />
+                <span aria-hidden className={s.okBtnLayer2} />
+                <span aria-hidden className={s.okBtnLayer3} />
+                <GoldStar size={18} className={s.okBtnStarLeft} />
+                <GoldStar size={18} className={s.okBtnStarRight} />
+                <span className={`${s.okBtnText} ${s.strokeGold}`}>
                   好的
                 </span>
               </button>
@@ -428,7 +410,7 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
 
   return (
     <div
-      className={styles.root}
+      className={s.root}
       // 星空背景图为打包资产 URL，保留内联注入
       style={{ background: `url(${gachaBg}) center / cover no-repeat, #12276B` }}
     >
@@ -440,13 +422,13 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
       />
 
       {/* 右上贝壳 */}
-      <div className={styles.shellPill}>
+      <div className={s.shellPill}>
         <ShellIcon size={26} />
-        <span className={styles.shellCount}>{shells}</span>
+        <span className={s.shellCount}>{shells}</span>
       </div>
 
       {/* 顶部保底进度 */}
-      <div className={styles.pityRow}>
+      <div className={s.pityRow}>
         <PityText label="稀有" cur={pityRare} total={RARE_PITY} />
         <PityText label="传说" cur={pityLegend} total={LEGEND_PITY} />
       </div>
@@ -457,12 +439,12 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
       ))}
 
       {/* 中央学盒 */}
-      <div className={styles.chestWrap}>
+      <div className={s.chestWrap}>
         <Chest opening={opening} />
       </div>
 
       {/* 底部抽卡按钮 */}
-      <div className={styles.bottomBar}>
+      <div className={s.bottomBar}>
         <DrawButton
           tone="sun"
           title="抽一次"
@@ -496,15 +478,15 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
 function PityText({ label, cur, total }: { label: string; cur: number; total: number }) {
   const pct = Math.min(1, cur / total)
   return (
-    <div className={styles.pity}>
+    <div className={s.pity}>
       <GoldStar size={14} />
-      <span className={styles.pityLabel}>
+      <span className={s.pityLabel}>
         {label}保底 {cur}/{total}
       </span>
       {/* 底部内凹轨道 + 金色进度填充 */}
-      <span aria-hidden className={styles.pityTrack}>
+      <span aria-hidden className={s.pityTrack}>
         <span
-          className={styles.pityFill}
+          className={s.pityFill}
           style={{ width: `${pct * 100}%` }}
         />
       </span>
@@ -521,15 +503,15 @@ function DrawButton({
   onClick: () => void
 }) {
   const isSky = tone === 'sky'
-  const toneCls = isSky ? styles.drawBtnSky : styles.drawBtnSun
-  const strokeCls = isSky ? styles.strokeSky : styles.strokeSun
+  const toneCls = isSky ? s.drawBtnSky : s.drawBtnSun
+  const strokeCls = isSky ? s.strokeSky : s.strokeSun
 
   const label = (
-    <span className={styles.drawLabel}>
-      <span className={`${styles.drawTitle} ${strokeCls}`}>
+    <span className={s.drawLabel}>
+      <span className={`${s.drawTitle} ${strokeCls}`}>
         {title}
       </span>
-      <span className={`${styles.drawCost} ${strokeCls}`}>
+      <span className={`${s.drawCost} ${strokeCls}`}>
         {cost}贝壳
       </span>
     </span>
@@ -538,7 +520,7 @@ function DrawButton({
   if (isSky) {
     return (
       <button
-        className={`mp-btn ${styles.drawBtn} ${toneCls}`}
+        className={`${uiBtn} ${s.drawBtn} ${toneCls}`}
         disabled={disabled}
         onClick={onClick}
         // 禁用态透明度/指针为运行时状态，保留内联
@@ -550,9 +532,9 @@ function DrawButton({
           alt=""
           aria-hidden
           draggable={false}
-          className={styles.flagImg}
+          className={s.flagImg}
         />
-        <span className={styles.shellWrap}>
+        <span className={s.shellWrap}>
           <ShellIcon size={34} variant="warm" />
         </span>
         {label}
@@ -562,18 +544,18 @@ function DrawButton({
 
   return (
     <button
-      className={`mp-btn ${styles.drawBtn} ${toneCls}`}
+      className={`${uiBtn} ${s.drawBtn} ${toneCls}`}
       disabled={disabled}
       onClick={onClick}
       style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1 }}
     >
       {/* 亮金边（顶亮底暗斜面） */}
-      <span aria-hidden className={styles.sunLayer1} />
+      <span aria-hidden className={s.sunLayer1} />
       {/* 金色牌面 */}
-      <span aria-hidden className={styles.sunLayer2} />
+      <span aria-hidden className={s.sunLayer2} />
       {/* 顶部内高光 */}
-      <span aria-hidden className={styles.sunLayer3} />
-      <span className={styles.shellWrap}>
+      <span aria-hidden className={s.sunLayer3} />
+      <span className={s.shellWrap}>
         <ShellIcon size={34} variant="warm" />
       </span>
       {label}

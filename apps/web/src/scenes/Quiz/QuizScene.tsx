@@ -41,7 +41,8 @@ import { useMasteryStore } from '../../stores/useMasteryStore'
 import { useWrongbookStore } from '../../stores/useWrongbookStore'
 import { audio } from '../../utils/audio'
 import { warmupModel } from '../../utils/mnist'
-import styles from './QuizScene.module.css'
+
+import * as s from './QuizScene.css'
 
 type Verdict = 'none' | 'correct' | 'wrong'
 
@@ -267,34 +268,34 @@ export function QuizScene(
   const promptWidth = ((1080 - 300) / ORIG.w) * 100
 
   return (
-    <div className={styles.scene}>
+    <div className={s.scene}>
       {/* 顶部栏：返回 / 标题 / 进度+宝箱，同一层级 */}
-      <div className={styles.topBar}>
+      <div className={s.topBar}>
         <BackButton onClick={() => { audio.playSfx('click'); setConfirmExit(true) }} />
         <img
           src={titleImg} alt="计算正确答案" draggable={false}
-          className={styles.titleImg}
+          className={s.titleImg}
         />
-        <div className={styles.progressWrap}>
+        <div className={s.progressWrap}>
           <ProgressBar ratio={progress} base="#ffffff" deep="rgba(255,255,255,.95)" height={16} />
-          <img src={chestIcon} alt="" draggable={false} className={styles.chestInBar} />
+          <img src={chestIcon} alt="" draggable={false} className={s.chestInBar} />
         </div>
       </div>
 
       {/* 笔记本舞台 */}
-      <div className={styles.bookArea}>
-        <div ref={stageRef} className={styles.stage}>
+      <div className={s.bookArea}>
+        <div ref={stageRef} className={s.stage}>
           <img src={pageLeftImg} alt="" draggable={false}
-            className={styles.fillImg} style={box(177, 331, 1173, 1661)} />
+            className={s.fillImg} style={box(177, 331, 1173, 1661)} />
           <img src={pageRightImg} alt="" draggable={false}
-            className={styles.fillImg} style={box(1203, 333, 2196, 1660)} />
+            className={s.fillImg} style={box(1203, 333, 2196, 1660)} />
           <img src={ringsImg} alt="" draggable={false}
-            className={styles.peNone} style={box(1099, 506, 1275, 1476)} />
+            className={s.peNone} style={box(1099, 506, 1275, 1476)} />
 
           {/* 题目（前端排版，自适应单行；fontPx 为运行时自适应字号） */}
           <div
             ref={promptRef}
-            className={styles.prompt}
+            className={s.prompt}
             style={{
               left: `${promptLeft}%`,
               width: `${promptWidth}%`,
@@ -302,11 +303,11 @@ export function QuizScene(
               fontSize: fontPx,
             }}
           >
-            <span className={styles.promptText}>{question.prompt}</span>
+            <span className={s.promptText}>{question.prompt}</span>
             <span>=</span>
             {/* 边框/文字颜色随判定状态变化，保留内联 */}
             <span
-              className={styles.answerBox}
+              className={s.answerBox}
               style={{
                 border: `0.055em dashed ${verdict === 'none' ? 'rgba(110,128,146,.6)' : boxColor}`,
                 color: boxColor,
@@ -319,7 +320,7 @@ export function QuizScene(
           {/* 手写框底板 + 标签 */}
           <img src={writingBoxImg} alt="" draggable={false} style={box(1335, 501, 2058, 1446)} />
           <img src={tagImg} alt="" draggable={false}
-            className={styles.peNone} style={box(1514, 319, 1880, 459)} />
+            className={s.peNone} style={box(1514, 319, 1880, 459)} />
 
           {/* 手写板：按实际手写区域大小（内缩对齐虚线框），高度 70% */}
           <div style={box(1347, 513, 2046, 1458)}>
@@ -338,22 +339,22 @@ export function QuizScene(
           {!hasInput && (
             <>
               <img src={hintTextImg} alt="" draggable={false}
-                className={styles.peNone} style={box(1548, 840, 1847, 897)} />
+                className={s.peNone} style={box(1548, 840, 1847, 897)} />
               <img src={pencilImg} alt="" draggable={false}
-                className={styles.peNone} style={box(1654, 947, 1751, 1052)} />
+                className={s.peNone} style={box(1654, 947, 1751, 1052)} />
             </>
           )}
 
           {/* 答对提示：右上角 +奖励贝壳 + 太棒啦 */}
           {verdict === 'correct' && (
-            <div className={styles.correctHint} style={box(1820, 350, 2120, 560)}>
-              <div className={styles.correctRow}>
-                <span className={styles.correctPlus}>
+            <div className={s.correctHint} style={box(1820, 350, 2120, 560)}>
+              <div className={s.correctRow}>
+                <span className={s.correctPlus}>
                   +{REWARD.oralPerQuestion}
                 </span>
-                <img src={shellIcon} alt="贝壳" className={styles.correctShell} />
+                <img src={shellIcon} alt="贝壳" className={s.correctShell} />
               </div>
-              <span className={styles.cheerText}>
+              <span className={s.cheerText}>
                 太棒啦！
               </span>
             </div>
@@ -362,14 +363,14 @@ export function QuizScene(
           {/* 答错提示：落笔重写即消失（左侧错误数字与红框仍保留） */}
           {verdict === 'wrong' && !hasInput && (
             <div
-              className={styles.floatHint}
+              className={s.floatHint}
               style={{
                 left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
                 top: `${((519 - ORIG.y) / ORIG.h) * 100}%`,
                 width: `${(723 / ORIG.w) * 100}%`,
               }}
             >
-              <span className={styles.floatHintTag}>
+              <span className={s.floatHintTag}>
                 答错了，再写一次吧
               </span>
             </div>
@@ -378,14 +379,14 @@ export function QuizScene(
           {/* 识别服务不可用提示（模型/后端加载失败时由 WritingBoard 上报），位于书写区下缘 */}
           {recogError && (
             <div
-              className={styles.floatHint}
+              className={s.floatHint}
               style={{
                 left: `${((1335 - ORIG.x) / ORIG.w) * 100}%`,
                 top: `${((1470 - ORIG.y) / ORIG.h) * 100}%`,
                 width: `${(723 / ORIG.w) * 100}%`,
               }}
             >
-              <span className={styles.floatHintTag}>
+              <span className={s.floatHintTag}>
                 识别暂时不可用，请刷新重试
               </span>
             </div>
@@ -410,5 +411,3 @@ export function QuizScene(
     </div>
   )
 }
-
-

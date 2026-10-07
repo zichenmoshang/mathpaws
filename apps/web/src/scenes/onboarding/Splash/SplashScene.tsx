@@ -22,7 +22,7 @@ import { audio } from '../../../utils/audio'
 // 资产台账：assets/hifi/splash/manifest.json
 import { preloadCritical } from '../../../utils/preload'
 
-import styles from './SplashScene.module.css'
+import * as s from './SplashScene.css'
 
 const K = 1024 / 2364
 const MIN_VISIBLE_MS = 1400
@@ -44,7 +44,7 @@ const LAYERS: LayerDef[] = [
 // 换算值 [480,1488,1887,1595]（x0=480），否则进度条偏左遮挡数字"1"。
 const BAR_BBOX: [number, number, number, number] = [480, 1488, 1887, 1595]
 
-/** 原稿 bbox → 逻辑像素定位（position:absolute 由 styles.layer 提供） */
+/** 原稿 bbox → 逻辑像素定位（position:absolute 由 s.layer 提供） */
 const place = (bbox: [number, number, number, number]): CSSProperties => {
   const [x0, y0, x1, y1] = bbox
   return {
@@ -112,23 +112,23 @@ export function SplashScene({ onNavigate }: { onNavigate: (id: RouteId) => void 
       {/* 舞台外留边：同一背景图 cover 出血铺满 */}
       <BackgroundBleed background={`url(${bg}) center / cover no-repeat`} />
       <LogicalStage>
-        <div className={styles.scene}>
+        <div className={s.scene}>
           {/* z0 重绘背景 */}
-          <img src={bg} alt="" draggable={false} className={styles.bg} />
+          <img src={bg} alt="" draggable={false} className={s.bg} />
 
           {/* 数字符号组 → logo → 雏鸟（z 序） */}
           {LAYERS.map(l => (
-            <img key={l.z} src={l.src} alt="" draggable={false} className={styles.layer} style={place(l.bbox)} />
+            <img key={l.z} src={l.src} alt="" draggable={false} className={s.layer} style={place(l.bbox)} />
           ))}
 
           {/* 进度条：CSS 空轨道垫底，满格位图按进度从左揭示 */}
-          <div className={styles.layer} style={place(BAR_BBOX)}>
-            <div className={styles.barTrack}>
-              <div className={styles.barSlot} />
+          <div className={s.layer} style={place(BAR_BBOX)}>
+            <div className={s.barTrack}>
+              <div className={s.barSlot} />
             </div>
             <img
               src={bar} alt="" draggable={false}
-              className={styles.barFill}
+              className={s.barFill}
               style={{ clipPath: `inset(0 ${(1 - shown) * 100}% 0 0)` }}
             />
           </div>

@@ -9,7 +9,7 @@
 // A/B 必须肉眼不可辨、差异只允许出现在 1-2px 颈缝弧。
 //
 // 注意：B 走的就是 PaperDoll 组件同一套 composeLook，本页不重复实现算法。
-// 静态样式已迁入同目录 PaperDollCompositeDev.module.css（CSS Modules）；
+// 静态样式已迁入同目录 PaperDollCompositeDev.css.ts（vanilla-extract）；
 // style={{...}} 仅保留运行时动态值（小标题/统计值的判定配色）。
 // ============================================================================
 import {
@@ -46,7 +46,7 @@ import truthWizard from '../../../assets/paperdoll/_truth/outfits/outfit-wizard-
 import wizardHeadUrl from '../../../assets/paperdoll/layers/heads/head-wizard@2x.webp'
 import shoeUrl from '../../../assets/paperdoll/layers/shoes/shoe-default@2x.webp'
 
-import styles from './PaperDollCompositeDev.module.css'
+import * as s from './PaperDollCompositeDev.css'
 
 const N = 2048
 
@@ -235,40 +235,40 @@ export function PaperDollCompositeDev() {
   }, [rows])
 
   return (
-    <div className={styles.root}>
-      <h2 className={styles.heading}>
+    <div className={s.root}>
+      <h2 className={s.heading}>
         运行时合成回归 —— 生产 composeLook 与离线真值 A/B（wizard 头 × 6 身体）
       </h2>
-      <div className={styles.intro}>
+      <div className={s.intro}>
         A=离线烘焙真值（_truth）　B=生产路径（PaperDoll 同款 composeLook + 运行时 relit）。
         判定：6 行颈部放大不可辨、热图无结构性亮斑（允许 1-2px 接缝弧）。
       </div>
-      {err ? <pre className={styles.err}>{err}</pre> : null}
-      {!rows && !err ? <div className={styles.progress}>{progress}</div> : null}
+      {err ? <pre className={s.err}>{err}</pre> : null}
+      {!rows && !err ? <div className={s.progress}>{progress}</div> : null}
 
       {rows?.map(r => (
-        <div key={r.id} className={styles.rowCard}>
-          <div className={styles.labelCol}>
-            <div className={styles.labelTitle}>{r.label}</div>
-            <div className={styles.labelId}>{r.id}</div>
+        <div key={r.id} className={s.rowCard}>
+          <div className={s.labelCol}>
+            <div className={s.labelTitle}>{r.label}</div>
+            <div className={s.labelId}>{r.id}</div>
           </div>
           <div>
             {/* 小标题配色随列类型动态注入 */}
-            <div className={styles.cap} style={{ color: '#546e7a' }}>A 真值<canvas ref={el => { refs.current[`${r.id}-fa`] = el }} className={styles.canvas} /></div>
+            <div className={s.cap} style={{ color: '#546e7a' }}>A 真值<canvas ref={el => { refs.current[`${r.id}-fa`] = el }} className={s.canvas} /></div>
           </div>
           <div>
-            <div className={styles.cap} style={{ color: '#1565C0' }}>B 生产 composeLook<canvas ref={el => { refs.current[`${r.id}-fb`] = el }} className={styles.canvas} /></div>
+            <div className={s.cap} style={{ color: '#1565C0' }}>B 生产 composeLook<canvas ref={el => { refs.current[`${r.id}-fb`] = el }} className={s.canvas} /></div>
           </div>
           <div>
-            <div className={styles.cap} style={{ color: '#546e7a' }}>颈部 A<canvas ref={el => { refs.current[`${r.id}-za`] = el }} className={styles.canvas} /></div>
+            <div className={s.cap} style={{ color: '#546e7a' }}>颈部 A<canvas ref={el => { refs.current[`${r.id}-za`] = el }} className={s.canvas} /></div>
           </div>
           <div>
-            <div className={styles.cap} style={{ color: '#1565C0' }}>颈部 B<canvas ref={el => { refs.current[`${r.id}-zb`] = el }} className={styles.canvas} /></div>
+            <div className={s.cap} style={{ color: '#1565C0' }}>颈部 B<canvas ref={el => { refs.current[`${r.id}-zb`] = el }} className={s.canvas} /></div>
           </div>
           <div>
-            <div className={styles.cap} style={{ color: '#b71c1c' }}>热图 ×8<canvas ref={el => { refs.current[`${r.id}-h`] = el }} className={styles.canvas} /></div>
+            <div className={s.cap} style={{ color: '#b71c1c' }}>热图 ×8<canvas ref={el => { refs.current[`${r.id}-h`] = el }} className={s.canvas} /></div>
           </div>
-          <div className={styles.statsCol}>
+          <div className={s.statsCol}>
             颈色 RGB({r.stats.neck.map(v => Math.round(v)).join(', ')})<br />
             全图 均值 {r.stats.meanAll.toFixed(2)} / P95 {r.stats.p95All} / &gt;25px {r.stats.over25All}<br />
             颈部 均值 <b style={{ color: r.stats.meanBand > 4 ? '#c62828' : '#2e7d32' }}>{r.stats.meanBand.toFixed(2)}</b>

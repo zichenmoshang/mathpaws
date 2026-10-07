@@ -1,10 +1,11 @@
 // 新手引导 B（M4-P13+G，简化版）：仅两个点——答题手写区（quiz）、农场选种（farm）。
 // 可跳过、不重播（guideDone 持久化于 profile 表）；3D 摇杆/转视角引导已随广场 2D 化删除。
+import { btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import { usePlayerStore } from '../../stores/usePlayerStore'
-import styles from './GuideTip.module.css'
+import * as s from './GuideTip.css'
 
 /** 会话内已展示的引导点（两个点都看过即收尾） */
 const shown = new Set<string>()
@@ -29,7 +30,7 @@ export function GuideTip({
   text: string
   style?: CSSProperties
 }) {
-  const guideDone = usePlayerStore(s => s.guideDone)
+  const guideDone = usePlayerStore(st => st.guideDone)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -53,12 +54,12 @@ export function GuideTip({
   }
 
   return (
-    // 定位由调用方经 style prop 内联传入（覆盖 module.css 中的静态样式）
-    <div className={styles.wrap} style={style}>
-      <span className={styles.text}>{text}</span>
-      <div className={styles.actions}>
-        <button type="button" className={`mp-btn ${styles.okBtn}`} onClick={() => close(false)}>知道了</button>
-        <button type="button" className={`mp-btn ${styles.skipBtn}`} onClick={() => close(true)}>跳过引导</button>
+    // 定位由调用方经 style prop 内联传入（覆盖 css.ts 中的静态样式）
+    <div className={s.wrap} style={style}>
+      <span className={s.text}>{text}</span>
+      <div className={s.actions}>
+        <button type="button" className={`${uiBtn} ${s.okBtn}`} onClick={() => close(false)}>知道了</button>
+        <button type="button" className={`${uiBtn} ${s.skipBtn}`} onClick={() => close(true)}>跳过引导</button>
       </div>
     </div>
   )

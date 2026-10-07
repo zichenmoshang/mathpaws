@@ -11,9 +11,10 @@
 //   右侧 3 卡手动轮播（练口算可进；真题/错题本"即将开放"）；连学卡弹 ChestPanel；
 //   已打卡不置灰练口算；滑动与点击不冲突。
 // 内容包在 1024×768 LogicalStage 内（原稿 2048×1536，坐标 ×K(0.5) 折算的逻辑像素
-//   已固化到 HomeScene.module.css）；舞台外留边由 BackgroundBleed 以同背景 cover 填充。
+//   已固化到 HomeScene.css.ts）；舞台外留边由 BackgroundBleed 以同背景 cover 填充。
 // ============================================================================
 import { PaperDoll } from '@mathpaws/paperdoll'
+import { btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 
 import type { RouteId } from '../../app/router'
@@ -35,7 +36,7 @@ import { useStreakStore } from '../../stores/useStreakStore'
 import { dayKey } from '../../utils/id'
 import { preloadIdle } from '../../utils/preload'
 import { audio } from '../../utils/audio'
-import styles from './HomeScene.module.css'
+import * as s from './HomeScene.css'
 // 拆层资产（台账见同目录 manifest.json）
 // 注意：topbar.webp / card-panel.webp 被模型重绘成"不透明灰"（alpha≈254），
 // 半透明玻璃必须前端 CSS 绘制（spec §2），故两者弃用不入渲染，仅留档。
@@ -62,19 +63,19 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   const studiedToday = lastStudyDate === dayKey()
 
   return (
-    <div className={styles.scene}>
+    <div className={s.scene}>
       {/* 舞台外出血背景：同一张背景图 cover 填满视口留边（加载前以天空蓝兜底） */}
       <BackgroundBleed background="#7dc9f2">
-        <img src={bg} alt="" aria-hidden draggable={false} className={styles.bleedImg} />
+        <img src={bg} alt="" aria-hidden draggable={false} className={s.bleedImg} />
       </BackgroundBleed>
 
       <LogicalStage>
-        <div className={styles.stage}>
+        <div className={s.stage}>
           {/* z0 舞台内背景：铺满 1024×768 舞台，随舞台等比缩放不变形 */}
-          <img src={bg} alt="" draggable={false} className={styles.stageBg} />
+          <img src={bg} alt="" draggable={false} className={s.stageBg} />
 
           {/* 顶栏：z1 玻璃底板（CSS 毛玻璃，重绘灰位图弃用）+ 前端排版内容 */}
-          <div aria-hidden className={styles.glassTopBar} />
+          <div aria-hidden className={s.glassTopBar} />
           <HomeTopBar
             layers={layers}
             heroName={heroName || '小朋友'}
@@ -118,28 +119,28 @@ function HomeTopBar({
   return (
     <>
       {/* 头像：圆形容器内裁出纸娃娃头肩（z2 位） */}
-      <div className={styles.avatar}>
-        <div className={styles.avatarDoll}>
+      <div className={s.avatar}>
+        <div className={s.avatarDoll}>
           <PaperDoll layers={layers} background="white" />
         </div>
       </div>
 
       {/* 用户名（z3 位） */}
-      <span className={styles.heroName}>
+      <span className={s.heroName}>
         {heroName}
       </span>
 
       {/* 连学 / 累计胶囊（z4/z5 位） */}
-      <TopPill text={`连学${streak}天`} className={styles.topPillStreak} />
-      <TopPill text={`累计${totalDays}天`} className={styles.topPillTotal} />
+      <TopPill text={`连学${streak}天`} className={s.topPillStreak} />
+      <TopPill text={`累计${totalDays}天`} className={s.topPillTotal} />
 
       {/* 齿轮（z6 位） */}
       <button
         aria-label="设置"
-        className={`mp-btn ${styles.gearBtn}`}
+        className={`${uiBtn} ${s.gearBtn}`}
         onClick={() => { audio.playSfx('click'); onSettings() }}
       >
-        <img src={gearIcon} alt="" draggable={false} className={styles.gearIcon} />
+        <img src={gearIcon} alt="" draggable={false} className={s.gearIcon} />
       </button>
     </>
   )
@@ -147,7 +148,7 @@ function HomeTopBar({
 
 function TopPill({ text, className }: { text: string; className: string }) {
   return (
-    <span className={`${styles.topPill} ${className}`}>
+    <span className={`${s.topPill} ${className}`}>
       {text}
     </span>
   )
@@ -168,25 +169,25 @@ function HeroStage({
       {/* 圆台（旧资产 p16-platform，原稿 z7 底座形态近似） */}
       <img
         src={platform} alt="" aria-hidden draggable={false}
-        className={styles.platform}
+        className={s.platform}
       />
 
       {/* PaperDoll 主角（可随装扮变） */}
-      <div className={`mp-doll-bob-wrap ${styles.dollWrap}`}>
+      <div className={s.dollWrap}>
         <PaperDoll layers={layers} background="transparent" />
       </div>
 
       {/* 趴兔 z8 */}
       <img
         src={rabbitLie} alt="雪球兔" draggable={false}
-        className={styles.rabbit}
+        className={s.rabbit}
       />
 
       {/* 益智乐园 z9：位图按钮（固定文案），透明按钮覆盖 */}
-      <img src={btnPlaza} alt="" aria-hidden draggable={false} className={styles.plazaBtnImg} />
+      <img src={btnPlaza} alt="" aria-hidden draggable={false} className={s.plazaBtnImg} />
       <button
         type="button" aria-label="进入益智乐园"
-        className={`mp-btn ${styles.plazaBtn}`}
+        className={`${uiBtn} ${s.plazaBtn}`}
         onClick={() => { audio.playSfx('click'); onEnterPlaza() }}
       />
     </>
@@ -216,9 +217,9 @@ const STUDY_CARDS: StudyCardDef[] = [
 
 // 各色调的标签 / CTA 样式类（静态渐变，原 TONE 常量迁入 CSS）
 const TONE_CLASS: Record<CardTone, { tag: string; cta: string }> = {
-  grass: { tag: styles.tagGrass, cta: styles.ctaGrass },
-  sky: { tag: styles.tagSky, cta: styles.ctaSky },
-  orange: { tag: styles.tagOrange, cta: styles.ctaOrange },
+  grass: { tag: s.tagTone.grass, cta: s.ctaTone.grass },
+  sky: { tag: s.tagTone.sky, cta: s.ctaTone.sky },
+  orange: { tag: s.tagTone.orange, cta: s.ctaTone.orange },
 }
 
 // 横向卡牌堆叠轮播（horizontal card stack/deck，coverflow 式）：
@@ -331,7 +332,7 @@ function StudyCardCarousel({
         onPointerMove={onPointerMove}
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
-        className={styles.carousel}
+        className={s.carousel}
       >
         {STUDY_CARDS.map((card, i) => {
           const d = i - index
@@ -342,7 +343,7 @@ function StudyCardCarousel({
           return (
             <div
               key={card.id}
-              className={styles.cardFrame}
+              className={s.cardFrame}
               style={{
                 transform: `translateX(${f.x}px) scale(${f.scale})`,
                 transition: moving ? 'none' : 'transform .34s cubic-bezier(.22,.9,.3,1), opacity .3s ease',
@@ -366,12 +367,12 @@ function StudyCardCarousel({
       </div>
 
       {/* 圆点指示器（z16 位） */}
-      <div className={styles.dots}>
+      <div className={s.dots}>
         {STUDY_CARDS.map((c, i) => (
           <button
             key={c.id}
             aria-label={`第 ${i + 1} 张卡片`}
-            className={`mp-btn ${styles.dot} ${i === index ? styles.dotActive : ''}`}
+            className={`${uiBtn} ${s.dot} ${i === index ? s.dotActive : ''}`}
             onClick={() => { audio.playSfx('click'); setIndex(i) }}
           />
         ))}
@@ -420,10 +421,10 @@ function StudyCard({
     <div
       onClick={bodyClick}
       role={card.id === 'streak' ? 'button' : undefined}
-      className={`${styles.card} ${card.id === 'streak' ? styles.cardClickable : ''}`}
+      className={`${s.card} ${card.id === 'streak' ? s.cardClickable : ''}`}
     >
       {/* 顶部标签（z12 位） */}
-      <div className={`${styles.tag} ${tone.tag}`}>
+      <div className={`${s.tag} ${tone.tag}`}>
         {card.tag}
       </div>
 
@@ -436,7 +437,7 @@ function StudyCard({
       {/* CTA（z15 位，CSS 渐变钮，3 卡文案不同） */}
       <button
         type="button"
-        className={`mp-btn ${styles.cta} ${tone.cta}`}
+        className={`${uiBtn} ${s.cta} ${tone.cta}`}
         onClick={(e) => {
           e.stopPropagation()
           if (!interactive || wasDragging.current) return
@@ -453,7 +454,7 @@ function StudyCard({
 
 function CardArt({ children }: { children: ReactNode }) {
   return (
-    <div className={styles.cardArt}>
+    <div className={s.cardArt}>
       {children}
     </div>
   )
@@ -464,11 +465,11 @@ function CardStreakBody({ claimedToday, studiedToday, streak }: { claimedToday: 
     return (
       <>
         <CardArt>
-          <img src={chestIcon} alt="" draggable={false} className={`${styles.artImg} ${styles.artImgFloat}`} />
+          <img src={chestIcon} alt="" draggable={false} className={`${s.artImg} ${s.artImgFloat}`} />
         </CardArt>
-        <div className={styles.textBlock}>
-          <div className={styles.doneTitle}>今日已打卡</div>
-          <div className={styles.doneDesc}>奖励已领取，可以继续练习口算</div>
+        <div className={s.textBlock}>
+          <div className={s.doneTitle}>今日已打卡</div>
+          <div className={s.doneDesc}>奖励已领取，可以继续练习口算</div>
         </div>
       </>
     )
@@ -477,13 +478,13 @@ function CardStreakBody({ claimedToday, studiedToday, streak }: { claimedToday: 
     <>
       {/* 闹钟+书 z13（页内 left 71.5 top 66.5 231×220；未学习时半透明） */}
       <img src={alarmBooks} alt="" draggable={false}
-        className={styles.alarmArt} style={{ opacity: studiedToday ? 1 : 0.7 }} />
-      <div className={styles.streakText}>
+        className={s.alarmArt} style={{ opacity: studiedToday ? 1 : 0.7 }} />
+      <div className={s.streakText}>
         {studiedToday
           ? (streak > 0 ? `已连续学习${streak}天` : '今天开始连学打卡吧')
           : '完成 1 轮口算后可打卡'}
       </div>
-      <div className={styles.starsRow}>
+      <div className={s.starsRow}>
         {Array.from({ length: 5 }).map((_, i) => <GoldStar key={i} size={26} filled={studiedToday && i < Math.max(1, streak)} />)}
       </div>
     </>
@@ -494,9 +495,9 @@ function CardRealBody() {
   return (
     <>
       <CardArt>
-        <div className={styles.quizArt}>
+        <div className={s.quizArt}>
           {['A', 'B', 'C'].map(letter => (
-            <span key={letter} className={styles.quizLetter}>
+            <span key={letter} className={s.quizLetter}>
               {letter}
             </span>
           ))}
@@ -511,7 +512,7 @@ function CardWrongBody() {
   return (
     <>
       <CardArt>
-        <img src={notebookIcon} alt="" draggable={false} className={styles.artImg} />
+        <img src={notebookIcon} alt="" draggable={false} className={s.artImg} />
       </CardArt>
       <CardText title="错题本" desc="做错的题在这里，重做还能赢贝壳" />
     </>
@@ -520,9 +521,9 @@ function CardWrongBody() {
 
 function CardText({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className={styles.textBlock}>
-      <div className={styles.cardTitle}>{title}</div>
-      <div className={styles.cardDesc}>{desc}</div>
+    <div className={s.textBlock}>
+      <div className={s.cardTitle}>{title}</div>
+      <div className={s.cardDesc}>{desc}</div>
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -39,6 +40,7 @@ export default defineConfig(({ command }) => ({
   },
   plugins: [
     react(),
+    vanillaExtractPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       // 开发期可关闭注入；build 必出 manifest + SW

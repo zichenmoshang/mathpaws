@@ -8,9 +8,10 @@
 //   - 未完成打卡（当天未答题）→ 领取钮置灰，提示先完成 1 轮答题；
 //   - 可领取 → 领取奖励（贝壳 + 食物），提示后自动关闭弹框；
 //   - 已领取（chestLastOpened===今天）再次打开 → 置灰「明日再来」。
-// 样式：静态部分已迁移至 ChestPanel.module.css（含 cqw 容器查询），
+// 样式：静态部分已迁移至 ChestPanel.css.ts（vanilla-extract，含 cqw 容器查询），
 //       内联仅保留 bbox / props 驱动的动态值。
 // ============================================================================
+import { btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 import bg from '../../assets/hifi/daily-chest/bg.jpg'
@@ -29,7 +30,7 @@ import stage from '../../assets/hifi/daily-chest/stage.png'
 import scroll from '../../assets/hifi/daily-chest/scroll.png'
 import stars from '../../assets/hifi/daily-chest/stars.png'
 import title from '../../assets/hifi/daily-chest/title.png'
-import styles from './ChestPanel.module.css'
+import * as s from './ChestPanel.css'
 
 // 各层在原稿(2364×1773)中的 bbox 与图层原生尺寸
 const SCROLL_BBOX: BBox = [775, 833, 1590, 1038]
@@ -45,10 +46,10 @@ const SHELL_TEXT: BBox = [398, 92, 940, 284]
 const FOOD_TEXT: BBox = [368, 96, 1000, 288]
 
 export function ChestPanel({ onClose }: { onClose: () => void }) {
-  const streak = useStreakStore(s => s.streak)
-  const chestLastOpened = useStreakStore(s => s.chestLastOpened)
-  const lastStudyDate = useStreakStore(s => s.lastStudyDate)
-  const markChestOpened = useStreakStore(s => s.markChestOpened)
+  const streak = useStreakStore(st => st.streak)
+  const chestLastOpened = useStreakStore(st => st.chestLastOpened)
+  const lastStudyDate = useStreakStore(st => st.lastStudyDate)
+  const markChestOpened = useStreakStore(st => st.markChestOpened)
   const [justOpened, setJustOpened] = useState(false)
 
   const level = chestLevelForStreak(Math.max(1, streak))
@@ -81,10 +82,10 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className={styles.backdrop} onClick={onClose} role="dialog" aria-modal="true">
-      <div className={styles.frame} onClick={e => e.stopPropagation()}>
+    <div className={s.backdrop} onClick={onClose} role="dialog" aria-modal="true">
+      <div className={s.frame} onClick={e => e.stopPropagation()}>
         {/* 背景 */}
-        <img src={bg} alt="" draggable={false} className={styles.fill} />
+        <img src={bg} alt="" draggable={false} className={s.fill} />
 
         {/* 拆层回贴（bbox 归一化为百分比，2364×1773） */}
         <Layer src={ribbonLeft} bbox={[168, 79, 645, 727]} />
@@ -120,7 +121,7 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
         {/* 关闭 */}
         <button
           aria-label="关闭"
-          className={`mp-btn ${styles.closeBtn}`}
+          className={`${uiBtn} ${s.closeBtn}`}
           onClick={() => { audio.playSfx('click'); onClose() }}
         >
           <svg viewBox="0 0 24 24" width="58%" height="58%" aria-hidden>
@@ -131,14 +132,14 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
         {/* 领取按钮：用图层底板，未满足条件时置灰并盖提示 */}
         <button
           type="button"
-          className={`mp-btn ${styles.claimBtn}`}
+          className={`${uiBtn} ${s.claimBtn}`}
           disabled={!canClaim}
           onClick={claim}
           style={{ cursor: canClaim ? 'pointer' : 'not-allowed' }}
         >
-          <img src={buttonImg} alt="" draggable={false} className={styles.fill} />
+          <img src={buttonImg} alt="" draggable={false} className={s.fill} />
           {!canClaim && !justOpened && (
-            <span className={styles.btnHint}>
+            <span className={s.btnHint}>
               {claimedToday ? '已领取，明日再来' : '完成 1 轮答题后领取'}
             </span>
           )}
@@ -146,8 +147,8 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
 
         {/* 领取成功短暂提示（随后弹框自动关闭） */}
         {justOpened && (
-          <div className={styles.claimedOverlay}>
-            <div className={styles.claimedText}>领取成功</div>
+          <div className={s.claimedOverlay}>
+            <div className={s.claimedText}>领取成功</div>
           </div>
         )}
       </div>
@@ -167,7 +168,7 @@ function Layer({ src, bbox }: { src: string; bbox: BBox }) {
     width: `${((x1 - x0) / 2364) * 100}%`,
     height: `${((y1 - y0) / 1773) * 100}%`,
   }
-  return <img src={src} alt="" draggable={false} className={styles.layer} style={style} />
+  return <img src={src} alt="" draggable={false} className={s.layer} style={style} />
 }
 
 /**
@@ -197,7 +198,7 @@ function TextZone({
 
   return (
     <div
-      className={styles.textZone}
+      className={s.textZone}
       style={{
         left: `${(fx0 / 2364) * 100}%`,
         top: `${(fy0 / 1773) * 100}%`,

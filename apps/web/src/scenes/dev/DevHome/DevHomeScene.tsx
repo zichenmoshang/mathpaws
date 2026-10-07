@@ -1,5 +1,5 @@
 // [DEV] 测试台：仅开发模式可见（import.meta.env.DEV 路由守卫），生产构建不含
-// 静态样式已迁入同目录 DevHomeScene.module.css（CSS Modules）；
+// 静态样式已迁入同目录 DevHomeScene.css.ts（vanilla-extract）；
 // style={{...}} 仅保留运行时动态值（如当前路由按钮的字重）。
 import { useState } from 'react'
 import type { ReactNode } from 'react'
@@ -17,7 +17,7 @@ import { usePlayerStore } from '../../../stores/usePlayerStore'
 import { useStreakStore } from '../../../stores/useStreakStore'
 import { dayKey } from '../../../utils/id'
 
-import styles from './DevHomeScene.module.css'
+import * as s from './DevHomeScene.css'
 
 /** 生产场景清单（与 router.ts 生产 RouteId 对齐；dev 场景不列） */
 const PROD_ROUTES: Array<{ id: RouteId; label: string }> = [
@@ -39,13 +39,13 @@ const PROD_ROUTES: Array<{ id: RouteId; label: string }> = [
 export function DevHomeScene() {
   const go = useRouter(s => s.go)
   return (
-    <div className={styles.page}>
-      <div className={styles.wrap}>
-        <div className={styles.headerRow}>
-          <h1 className={styles.title}>开发测试台</h1>
+    <div className={s.page}>
+      <div className={s.wrap}>
+        <div className={s.headerRow}>
+          <h1 className={s.title}>开发测试台</h1>
           <a
             href="#home"
-            className={styles.homeLink}
+            className={s.homeLink}
             onClick={e => {
               e.preventDefault()
               go('home')
@@ -53,7 +53,7 @@ export function DevHomeScene() {
           >
             返回首页
           </a>
-          <span className={styles.hint}>仅开发模式可见（#dev）</span>
+          <span className={s.hint}>仅开发模式可见（#dev）</span>
         </div>
         <NavSection />
         <EconomySection />
@@ -73,12 +73,12 @@ function NavSection() {
   const current = useRouter(s => s.route)
   return (
     <Section title="页面跳转（生产场景）">
-      <div className={styles.row}>
+      <div className={s.row}>
         {PROD_ROUTES.map(r => (
           <button
             key={r.id}
             type="button"
-            className={styles.btn}
+            className={s.btn}
             // 当前路由高亮字重为运行时状态，保留内联
             style={{ fontWeight: current === r.id ? 900 : 400 }}
             onClick={() => go(r.id)}
@@ -128,8 +128,8 @@ function PetSection() {
     usePetStore.setState({ petExp: Math.max(0, Math.floor(n)) })
   return (
     <Section title="宠物">
-      <div className={styles.row}>
-        <span className={styles.label}>状态</span>
+      <div className={s.row}>
+        <span className={s.label}>状态</span>
         <span>
           {hasPet
             ? `已领养 ${PET_SPECIES[petType].cnName}（${petName || '未命名'}）`
@@ -180,15 +180,15 @@ function FarmSection() {
         value={farmExp}
         onSet={n => useFarmStore.setState({ farmExp: Math.max(0, Math.floor(n)) })}
       />
-      <div className={styles.row}>
-        <span className={styles.label}>种子库存</span>
+      <div className={s.row}>
+        <span className={s.label}>种子库存</span>
         {CROPS.map(c => (
           <span key={c.id}>
             {c.emoji}
             {c.name}×{seedInventory[c.id] ?? 0}
             <button
               type="button"
-              className={`${styles.btn} ${styles.seedBtn}`}
+              className={`${s.btn} ${s.seedBtn}`}
               onClick={() => addSeeds(c.id, 5)}
             >
               +5
@@ -196,12 +196,12 @@ function FarmSection() {
           </span>
         ))}
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>果实库存</span>
+      <div className={s.row}>
+        <span className={s.label}>果实库存</span>
         <span>{CROPS.map(c => `${c.emoji}×${cropInventory[c.id] ?? 0}`).join('　')}</span>
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>地块</span>
+      <div className={s.row}>
+        <span className={s.label}>地块</span>
         {plots.map((p, i) => (
           <span key={i}>
             [{i}]{' '}
@@ -210,7 +210,7 @@ function FarmSection() {
               : '空地'}
           </span>
         ))}
-        <button type="button" className={styles.btn} onClick={ripenAll}>
+        <button type="button" className={s.btn} onClick={ripenAll}>
           全部地块成熟
         </button>
       </div>
@@ -224,8 +224,8 @@ function GachaSection() {
   const ownedCount = useGachaStore(s => s.owned.length)
   return (
     <Section title="抽卡保底">
-      <div className={styles.row}>
-        <span className={styles.label}>已收集</span>
+      <div className={s.row}>
+        <span className={s.label}>已收集</span>
         <span>{ownedCount} 件装扮（保底：10 稀有 / 100 传说）</span>
       </div>
       <NumRow
@@ -255,13 +255,13 @@ function PlayerSection() {
   const [name, setName] = useState('')
   return (
     <Section title="玩家与引导">
-      <div className={styles.row}>
-        <span className={styles.label}>主角昵称</span>
+      <div className={s.row}>
+        <span className={s.label}>主角昵称</span>
         <span>
           当前 <b>{heroName}</b>
         </span>
         <input
-          className={styles.input}
+          className={s.input}
           value={name}
           placeholder="≤6 字"
           maxLength={6}
@@ -269,7 +269,7 @@ function PlayerSection() {
         />
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => {
             if (name.trim()) usePlayerStore.getState().setHeroName(name)
           }}
@@ -277,24 +277,24 @@ function PlayerSection() {
           改名
         </button>
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>首次动线</span>
+      <div className={s.row}>
+        <span className={s.label}>首次动线</span>
         <span>onboardingDone = {String(onboardingDone)}</span>
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => usePlayerStore.setState({ onboardingDone: false })}
         >
           重置（重走启动→领养）
         </button>
-        <span className={styles.hint}>刷新后从启动页开始</span>
+        <span className={s.hint}>刷新后从启动页开始</span>
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>引导气泡</span>
+      <div className={s.row}>
+        <span className={s.label}>引导气泡</span>
         <span>guideDone = {String(guideDone)}</span>
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => {
             usePlayerStore.setState({ guideDone: false })
             localStorage.removeItem('mp_guide_dismissed')
@@ -302,7 +302,7 @@ function PlayerSection() {
         >
           清 guideDone + mp_guide_dismissed
         </button>
-        <span className={styles.hint}>刷新后重播引导气泡</span>
+        <span className={s.hint}>刷新后重播引导气泡</span>
       </div>
     </Section>
   )
@@ -331,26 +331,26 @@ function StreakSection() {
           run: () => useStreakStore.setState({ streak: n }),
         }))}
       />
-      <div className={styles.row}>
-        <span className={styles.label}>宝箱等级</span>
+      <div className={s.row}>
+        <span className={s.label}>宝箱等级</span>
         <span>
           Lv.{chest.level}（{chest.shells} 贝壳 + {chest.food} 食物）；累计学习 {totalDays} 天
         </span>
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>上次打卡日期</span>
+      <div className={s.row}>
+        <span className={s.label}>上次打卡日期</span>
         <span>
           <b>{lastStudyDate || '（无）'}</b>
         </span>
         <input
-          className={`${styles.input} ${styles.dateInput}`}
+          className={`${s.input} ${s.dateInput}`}
           value={dateText}
           placeholder="YYYY-MM-DD"
           onChange={e => setDateText(e.target.value)}
         />
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => {
             const v = dateText.trim()
             if (/^\d{4}-\d{2}-\d{2}$/.test(v)) useStreakStore.setState({ lastStudyDate: v })
@@ -360,26 +360,26 @@ function StreakSection() {
         </button>
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => useStreakStore.setState({ lastStudyDate: offsetDay(0) })}
         >
           今天
         </button>
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => useStreakStore.setState({ lastStudyDate: offsetDay(-1) })}
         >
           昨天
         </button>
-        <span className={styles.hint}>设"昨天"后再完成 1 轮答题即连签 +1</span>
+        <span className={s.hint}>设"昨天"后再完成 1 轮答题即连签 +1</span>
       </div>
-      <div className={styles.row}>
-        <span className={styles.label}>宝箱领取记录</span>
+      <div className={s.row}>
+        <span className={s.label}>宝箱领取记录</span>
         <span>{chestLastOpened || '（无）'}</span>
         <button
           type="button"
-          className={styles.btn}
+          className={s.btn}
           onClick={() => useStreakStore.setState({ chestLastOpened: '' })}
         >
           清空（今日可再领）
@@ -414,8 +414,8 @@ function DangerSection() {
   }
   return (
     <Section title="危险区">
-      <div className={styles.row}>
-        <button type="button" className={styles.dangerBtn} onClick={() => void wipe()}>
+      <div className={s.row}>
+        <button type="button" className={s.dangerBtn} onClick={() => void wipe()}>
           清空全部存档（删 IndexedDB + localStorage + 刷新）
         </button>
       </div>
@@ -425,8 +425,8 @@ function DangerSection() {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className={styles.section}>
-      <h2 className={styles.h2}>{title}</h2>
+    <section className={s.section}>
+      <h2 className={s.h2}>{title}</h2>
       {children}
     </section>
   )
@@ -449,13 +449,13 @@ function NumRow({
     if (text.trim() !== '' && Number.isFinite(n)) onSet(n)
   }
   return (
-    <div className={styles.row}>
-      <span className={styles.label}>{label}</span>
+    <div className={s.row}>
+      <span className={s.label}>{label}</span>
       <span>
         当前 <b>{value}</b>
       </span>
       <input
-        className={styles.input}
+        className={s.input}
         value={text}
         inputMode="numeric"
         placeholder="数值"
@@ -464,11 +464,11 @@ function NumRow({
           if (e.key === 'Enter') apply()
         }}
       />
-      <button type="button" className={styles.btn} onClick={apply}>
+      <button type="button" className={s.btn} onClick={apply}>
         设定
       </button>
       {quick?.map(q => (
-        <button key={q.text} type="button" className={styles.btn} onClick={q.run}>
+        <button key={q.text} type="button" className={s.btn} onClick={q.run}>
           {q.text}
         </button>
       ))}

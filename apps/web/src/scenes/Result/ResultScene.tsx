@@ -18,7 +18,8 @@ import { QUESTIONS_PER_ROUND } from '../../config/quiz'
 import { useLastRoundStore } from '../../stores/useLastRoundStore'
 import { useStreakStore } from '../../stores/useStreakStore'
 import { audio } from '../../utils/audio'
-import styles from './ResultScene.module.css'
+
+import * as s from './ResultScene.css'
 
 // 结算页舞台 = 全稿 2364×1773
 const R = { w: 2364, h: 1773 }
@@ -45,35 +46,35 @@ export function ResultScene(
   const home = () => { audio.playSfx('click'); onNavigate('home') }
 
   return (
-    <div className={styles.scene}>
-      <div className={styles.stage}>
-        <img src={resultBg} alt="" draggable={false} className={styles.bg} />
+    <div className={s.scene}>
+      <div className={s.stage}>
+        <img src={resultBg} alt="" draggable={false} className={s.bg} />
 
         <img src={resultBanner} alt="" draggable={false}
-          className={styles.banner} style={rbox(417, 284, 1945, 826)} />
+          className={s.banner} style={rbox(417, 284, 1945, 826)} />
         <img src={resultBird} alt="" draggable={false}
-          className={styles.bird} style={rbox(992, 398, 1390, 717)} />
+          className={s.bird} style={rbox(992, 398, 1390, 717)} />
         <img src={resultTitle} alt="太棒啦" draggable={false}
-          className={styles.title} style={rbox(639, 671, 1745, 1020)} />
+          className={s.title} style={rbox(639, 671, 1745, 1020)} />
 
         {/* 三个奖励：图标切图 + 果冻立体字（动态数值前端排版） */}
         <img src={resultIconShell} alt="" draggable={false}
-          className={styles.iconShell} style={rbox(770, 1051, 951, 1233)} />
-        <div className={styles.rewardLabel}
+          className={s.iconShell} style={rbox(770, 1051, 951, 1233)} />
+        <div className={s.rewardLabel}
           style={rewardLabelPos('#8fe3ff', 'rgba(18,102,214,.95)', 735, 983)}>
           贝壳 +{r.shellsEarned}
         </div>
 
         <img src={resultIconStar} alt="" draggable={false}
-          className={styles.iconStar} style={rbox(1102, 1050, 1282, 1232)} />
-        <div className={styles.rewardLabel}
+          className={s.iconStar} style={rbox(1102, 1050, 1282, 1232)} />
+        <div className={s.rewardLabel}
           style={rewardLabelPos('#f1a6ff', 'rgba(122,40,178,.95)', 1093, 1282)}>
           食物 +{r.foodEarned}
         </div>
 
         <img src={resultIconFlame} alt="" draggable={false}
-          className={styles.iconFlame} style={rbox(1439, 1052, 1617, 1232)} />
-        <div className={styles.rewardLabel}
+          className={s.iconFlame} style={rbox(1439, 1052, 1617, 1232)} />
+        <div className={s.rewardLabel}
           style={rewardLabelPos('#ffc27a', 'rgba(178,74,22,.95)', 1429, 1626)}>
           连学{streak}天
         </div>
@@ -81,7 +82,7 @@ export function ResultScene(
         {/* 练习轮提示 */}
         {!r.paidRound && (
           <div
-            className={styles.practiceTip}
+            className={s.practiceTip}
             style={{
               left: `${(639 / R.w) * 100}%`,
               width: `${((1745 - 639) / R.w) * 100}%`,
@@ -94,25 +95,25 @@ export function ResultScene(
 
         {/* 按钮：再练一轮（自绘）+ 回首页（切图） */}
         <button type="button" onClick={again}
-          className={styles.againBtn} style={rbox(598, 1400, 1147, 1608)}>
+          className={s.againBtn} style={rbox(598, 1400, 1147, 1608)}>
           再练一轮
         </button>
         <img src={resultBtnPlaza} alt="回首页" draggable={false}
-          className={styles.plazaImg} style={rbox(1217, 1400, 1766, 1608)} />
+          className={s.plazaImg} style={rbox(1217, 1400, 1766, 1608)} />
         <button
           type="button" aria-label="回首页" onClick={home}
-          className={styles.homeBtn} style={rbox(1217, 1400, 1766, 1608)}
+          className={s.homeBtn} style={rbox(1217, 1400, 1766, 1608)}
         />
       </div>
     </div>
   )
 }
 
-/* ---------------- 样式（静态部分见 ResultScene.module.css） ---------------- */
+/* ---------------- 样式（静态部分见 ResultScene.css.ts） ---------------- */
 
 /**
  * 果冻立体奖励字的动态部分：原稿行 bbox 换算的坐标 + 随奖励项变化的填充/描边色；
- * 静态排版（flex 居中、字号 clamp 等）在 module.css 的 .rewardLabel
+ * 静态排版（flex 居中、字号 clamp 等）在 ResultScene.css.ts 的 rewardLabel
  */
 const rewardLabelPos =
   (fill: string, edge: string, x0: number, x1: number): CSSProperties => ({

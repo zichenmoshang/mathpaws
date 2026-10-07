@@ -4,6 +4,7 @@ import {
   BackBtn,
   Card,
   Btn,
+  btn as uiBtn,
 } from '@mathpaws/ui'
 import { useEffect, useState } from 'react'
 
@@ -21,13 +22,13 @@ import {
   type SlotId,
 } from '../../../paperdoll/catalog'
 
-import styles from './PaperDollLookDev.module.css'
+import * as s from './PaperDollLookDev.css'
 
 // 开发专用换装验证页（#paperdoll）：不接 IndexedDB / 经济 / 路由业务，
 // 只用静态 catalog 喂穿戴组合，验证整身+帽/鞋 3 槽合成、@2x 清晰度与跨套混搭。
 // 验证通过后，P16 背包页复用同一个 PaperDoll 组件 + catalog，仅把这里的调试
 // 控件换成真实库存与穿戴 store。本页长期保留，作为每套新装扮的回归入口。
-// 静态样式已迁入同目录 PaperDollLookDev.module.css（CSS Modules）。
+// 静态样式已迁入同目录 PaperDollLookDev.css.ts（vanilla-extract）。
 
 const SLOT_ORDER: SlotId[] = ['outfit', 'hat', 'shoe']
 
@@ -56,7 +57,7 @@ function OptionButton({
 }) {
   return (
     <button
-      className={`mp-btn ${styles.optionBtn}${option.icon ? ` ${styles.optionBtnIcon}` : ''}${active ? ` ${styles.optionBtnActive}` : ''}`}
+      className={`${uiBtn} ${s.optionBtn}${option.icon ? ` ${s.optionBtnIcon}` : ''}${active ? ` ${s.optionBtnActive}` : ''}`}
       onClick={onClick}
     >
       {option.icon ? (
@@ -64,7 +65,7 @@ function OptionButton({
           src={option.icon}
           alt=""
           draggable={false}
-          className={styles.optionIcon}
+          className={s.optionIcon}
         />
       ) : null}
       <span>{option.label}</span>
@@ -99,35 +100,35 @@ export function PaperDollLookDev() {
     setSel(prev => ({ ...prev, [slot]: id }))
 
   return (
-    <div className={styles.root}>
+    <div className={s.root}>
       <TopBar tone="sky">
-        <div className={styles.topBarLeft}>
+        <div className={s.topBarLeft}>
           {/* 返回广场：走正式路由（原 dispatchEvent('go-plaza') 无监听方，是死事件） */}
           <BackBtn onClick={() => { useRouter.getState().go('plaza'); useRouter.getState().clearHash() }} />
-          <span className={styles.topBarTitle}>
+          <span className={s.topBarTitle}>
             PaperDoll LookDev · 换装运行时验证
           </span>
         </div>
-        <span className={styles.topBarHash}>
+        <span className={s.topBarHash}>
           #paperdoll
         </span>
       </TopBar>
 
-      <div className={styles.main}>
+      <div className={s.main}>
         {/* 左：娃娃舞台 */}
-        <div className={styles.stage}>
-        <div className={styles.dollBox}>
+        <div className={s.stage}>
+        <div className={s.dollBox}>
           <PaperDoll layers={layers} background={bg} />
         </div>
         </div>
 
         {/* 右：调试控件 */}
-        <div className={styles.sideCol}>
+        <div className={s.sideCol}>
           <Card padding={18}>
             {SLOT_ORDER.map(slot => (
               <div key={slot}>
-                <div className={styles.sectionTitle}>{SLOT_LABEL[slot]}（{slot}）</div>
-                <div className={styles.row}>
+                <div className={s.sectionTitle}>{SLOT_LABEL[slot]}（{slot}）</div>
+                <div className={s.row}>
                   {SLOT_VIEW[slot].map(o => (
                     <OptionButton
                       key={o.id}
@@ -140,12 +141,12 @@ export function PaperDollLookDev() {
               </div>
             ))}
 
-            <div className={styles.sectionTitle}>预览背景</div>
-            <div className={styles.row}>
+            <div className={s.sectionTitle}>预览背景</div>
+            <div className={s.row}>
               {BG_OPTIONS.map(b => (
                 <button
                   key={b.id}
-                  className={`mp-btn ${styles.bgBtn}${bg === b.id ? ` ${styles.bgBtnActive}` : ''}`}
+                  className={`${uiBtn} ${s.bgBtn}${bg === b.id ? ` ${s.bgBtnActive}` : ''}`}
                   onClick={() => setBg(b.id)}
                 >
                   {b.label}
@@ -153,7 +154,7 @@ export function PaperDollLookDev() {
               ))}
             </div>
 
-            <div className={styles.actions}>
+            <div className={s.actions}>
               <Btn variant="sun" onClick={() => setSel(randomSelection())}>
                 随机混搭
               </Btn>
@@ -164,13 +165,13 @@ export function PaperDollLookDev() {
           </Card>
 
           <Card padding={16} style={{ marginTop: 14 }}>
-            <div className={styles.comboTitle}>
+            <div className={s.comboTitle}>
               当前组合
             </div>
-            <div className={styles.comboBody}>
+            <div className={s.comboBody}>
               {combo}
             </div>
-            <div className={styles.comboMeta}>
+            <div className={s.comboMeta}>
               视口 {viewport.w}×{viewport.h} · DPR {viewport.dpr}
               <br />
               图层为 2048 全画布透明 WebP（@2x），离屏 canvas 按 整身→鞋→帽 合成单图后整体缩放

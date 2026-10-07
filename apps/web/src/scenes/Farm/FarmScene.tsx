@@ -6,8 +6,8 @@
 // 地块热点 = z9 层 4 块土壤实测矩形（PIL 测量，非 bbox 四等分）；一期固定 4 块地（扩地转二期）。
 // 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
 // 舞台外留边由 BackgroundBleed 以同一背景 cover 出血填充；
-// 静态样式已迁移至 FarmScene.module.css，内联仅保留运行时动态值。
-import { BackButton, Modal, Tabs, Tag, ProgressBar } from '@mathpaws/ui'
+// 静态样式已迁移至 FarmScene.css.ts，内联仅保留运行时动态值。
+import { BackButton, Modal, Tabs, Tag, ProgressBar, btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
@@ -47,7 +47,7 @@ import fruitPotato from '../../assets/img/farm/fruit-potato@2x.webp'
 import fruitCarrot from '../../assets/img/farm/fruit-carrot@2x.webp'
 import fruitTomato from '../../assets/img/farm/fruit-tomato@2x.webp'
 import fruitStrawberry from '../../assets/img/farm/fruit-strawberry@2x.webp'
-import styles from './FarmScene.module.css'
+import * as s from './FarmScene.css'
 
 const SEED_IMG: Record<CropId, string> = {
   corn: seedCorn, pumpkin: seedPumpkin, potato: seedPotato,
@@ -170,11 +170,11 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   return (
     <BackgroundBleed background="#8ecdf2">
       {/* 舞台外留边：同一背景 cover 出血填充 */}
-      <img src={bg} alt="" draggable={false} className={styles.bleedBg} />
+      <img src={bg} alt="" draggable={false} className={s.bleedBg} />
       <LogicalStage>
-        <div className={styles.scene}>
+        <div className={s.scene}>
           {/* z0 重绘背景（铺满舞台随缩放） */}
-          <img src={bg} alt="" draggable={false} className={styles.bg} />
+          <img src={bg} alt="" draggable={false} className={s.bg} />
 
           {/* 静态展示层 */}
           {LAYERS.map(l => (
@@ -186,17 +186,17 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
 
           {/* 资源牌 + 前端数字 */}
           <img src={pillFlower} alt="" draggable={false} style={place(PILL_FLOWER_BBOX)} />
-          <span className={styles.pillNum} style={pillNumPlace(PILL_FLOWER_BBOX)}>{flowerCoins}</span>
+          <span className={s.pillNum} style={pillNumPlace(PILL_FLOWER_BBOX)}>{flowerCoins}</span>
           <img src={pillShell} alt="" draggable={false} style={place(PILL_SHELL_BBOX)} />
-          <span className={styles.pillNum} style={pillNumPlace(PILL_SHELL_BBOX)}>{shells}</span>
+          <span className={s.pillNum} style={pillNumPlace(PILL_SHELL_BBOX)}>{shells}</span>
 
           {/* 农场等级条（前端，标题横幅下方） */}
-          <div className={styles.levelWrap}>
-            <span className={styles.lv}>Lv.{level}</span>
-            <div className={styles.progressGrow}>
+          <div className={s.levelWrap}>
+            <span className={s.lv}>Lv.{level}</span>
+            <div className={s.progressGrow}>
               <ProgressBar ratio={xpRatio} height={14} />
             </div>
-            <span className={styles.xpText}>{nextXp ? `${farmExp - prevXp}/${nextXp - prevXp}` : '已满级'}</span>
+            <span className={s.xpText}>{nextXp ? `${farmExp - prevXp}/${nextXp - prevXp}` : '已满级'}</span>
           </div>
 
           {/* 4 块地：z9 bbox 四等分热点 */}
@@ -208,27 +208,27 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
               <button
                 key={i}
                 type="button"
-                className={`mp-btn ${styles.plotBtn}`}
+                className={`${uiBtn} ${s.plotBtn}`}
                 onClick={() => clickPlot(i)}
                 style={place(cell)}
               >
                 {st.stage === 'empty' && (
-                  <img src={btnPlant} alt="种植" draggable={false} className={styles.plantBtnImg} />
+                  <img src={btnPlant} alt="种植" draggable={false} className={s.plantBtnImg} />
                 )}
                 {st.stage === 'growing' && (
                   <>
-                    <img src={sprouts} alt="" draggable={false} className={styles.sproutsImg} />
+                    <img src={sprouts} alt="" draggable={false} className={s.sproutsImg} />
                     {/* 倒计时小气泡（不挡植物） */}
-                    <span className={styles.cdBubble}>{fmt(st.remainSeconds)}</span>
+                    <span className={s.cdBubble}>{fmt(st.remainSeconds)}</span>
                   </>
                 )}
                 {st.stage === 'ready' && plot?.seedId && (
                   <>
                     <img
                       src={FRUIT_IMG[plot.seedId]} alt={CROP_MAP[plot.seedId].name} draggable={false}
-                      className={`${styles.fruitImg} ${styles.fruitReady}`}
+                      className={`${s.fruitImg} ${s.fruitReady}`}
                     />
-                    <span className={styles.readyTag}>点击收获</span>
+                    <span className={s.readyTag}>点击收获</span>
                   </>
                 )}
               </button>
@@ -238,17 +238,17 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
           {/* 仓库入口（右下角，橙色胶囊） */}
           <button
             type="button"
-            className={`mp-btn ${styles.warehouseBtn}`}
+            className={`${uiBtn} ${s.warehouseBtn}`}
             onClick={() => { audio.playSfx('click'); setWarehouseOpen(true) }}
           >
             仓库
           </button>
 
           {/* 冷启动提示气泡 */}
-          {showColdHint && <div className={styles.coldHint}>点空地，播下玉米种子吧！</div>}
+          {showColdHint && <div className={s.coldHint}>点空地，播下玉米种子吧！</div>}
 
           {/* 收获飘字 */}
-          {fly && <div className={styles.fly}>{fly}</div>}
+          {fly && <div className={s.fly}>{fly}</div>}
 
           {/* 新手引导 B：农场选种提示（可跳过、不重播） */}
           <GuideTip id="farm-seed" text="点空地，选种子播种；成熟了记得回来收获" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 96 }} />
@@ -297,29 +297,29 @@ function SeedBagPanel({
 
   return (
     <Modal onClose={onClose} width={620}>
-      <div className={styles.panel}>
-        <div className={styles.panelTitle}>种子袋</div>
-        <div className={styles.panelList}>
+      <div className={s.panel}>
+        <div className={s.panelTitle}>种子袋</div>
+        <div className={s.panelList}>
           {CROPS.map(c => {
             const locked = level < c.unlockLevel
             const owned = seedInventory[c.id] ?? 0
             const affordable = flowerCoins >= c.seedPrice
             return (
-              <div key={c.id} className={styles.cropRow} style={{ opacity: locked ? 0.55 : 1 }}>
+              <div key={c.id} className={s.cropRow} style={{ opacity: locked ? 0.55 : 1 }}>
                 <img
                   src={SEED_IMG[c.id]} alt={c.name} draggable={false}
-                  className={styles.cropIcon}
+                  className={s.cropIcon}
                   style={{ filter: locked ? 'grayscale(1)' : 'none' }}
                 />
-                <div className={styles.cropMeta}>
-                  <span className={styles.cropName}>{c.name}</span>
-                  <span className={styles.cropSub}>{c.growMinutes} 分钟成熟 · 持有 ×{owned}</span>
+                <div className={s.cropMeta}>
+                  <span className={s.cropName}>{c.name}</span>
+                  <span className={s.cropSub}>{c.growMinutes} 分钟成熟 · 持有 ×{owned}</span>
                 </div>
                 {locked && <Tag tone="gray">Lv.{c.unlockLevel} 解锁</Tag>}
                 {!locked && (
-                  <div className={styles.rowActions}>
+                  <div className={s.rowActions}>
                     <button
-                      type="button" className={`mp-btn ${styles.smallBuyBtn}`}
+                      type="button" className={`${uiBtn} ${s.smallBuyBtn}`}
                       disabled={!affordable}
                       onClick={() => buy(c.id)}
                       style={{ opacity: affordable ? 1 : 0.5, cursor: affordable ? 'pointer' : 'not-allowed' }}
@@ -327,7 +327,7 @@ function SeedBagPanel({
                       买1份 {c.seedPrice}
                     </button>
                     <button
-                      type="button" className={`mp-btn ${styles.plantBtn}`}
+                      type="button" className={`${uiBtn} ${s.plantBtn}`}
                       disabled={owned < 1 && !affordable}
                       onClick={() => {
                         if (owned >= 1) plant(c.id)
@@ -378,47 +378,47 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal onClose={onClose} width={620}>
-      <div className={styles.panel}>
-        <div className={styles.panelTitle}>仓库</div>
+      <div className={s.panel}>
+        <div className={s.panelTitle}>仓库</div>
         <Tabs
           tabs={[{ id: 'fruits', label: '果实' }, { id: 'seeds', label: '种子' }]}
           active={tab}
           onChange={setTab}
         />
         {tab === 'seeds' && (
-          <div className={styles.seedGrid}>
+          <div className={s.seedGrid}>
             {CROPS.map(c => {
               const n = seedInventory[c.id] ?? 0
               return (
-                <div key={c.id} className={styles.whCell} style={{ opacity: n > 0 ? 1 : 0.45 }}>
-                  <img src={SEED_IMG[c.id]} alt={c.name} draggable={false} className={styles.whIcon} />
-                  <span className={styles.cropName}>{c.name}</span>
-                  <span className={styles.cropSub}>×{n}</span>
+                <div key={c.id} className={s.whCell} style={{ opacity: n > 0 ? 1 : 0.45 }}>
+                  <img src={SEED_IMG[c.id]} alt={c.name} draggable={false} className={s.whIcon} />
+                  <span className={s.cropName}>{c.name}</span>
+                  <span className={s.cropSub}>×{n}</span>
                 </div>
               )
             })}
           </div>
         )}
         {tab === 'fruits' && (
-          <div className={styles.panelList}>
+          <div className={s.panelList}>
             {CROPS.map(c => {
               const n = cropInventory[c.id] ?? 0
               return (
-                <div key={c.id} className={styles.cropRow} style={{ opacity: n > 0 ? 1 : 0.45 }}>
-                  <img src={FRUIT_IMG[c.id]} alt={c.name} draggable={false} className={styles.cropIcon} />
-                  <div className={styles.cropMeta}>
-                    <span className={styles.cropName}>{c.name}</span>
-                    <span className={styles.cropSub}>×{n} · 单价 {c.sellPrice}</span>
+                <div key={c.id} className={s.cropRow} style={{ opacity: n > 0 ? 1 : 0.45 }}>
+                  <img src={FRUIT_IMG[c.id]} alt={c.name} draggable={false} className={s.cropIcon} />
+                  <div className={s.cropMeta}>
+                    <span className={s.cropName}>{c.name}</span>
+                    <span className={s.cropSub}>×{n} · 单价 {c.sellPrice}</span>
                   </div>
-                  <div className={styles.rowActions}>
+                  <div className={s.rowActions}>
                     <button
-                      type="button" className={`mp-btn ${styles.smallBuyBtn}`} disabled={n < 1} onClick={() => sell(c.id, 1)}
+                      type="button" className={`${uiBtn} ${s.smallBuyBtn}`} disabled={n < 1} onClick={() => sell(c.id, 1)}
                       style={{ opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
                     >
                       卖1个
                     </button>
                     <button
-                      type="button" className={`mp-btn ${styles.plantBtn}`} disabled={n < 1} onClick={() => sell(c.id, n)}
+                      type="button" className={`${uiBtn} ${s.plantBtn}`} disabled={n < 1} onClick={() => sell(c.id, n)}
                       style={{ opacity: n < 1 ? 0.5 : 1, cursor: n < 1 ? 'not-allowed' : 'pointer' }}
                     >
                       全卖
@@ -429,9 +429,9 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
             })}
           </div>
         )}
-        <div className={styles.whFoot}>
-          <span className={styles.whFlower}>花朵币 {flowerCoins}</span>
-          {sellFly && <span className={styles.sellFly}>{sellFly}</span>}
+        <div className={s.whFoot}>
+          <span className={s.whFlower}>花朵币 {flowerCoins}</span>
+          {sellFly && <span className={s.sellFly}>{sellFly}</span>}
         </div>
       </div>
     </Modal>

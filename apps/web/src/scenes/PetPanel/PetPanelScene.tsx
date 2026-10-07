@@ -10,8 +10,8 @@
 //   P9-04：右侧宠物格（犬猫"即将开放"）；顶部 PK 入口"即将开放"；装备三槽已删除
 // 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
 // 舞台外留边由 BackgroundBleed 以同一背景 cover 出血填充；
-// 静态样式已迁移至 PetPanelScene.module.css，内联仅保留运行时动态值。
-import { BackButton, Modal, CloudInput, Btn, ProgressBar } from '@mathpaws/ui'
+// 静态样式已迁移至 PetPanelScene.css.ts，内联仅保留运行时动态值。
+import { BackButton, Modal, CloudInput, Btn, ProgressBar, btn as uiBtn } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -44,7 +44,7 @@ import { PET_SPECIES, PET_STAGES, petLevelFromExp, type PetTypeId } from '../../
 import { useEconomyStore } from '../../stores/useEconomyStore'
 import { usePetStore } from '../../stores/usePetStore'
 import { audio } from '../../utils/audio'
-import styles from './PetPanelScene.module.css'
+import * as s from './PetPanelScene.css'
 
 /** 原稿 2364×1773 → 1024×768 逻辑像素 */
 const K = 1024 / 2364
@@ -181,11 +181,11 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
   return (
     <BackgroundBleed background="#f2ddc0">
       {/* 舞台外留边：同一背景 cover 出血填充 */}
-      <img src={bg} alt="" draggable={false} className={styles.bleedBg} />
+      <img src={bg} alt="" draggable={false} className={s.bleedBg} />
       <LogicalStage>
-        <div className={styles.scene}>
+        <div className={s.scene}>
           {/* z0 重绘背景（儿童房，铺满舞台随缩放） */}
-          <img src={bg} alt="" draggable={false} className={styles.bg} />
+          <img src={bg} alt="" draggable={false} className={s.bg} />
 
           {/* 主面板 + 云标题 */}
           <img src={panel} alt="" draggable={false} style={place(BBOX.panel)} />
@@ -194,34 +194,34 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
           {/* 左上返回 / 右上资源牌 + 前端数字 + PK 入口 */}
           <BackButton size={58} onClick={() => go('plaza')} style={{ position: 'absolute', left: 14, top: 10 }} />
           <img src={pillShell} alt="" draggable={false} style={place(BBOX.pillShell)} />
-          <span className={styles.pillNum} style={pillNumPlace(BBOX.pillShell)}>{shells}</span>
+          <span className={s.pillNum} style={pillNumPlace(BBOX.pillShell)}>{shells}</span>
           <img src={pillFood} alt="" draggable={false} style={place(BBOX.pillFood)} />
-          <span className={styles.pillNum} style={pillNumPlace(BBOX.pillFood)}>{petFood}</span>
-          <button type="button" className={`mp-btn ${styles.pkBtn}`} onClick={comingSoon}>宠物 PK</button>
+          <span className={s.pillNum} style={pillNumPlace(BBOX.pillFood)}>{petFood}</span>
+          <button type="button" className={`${uiBtn} ${s.pkBtn}`} onClick={comingSoon}>宠物 PK</button>
 
           {/* 中心立绘（z9 位，按进化阶段切图；点击互动） */}
-          <button type="button" className={`mp-btn ${styles.heroBtn}`} onClick={poke} style={place(BBOX.hero)} aria-label="点我互动">
+          <button type="button" className={`${uiBtn} ${s.heroBtn}`} onClick={poke} style={place(BBOX.hero)} aria-label="点我互动">
             <img
               src={stageImg(petType, level)} alt={displayName} draggable={false}
-              className={`${styles.heroImg} ${styles.petBounce}`}
+              className={`${s.heroImg} ${s.petBounce}`}
             />
-            {cheer && <span className={styles.cheer}>{cheer}</span>}
+            {cheer && <span className={s.cheer}>{cheer}</span>}
           </button>
 
           {/* 名字（立绘与进度条之间） */}
-          <span className={styles.name}>{displayName}</span>
+          <span className={s.name}>{displayName}</span>
 
           {/* 等级进度条（z5 位，前端 ProgressBar + Lv 徽章 + 数字） */}
-          <span className={styles.lvBadge} style={{ left: BBOX.expBar[0] * K - 64, top: BBOX.expBar[1] * K - 4 }}>Lv.{level}</span>
-          <div className={styles.expBar} style={place(BBOX.expBar)}>
+          <span className={s.lvBadge} style={{ left: BBOX.expBar[0] * K - 64, top: BBOX.expBar[1] * K - 4 }}>Lv.{level}</span>
+          <div className={s.expBar} style={place(BBOX.expBar)}>
             <ProgressBar ratio={expRatio} base="#ffd83d" deep="#e08f00" height={16} />
           </div>
-          <span className={styles.expText} style={{ left: BBOX.expBar[2] * K + 8, top: BBOX.expBar[1] * K, height: (BBOX.expBar[3] - BBOX.expBar[1]) * K }}>
+          <span className={s.expText} style={{ left: BBOX.expBar[2] * K + 8, top: BBOX.expBar[1] * K, height: (BBOX.expBar[3] - BBOX.expBar[1]) * K }}>
             {nextStage ? `${expInLevel}/${expSpan}` : '已满级'}
           </span>
 
           {/* 进化提示（进度条与相框之间） */}
-          <span className={styles.evoHint}>
+          <span className={s.evoHint}>
             {nextStage
               ? expRatio >= 0.8
                 ? '快要进化啦！'
@@ -236,40 +236,40 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
             return (
               <div key={st.level} style={place(frame.bbox)}>
                 {/* 相框缩至 92% 居中：给上方进化提示留出可视间隙 */}
-                <img src={frame.src} alt="" draggable={false} className={styles.evoFrame} />
+                <img src={frame.src} alt="" draggable={false} className={s.evoFrame} />
                 <img
                   src={stageImg(petType, st.level)} alt={st.form} draggable={false}
-                  className={styles.evoStageImg}
+                  className={s.evoStageImg}
                   style={{
                     filter: reached ? 'none' : 'grayscale(1)',
                     opacity: reached ? 1 : 0.5,
                   }}
                 />
                 {!reached && (
-                  <img src={lockIcon} alt="" draggable={false} className={styles.evoLock} />
+                  <img src={lockIcon} alt="" draggable={false} className={s.evoLock} />
                 )}
-                <span className={styles.frameLabel}>Lv.{st.level}</span>
+                <span className={s.frameLabel}>Lv.{st.level}</span>
               </div>
             )
           })}
 
           {/* 喂食钮（z10 骨头）+ 食物数气泡；改名钮（z11 铅笔） */}
           <div style={place(BBOX.feed)}>
-            {petFood > 0 && <span className={styles.foodBubble}>×{petFood}</span>}
+            {petFood > 0 && <span className={s.foodBubble}>×{petFood}</span>}
             <button
-              type="button" aria-label="一键喂食" className={`mp-btn ${styles.roundBtn}`}
+              type="button" aria-label="一键喂食" className={`${uiBtn} ${s.roundBtn}`}
               onClick={feedAll} disabled={feedDisabled}
               style={{ opacity: feedDisabled ? 0.5 : 1, cursor: feedDisabled ? 'not-allowed' : 'pointer' }}
             >
-              <img src={btnFeed} alt="" draggable={false} className={styles.roundBtnImg} />
+              <img src={btnFeed} alt="" draggable={false} className={s.roundBtnImg} />
             </button>
-            <span className={styles.btnLabel}>喂食</span>
+            <span className={s.btnLabel}>喂食</span>
           </div>
           <div style={place(BBOX.rename)}>
-            <button type="button" aria-label="改名" className={`mp-btn ${styles.roundBtn}`} onClick={openRename}>
-              <img src={btnRename} alt="" draggable={false} className={styles.roundBtnImg} />
+            <button type="button" aria-label="改名" className={`${uiBtn} ${s.roundBtn}`} onClick={openRename}>
+              <img src={btnRename} alt="" draggable={false} className={s.roundBtnImg} />
             </button>
-            <span className={styles.btnLabel}>改名</span>
+            <span className={s.btnLabel}>改名</span>
           </div>
 
           {/* 右侧宠物格（兔已拥有；犬猫"即将开放"） */}
@@ -280,15 +280,15 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
               <button
                 key={cell.id}
                 type="button"
-                className={`mp-btn ${styles.gridCell}`}
+                className={`${uiBtn} ${s.gridCell}`}
                 aria-label={spec.cnName}
                 onClick={() => (spec.available ? undefined : comingSoon())}
                 style={{ ...place(cell.bbox), cursor: spec.available ? 'pointer' : 'default' }}
               >
-                <img src={cell.src} alt="" draggable={false} className={styles.gridImg} />
+                <img src={cell.src} alt="" draggable={false} className={s.gridImg} />
                 <img
                   src={CORE_IMG[cell.id]} alt={spec.cnName} draggable={false}
-                  className={styles.gridCore}
+                  className={s.gridCore}
                   style={{
                     filter: spec.available ? 'none' : 'grayscale(1)',
                     opacity: spec.available ? 1 : 0.55,
@@ -296,32 +296,32 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
                 />
                 {!spec.available && (
                   <>
-                    <img src={lockIcon} alt="" draggable={false} className={styles.gridLock} />
-                    <span className={styles.gridLockLabel}>即将开放</span>
+                    <img src={lockIcon} alt="" draggable={false} className={s.gridLock} />
+                    <span className={s.gridLockLabel}>即将开放</span>
                   </>
                 )}
-                {owned && <span className={styles.gridOwn}>已拥有</span>}
+                {owned && <span className={s.gridOwn}>已拥有</span>}
               </button>
             )
           })}
 
           {/* 喂食飘字 */}
-          {feedFly && <div className={styles.feedFly}>{feedFly}</div>}
+          {feedFly && <div className={s.feedFly}>{feedFly}</div>}
 
           {/* 改名弹窗 */}
           {renameOpen && (
             <Modal onClose={() => setRenameOpen(false)}>
-              <div className={styles.renameBox}>
-                <span className={styles.renameTitle}>给宠物起个名字</span>
+              <div className={s.renameBox}>
+                <span className={s.renameTitle}>给宠物起个名字</span>
                 <CloudInput
                   value={nameDraft} onChange={setNameDraft}
                   placeholder={PET_SPECIES[petType].cnName} maxLength={6}
                   onSubmit={confirmRename} style={{ width: 260, textAlign: 'center' }}
                 />
-                <div className={styles.renameActions}>
+                <div className={s.renameActions}>
                   {/* 注意：Btn ghost 变体是白字+近透明白底，白 Modal 上不可见，禁用 */}
                   <button
-                    type="button" className={`mp-btn ${styles.renameCancel}`} onClick={() => setRenameOpen(false)}
+                    type="button" className={`${uiBtn} ${s.renameCancel}`} onClick={() => setRenameOpen(false)}
                   >
                     取消
                   </button>
@@ -355,27 +355,27 @@ function EvolutionCeremony({
 }) {
   const stage = PET_STAGES[to - 1]
   return (
-    <div className={styles.ceremonyMask}>
-      <div className={styles.evoBeam} />
+    <div className={s.ceremonyMask}>
+      <div className={s.evoBeam} />
       {CONFETTI.map((c, i) => (
         <span
           key={i}
-          className={styles.evoConfetti}
-          style={{ left: c.x, background: c.color, animationDelay: c.delay }}
+          className={s.evoConfetti}
+          style={{ left: c.x, background: c.color, [s.confettiDelayVar]: c.delay } as CSSProperties}
         />
       ))}
-      <img src={starIcon} alt="" draggable={false} className={styles.orbitIcon} style={{ left: '32%', top: '24%' }} />
-      <img src={heartIcon} alt="" draggable={false} className={styles.orbitIcon} style={{ right: '30%', top: '30%', animationDelay: '.4s' }} />
-      <img src={starIcon} alt="" draggable={false} className={styles.orbitIcon} style={{ left: '38%', bottom: '26%', animationDelay: '.8s', width: 34, height: 34 }} />
+      <img src={starIcon} alt="" draggable={false} className={s.orbitIcon} style={{ left: '32%', top: '24%' }} />
+      <img src={heartIcon} alt="" draggable={false} className={s.orbitIcon} style={{ right: '30%', top: '30%', [s.orbitDelayVar]: '.4s' } as CSSProperties} />
+      <img src={starIcon} alt="" draggable={false} className={s.orbitIcon} style={{ left: '38%', bottom: '26%', [s.orbitDelayVar]: '.8s', width: 34, height: 34 } as CSSProperties} />
 
-      <div className={styles.ceremonyCard}>
-        <span className={styles.ceremonyTitle}>进化成功！</span>
+      <div className={s.ceremonyCard}>
+        <span className={s.ceremonyTitle}>进化成功！</span>
         <img
           src={stageImg(petType, to)} alt={stage.form} draggable={false}
-          className={styles.ceremonyImg}
+          className={s.ceremonyImg}
         />
-        <span className={styles.ceremonyForm}>Lv.{to} {stage.form}</span>
-        <button type="button" className={`mp-btn ${styles.ceremonyBtn}`} onClick={onClose}>太棒了</button>
+        <span className={s.ceremonyForm}>Lv.{to} {stage.form}</span>
+        <button type="button" className={`${uiBtn} ${s.ceremonyBtn}`} onClick={onClose}>太棒了</button>
       </div>
     </div>
   )

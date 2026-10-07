@@ -6,7 +6,7 @@
 // 清缓存：二次确认，只清 SW/CacheStorage，不删 IndexedDB 存档；无振动/重置/导入导出。
 // 自适应接线：内容置于 1024×768 LogicalStage 随舞台等比缩放；
 // 舞台外留边由 BackgroundBleed 以同一背景图 cover 出血填充。
-import { BackButton, Btn, ConfirmDialog, Modal, Switch } from '@mathpaws/ui'
+import { BackButton, Btn, ConfirmDialog, Modal, Switch, btn as uiBtn } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import { useState } from 'react'
 
@@ -28,7 +28,7 @@ import soundIcon from '../../assets/img/icons/i-sound@2x.webp'
 import { useSettingsStore } from '../../stores/useSettingsStore'
 import { audio } from '../../utils/audio'
 
-import styles from './SettingsScene.module.css'
+import * as s from './SettingsScene.css'
 
 /** 原稿 2364×1773 → 1024×768 逻辑像素 */
 const K = 1024 / 2364
@@ -43,7 +43,7 @@ const LAYERS: LayerDef[] = [
   { z: 16, src: rabbit, bbox: [629, 86, 902, 447] },
 ]
 
-/** 原稿 bbox → 逻辑像素定位（position:absolute 由 styles.layer 提供） */
+/** 原稿 bbox → 逻辑像素定位（position:absolute 由 s.layer 提供） */
 const place = (bbox: [number, number, number, number]): CSSProperties => {
   const [x0, y0, x1, y1] = bbox
   return {
@@ -68,8 +68,8 @@ async function clearAppCaches(): Promise<void> {
 }
 
 export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => void }) {
-  const bgm = useSettingsStore(s => s.bgm)
-  const sfx = useSettingsStore(s => s.sfx)
+  const bgm = useSettingsStore(st => st.bgm)
+  const sfx = useSettingsStore(st => st.sfx)
 
   const [confirmClear, setConfirmClear] = useState(false)
   const [cleared, setCleared] = useState(false)
@@ -104,7 +104,7 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
     {
       icon: broomIcon, label: '清理缓存',
       control: (
-        <button type="button" className={`mp-btn ${styles.rowBtn}`} onClick={() => { audio.playSfx('click'); setConfirmClear(true) }}>
+        <button type="button" className={`${uiBtn} ${s.rowBtn}`} onClick={() => { audio.playSfx('click'); setConfirmClear(true) }}>
           清理
         </button>
       ),
@@ -112,7 +112,7 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
     {
       icon: gearIcon, label: '关于我们',
       control: (
-        <button type="button" className={`mp-btn ${styles.rowBtn} ${styles.rowBtnInfo}`} onClick={() => { audio.playSfx('click'); setAboutOpen(true) }}>
+        <button type="button" className={`${uiBtn} ${s.rowBtn} ${s.rowBtnInfo}`} onClick={() => { audio.playSfx('click'); setAboutOpen(true) }}>
           查看
         </button>
       ),
@@ -124,31 +124,31 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
       {/* 舞台外留边：同一背景图 cover 出血铺满 */}
       <BackgroundBleed background={`url(${bg}) center / cover no-repeat`} />
       <LogicalStage>
-        <div className={styles.scene}>
+        <div className={s.scene}>
           {/* z0 重绘背景 */}
-          <img src={bg} alt="" draggable={false} className={styles.bg} />
+          <img src={bg} alt="" draggable={false} className={s.bg} />
 
           {/* 静态展示层 */}
           {LAYERS.map(l => (
-            <img key={l.z} src={l.src} alt="" draggable={false} className={styles.layer} style={place(l.bbox)} />
+            <img key={l.z} src={l.src} alt="" draggable={false} className={s.layer} style={place(l.bbox)} />
           ))}
 
           {/* 左上返回（原稿顶部干净区） */}
-          <div className={styles.backBtn}>
+          <div className={s.backBtn}>
             <BackButton size={58} onClick={() => go('home')} />
           </div>
 
           {/* 4 行设置项（行位置按拆层行 bbox，top 逐行内联） */}
           {rows.map((r, i) => (
-            <div key={r.label} className={styles.row} style={{ top: ROWS_Y[i] * K - 34 }}>
-              <img src={r.icon} alt="" draggable={false} className={styles.rowIcon} />
-              <span className={styles.rowLabel}>{r.label}</span>
-              <span className={styles.rowControl}>{r.control}</span>
+            <div key={r.label} className={s.row} style={{ top: ROWS_Y[i] * K - 34 }}>
+              <img src={r.icon} alt="" draggable={false} className={s.rowIcon} />
+              <span className={s.rowLabel}>{r.label}</span>
+              <span className={s.rowControl}>{r.control}</span>
             </div>
           ))}
 
           {/* 清理完成提示（白卡内底部） */}
-          {cleared && <div className={styles.cleared}>已清理，下次启动生效</div>}
+          {cleared && <div className={s.cleared}>已清理，下次启动生效</div>}
 
           {/* 清缓存二次确认 */}
           {confirmClear && (
@@ -166,11 +166,11 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
           {/* 关于我们 */}
           {aboutOpen && (
             <Modal onClose={() => setAboutOpen(false)}>
-              <div className={styles.about}>
-                <span className={styles.aboutTitle}>mathpaws</span>
-                <span className={styles.aboutText}>版本 v{version}（一期）</span>
-                <span className={styles.aboutText}>面向小学生的口算练习小游戏</span>
-                <span className={styles.aboutText}>本地离线应用，全部学习数据只保存在本设备</span>
+              <div className={s.about}>
+                <span className={s.aboutTitle}>mathpaws</span>
+                <span className={s.aboutText}>版本 v{version}（一期）</span>
+                <span className={s.aboutText}>面向小学生的口算练习小游戏</span>
+                <span className={s.aboutText}>本地离线应用，全部学习数据只保存在本设备</span>
                 <Btn variant="grass" onClick={() => { audio.playSfx('click'); setAboutOpen(false) }}>知道了</Btn>
               </div>
             </Modal>

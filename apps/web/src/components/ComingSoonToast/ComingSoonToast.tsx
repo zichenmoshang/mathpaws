@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { create } from 'zustand'
 
 import { audio } from '../../utils/audio'
-import styles from './ComingSoonToast.module.css'
+import * as s from './ComingSoonToast.css'
 
 interface ToastState {
   visible: boolean
@@ -41,10 +41,10 @@ export function toastMessage(message: string, icon?: string): void {
 }
 
 export function ComingSoonToast() {
-  const visible = useComingSoonStore(s => s.visible)
-  const message = useComingSoonStore(s => s.message)
-  const icon = useComingSoonStore(s => s.icon)
-  const hide = useComingSoonStore(s => s.hide)
+  const visible = useComingSoonStore(st => st.visible)
+  const message = useComingSoonStore(st => st.message)
+  const icon = useComingSoonStore(st => st.icon)
+  const hide = useComingSoonStore(st => st.hide)
 
   useEffect(() => {
     if (!visible) return
@@ -57,9 +57,9 @@ export function ComingSoonToast() {
   return (
     // 全屏背板不拦截指针（1.6s 自动消失期间不吞下层点击）；
     // 点击提示气泡本身仍可提前关闭
-    <div className={styles.backdrop}>
-      <div className={styles.toast} role="status" onClick={hide}>
-        <span className={styles.emoji}>{icon}</span>
+    <div className={s.backdrop}>
+      <div className={s.toast} role="status" onClick={hide}>
+        <span className={s.emoji}>{icon}</span>
         {message}
       </div>
     </div>
