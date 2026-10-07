@@ -174,7 +174,7 @@ mathpaws/
 | useEquippedStore | ownedCosmetics / equippedCosmetics（无 gender） |
 | useLastRoundStore | 答题轮次：题目 / 索引 / 答对数 / mode / status；正式答题不超时、每日前 2 轮发奖 |
 | useMasteryStore | 有序知识点路径 + 三态 + 掌握计数；`distribution` 供每轮 70/30 配比（**某阵营为空时配额重分配，保证总和 = 总题数**） |
-| useWrongbookStore | 错题按"知识点+题型"去重、容量 `WRONGBOOK_CAPACITY`（config/quiz.ts，默认 100）；**LRU：重复答错移到队尾，淘汰最久未错**（PRD §7.4"淘汰最旧"的实现口径，保留近期高频错）；`removeIfCorrect` 仅在 key 存在且答对时返回 true |
+| useWrongbookStore | 错题按"知识点+题型"去重、容量 `WRONGBOOK_CAPACITY`（config/quiz.ts，默认 100）；**LRU：重复答错移到队尾，淘汰最久未答错**（PRD §7.4 口径）；`removeIfCorrect` 仅在 key 存在且答对时返回 true |
 | useStreakStore | 当天完成 ≥1 轮、连续 streak、累计天数、宝箱记录；断签后 streak 重置为 1、宝箱等级由 streak 直接推导；`markChestOpened()` 无参化（日期内部自取 `dayKey()`） |
 | useSettingsStore | BGM / 音效开关、清缓存（只清 SW / CacheStorage，不碰存档） |
 
