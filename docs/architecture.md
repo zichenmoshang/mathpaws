@@ -69,7 +69,7 @@ mathpaws/
 │       │   ├── components/      # 一组件一目录：ChestPanel / WritingBoard / GuideTip /
 │       │   │                    #   ComingSoonToast
 │       │   ├── stores/          # 分域 zustand stores（10 域 + persist + bootstrap）
-│       │   ├── db/              # index.ts（10 表 + DB v2）/ migration.ts / types.ts
+│       │   ├── db/              # index.ts（10 表 + DB v3）/ migration.ts（新装初始化）/ types.ts
 │       │   ├── content/         # 题库与掌握度：oral / mastery / knowledgePath / types
 │       │   ├── config/          # 数值集中地：economy / farm / gachaPool / quiz / pets /
 │       │   │                    #   cosmetics / petArt / streak / player
@@ -187,15 +187,15 @@ mathpaws/
 
 ## 10. 本地数据（IndexedDB）
 
-`db/index.ts` DB v2 = 10 张业务表 + 旧 `state` 仓（v1 残留，迁移后清空）；`db/migration.ts` 幂等迁移；回归脚本 `apps/web/scripts/migration-regression.mjs`。
+`db/index.ts` DB v3 = 10 张业务表（旧 v1 `state` 仓在 v2→v3 升级中一次性 `deleteObjectStore`，纯 schema 清理）。demo 阶段无老存档、不做 legacy 迁移：`db/migration.ts` 仅负责**新装默认初始化**（`ensureInitialized`：无 profile 写全套默认值，已有 profile 幂等补齐缺失表）。未来 schema 变更走 `upgrade(vN→vN+1)`。
 
 | objectStore | 内容 |
 |---|---|
-| profile | 设备游客 UUID、主角名、引导完成标志（**迁移中最后写入，作为完成标记**） |
-| economy / pets / cosmetics / farm | 各域存档（farm 地块含 plantedAt；seedId 合法但 plantedAt 缺失按空地块处理，可种可收） |
+| profile | 设备游客 UUID、主角名、引导完成标志 |
+| economy / pets / cosmetics / farm | 各域存档（farm 地块含 plantedAt） |
 | mastery / wrongbook / strokes / streak / settings | 掌握路径 / 错题 / 手写样本（一期不写）/ 连学 / 音频开关 |
 
-- **迁移原子性**：各表 put 完成后才写 profile（完成标记）并 `deleteLegacyState`；中途崩溃下次重进迁移分支，旧档不会被默认值顶替；`ensureMissingTables` 只补整表，字段级兜底由 store 装载时 spread 默认值承担。
+- **初始化幂等**：`ensureMissingTables` 只补整表，字段级兜底由 store 装载时 spread 默认值承担。
 - `getDB` 打开失败**清缓存 Promise 允许重试**（隐私模式 / 版本错误场景）。
 - 时间口径：本地时间戳、接受改设备时间（一期无后端校验）；自然日 key 用 `dayKey()`。
 - "清除缓存"只清 SW / CacheStorage，**不碰 IndexedDB 存档**；一期不做导出 / 导入 / 云存档。

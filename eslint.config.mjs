@@ -56,8 +56,7 @@ export default tseslint.config(
   {
     files: ['**/*.{js,mjs,cjs}'],
     languageOptions: {
-      // indexedDB：migration 回归脚本经 fake-indexeddb 注入
-      globals: { ...globals.node, indexedDB: 'readonly' },
+      globals: { ...globals.node },
     },
     rules: {
       // design/ 下为 Node CommonJS 工具脚本，允许 require

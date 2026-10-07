@@ -1,4 +1,4 @@
-// stores 统一出口 + 应用启动编排（装载 → 迁移 → 绑定持久化）
+// stores 统一出口 + 应用启动编排（初始化 → 装载 → 绑定持久化）
 export { usePlayerStore, loadPlayer } from './usePlayerStore'
 export { useEconomyStore, loadEconomy } from './useEconomyStore'
 export { useSettingsStore, loadSettings } from './useSettingsStore'
@@ -12,7 +12,7 @@ export { useMasteryStore, loadMastery } from './useMasteryStore'
 export { useWrongbookStore, wrongKey, loadWrongbook } from './useWrongbookStore'
 
 import { getDB } from '../db'
-import { migrateIfNeeded } from '../db/migration'
+import { ensureInitialized } from '../db/migration'
 import { MAIN_KEY } from '../db/types'
 
 import { bindPersist, flushPersist, registerPersistFlush, PERSIST_DEBOUNCE_MS } from './persist'
@@ -33,14 +33,14 @@ let bootstrapPromise: Promise<void> | null = null
 let unbinds: Array<() => void> = []
 
 /**
- * 应用启动：迁移（幂等）→ 装载各表到 stores → 跨日计数重置 → 绑定持久化。
+ * 应用启动：初始化（幂等）→ 装载各表到 stores → 跨日计数重置 → 绑定持久化。
  * 多次调用安全：并发共享同一 in-flight Promise；失败后可重试。
  */
 export function bootstrapStores(): Promise<void> {
   if (bootstrapPromise) return bootstrapPromise
   const p = (async () => {
-    // 1) DB 升级 + 旧档迁移（或全新用户默认值）
-    await migrateIfNeeded()
+    // 1) DB 建表（v3 一次性清理旧 state 仓）+ 新装默认值初始化
+    await ensureInitialized()
 
     // 2) 装载到内存 stores
     await Promise.all([

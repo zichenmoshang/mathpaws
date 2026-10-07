@@ -22,7 +22,7 @@ pnpm dev        # 启动 Web 客户端（apps/web）
 | `pnpm typecheck` | 全部包 TypeScript 检查 |
 | `pnpm lint` | ESLint 检查 |
 | `pnpm format` | Prettier 格式化 |
-| `pnpm test` | 全部包的测试（含 IndexedDB 迁移回归） |
+| `pnpm test` | 全部包的测试 |
 
 ## 仓库结构
 
