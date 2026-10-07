@@ -62,3 +62,17 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # 部署后冒烟：直打线上 Pages 地址（E2E_BASE_URL，不起本地 preview），
+      # 作为 PR 门禁之外的部署层兜底；失败使本 workflow 变红以便及时发现
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - run: corepack pnpm --filter mathpaws-client exec playwright install --with-deps chromium
+
+      - name: Post-deploy smoke
+        env:
+          E2E_BASE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: corepack pnpm --filter mathpaws-client exec playwright test

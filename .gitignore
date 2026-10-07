@@ -75,6 +75,10 @@ ref_assets/
 # ---------- 测试覆盖率 ----------
 coverage/
 
+# ---------- Playwright E2E 产物 ----------
+playwright-report/
+test-results/
+
 # ---------- 内部文档（不公开，仅本地维护；公开文档不得引用） ----------
 docs/internal/
 

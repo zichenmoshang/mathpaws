@@ -128,7 +128,7 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   const [warehouseOpen, setWarehouseOpen] = useState(false)
   const [fly, setFly] = useState<string | null>(null)
   // 飘字定时器：卸载时清理，避免组件销毁后 setState
-  const flyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const flyTimer = useRef<number | null>(null)
   useEffect(() => () => {
     if (flyTimer.current) clearTimeout(flyTimer.current)
   }, [])
@@ -359,7 +359,7 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
   const flowerCoins = useEconomyStore(s => s.flowerCoins)
   const [sellFly, setSellFly] = useState<string | null>(null)
   // 售出飘字定时器：面板关闭（卸载）时清理
-  const sellTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const sellTimer = useRef<number | null>(null)
   useEffect(() => () => {
     if (sellTimer.current) clearTimeout(sellTimer.current)
   }, [])

@@ -16,6 +16,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "e2e"],
   "exclude": ["src/**/_legacy", "_legacy", "dist"]
 }
