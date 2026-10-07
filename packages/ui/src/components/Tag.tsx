@@ -1,7 +1,8 @@
 // ---------- Tag / LockTag ----------
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { C, FONT, R } from '../tokens'
+import { C } from '../tokens'
+import * as s from './Tag.css'
 
 export function Tag({
   children, tone = 'blue',
@@ -18,8 +19,9 @@ export function Tag({
   }[tone]
   return (
     <span
+      className={s.tag}
       style={{
-        ...s.tag,
+        // 动态值：底色/字色随 tone 变化，保留内联
         background: map.bg, color: map.fg,
       }}
     >
@@ -31,25 +33,8 @@ export function Tag({
 // 【暂未使用】LockTag 业务页零引用，待评估。
 export function LockTag({ label = '即将开放' }: { label?: string }) {
   return (
-    <span
-      style={s.lockTag}
-    >
+    <span className={s.lockTag}>
       🔒 {label}
     </span>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  tag: {
-    display: 'inline-flex', alignItems: 'center',
-    padding: '3px 12px', borderRadius: R.pill,
-    fontFamily: FONT.family, fontWeight: 800, fontSize: 14, whiteSpace: 'nowrap',
-  },
-  lockTag: {
-    display: 'inline-flex', alignItems: 'center', gap: 4,
-    padding: '3px 12px', borderRadius: R.pill,
-    background: '#eceff1', color: '#546e7a',
-    fontFamily: FONT.family, fontWeight: 800, fontSize: 14,
-  },
 }

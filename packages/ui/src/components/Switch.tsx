@@ -1,7 +1,6 @@
 // ---------- Switch ----------
-import type { CSSProperties } from 'react'
-
-import { C, FONT, R } from '../tokens'
+import { C } from '../tokens'
+import * as s from './Switch.css'
 
 export function Switch({
   checked, onChange, label,
@@ -16,17 +15,19 @@ export function Switch({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      style={s.root}
+      className={s.root}
     >
       <span
+        className={s.track}
         style={{
-          ...s.track,
+          // 动态值：轨道底色随 checked 变化，保留内联
           background: checked ? C.grass : '#b0bec5',
         }}
       >
         <span
+          className={s.knob}
           style={{
-            ...s.knob,
+            // 动态值：滑块位置随 checked 变化，保留内联
             left: checked ? 29 : 3,
           }}
         />
@@ -34,23 +35,4 @@ export function Switch({
       {label}
     </button>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: {
-    display: 'inline-flex', alignItems: 'center', gap: 10,
-    border: 'none', background: 'transparent', cursor: 'pointer',
-    fontFamily: FONT.family, fontWeight: 800, color: C.ink,
-  },
-  track: {
-    width: 56, height: 30, borderRadius: R.pill, position: 'relative',
-    transition: 'background .2s',
-    boxShadow: 'inset 0 2px 4px rgba(0,0,0,.18)',
-  },
-  knob: {
-    position: 'absolute', top: 3,
-    width: 24, height: 24, borderRadius: '50%', background: '#fff',
-    transition: 'left .2s', boxShadow: '0 2px 4px rgba(0,0,0,.25)',
-  },
 }

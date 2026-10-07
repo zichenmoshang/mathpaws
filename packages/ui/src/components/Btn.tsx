@@ -1,7 +1,9 @@
 // ---------- 糖果立体按钮 ----------
-import type { CSSProperties, ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes } from 'react'
 
-import { FONT, R, VARIANT, edge, type Variant } from '../tokens'
+import { R, VARIANT, edge, type Variant } from '../tokens'
+import { btn } from '../styles.css'
+import * as s from './Btn.css'
 
 type Size = 'sm' | 'md' | 'lg'
 interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -16,10 +18,9 @@ export function Btn({ variant = 'sun', size = 'md', fullWidth, style, children, 
   const radius = size === 'sm' ? R.sm : R.md
   return (
     <button
-      className="mp-btn"
+      className={`${btn} ${s.base}`}
       {...rest}
       style={{
-        ...s.base,
         height: h,
         padding: `0 ${size === 'sm' ? 16 : 28}px`,
         borderRadius: radius,
@@ -36,14 +37,4 @@ export function Btn({ variant = 'sun', size = 'md', fullWidth, style, children, 
       {children}
     </button>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  base: {
-    border: 'none',
-    fontWeight: 900,
-    fontFamily: FONT.family,
-    userSelect: 'none',
-  },
 }
