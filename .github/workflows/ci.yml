@@ -27,3 +27,18 @@ jobs:
       - run: pnpm test
 
       - run: pnpm build
+
+      # E2E 冒烟：preview 依赖上一步 build 产物
+      - run: corepack pnpm --filter mathpaws-client exec playwright install --with-deps chromium
+
+      - run: corepack pnpm test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-artifacts
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          if-no-files-found: ignore
+          retention-days: 7

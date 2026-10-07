@@ -381,7 +381,7 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
   const anyNew = useMemo(() => outcomes?.some(o => o.isNew), [outcomes])
 
   // 开盒动画计时器：卸载时清理，避免组件销毁后 setState
-  const drawTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const drawTimer = useRef<number | null>(null)
   useEffect(() => () => {
     if (drawTimer.current) clearTimeout(drawTimer.current)
   }, [])
