@@ -1,7 +1,9 @@
 // ---------- Tabs / Segmented ----------
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { FONT, R, VARIANT, edge } from '../tokens'
+import { btn } from '../styles.css'
+import { VARIANT, edge } from '../tokens'
+import * as s from './Tabs.css'
 
 export function Tabs<T extends string>({
   tabs, active, onChange,
@@ -11,16 +13,16 @@ export function Tabs<T extends string>({
   onChange: (id: T) => void
 }) {
   return (
-    <div style={s.root}>
+    <div className={s.root}>
       {tabs.map(t => {
         const on = t.id === active
         return (
           <button
             key={t.id}
-            className={on ? '' : 'mp-btn'}
+            className={on ? s.tab : `${btn} ${s.tab}`}
             onClick={() => onChange(t.id)}
             style={{
-              ...s.tab,
+              // 动态值：选中态配色与立体底边随 active 变化，保留内联
               background: on
                 ? `linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0) 45%), ${VARIANT.sky.bg}`
                 : '#eceff1',
@@ -34,14 +36,4 @@ export function Tabs<T extends string>({
       })}
     </div>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: { display: 'inline-flex', gap: 6, flexWrap: 'wrap' },
-  tab: {
-    height: 40, padding: '0 20px', borderRadius: R.pill,
-    border: 'none', cursor: 'pointer', fontFamily: FONT.family,
-    fontWeight: 900, fontSize: 17,
-  },
 }

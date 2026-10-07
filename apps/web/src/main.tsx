@@ -5,7 +5,6 @@ import App from './App'
 import { CompatGate } from './app/CompatGate'
 import { ErrorBoundary } from './app/ErrorBoundary'
 import './styles/global.css'
-import '@mathpaws/ui/styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

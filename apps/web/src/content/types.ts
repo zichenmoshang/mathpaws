@@ -29,22 +29,3 @@ export interface QuizQuestion {
 
 /** 难度等级（Gate G2 三级，真实试卷分层） */
 export type DifficultyLevel = 1 | 2 | 3
-
-/** 口算生成器的知识点出题参数（随 Gate G2 审核定稿） */
-export interface OralGenParams {
-  /** 允许的运算类型 */
-  ops: Array<'+' | '-' | '×' | '÷' | 'mix'>
-  /** 数字范围 */
-  min: number
-  max: number
-  /** 是否含进退位 / 括号 / 多步 */
-  carry: boolean
-  parentheses: boolean
-  multiStep: boolean
-  /** 操作数须为该数的倍数（整十=10、整百=100；不限制为 1） */
-  multiplesOf?: number
-  /** 第二操作数范围（如乘一位数 2–9；仅乘法结构性约束） */
-  factorRange?: { min: number; max: number }
-  /** 小数位数（>0 表示按小数生成，如一位小数） */
-  decimalPlaces?: number
-}

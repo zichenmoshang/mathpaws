@@ -45,11 +45,6 @@ export function isBaselineCosmetic(id: string): boolean {
   return BASELINE_IDS.has(id)
 }
 
-/** 背包穿戴校验：已抽拥有 或 基线装扮 */
-export function isOwnedOrBaseline(ownedHas: (id: string) => boolean): (id: string) => boolean {
-  return (id: string) => BASELINE_IDS.has(id) || ownedHas(id)
-}
-
 /** 品质视觉：普通蓝 / 稀有紫 / 传说金（仅 UI 边框与光效，不画进服装贴图） */
 export const RARITY_META: Record<
   Rarity,

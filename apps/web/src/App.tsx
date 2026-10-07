@@ -1,17 +1,13 @@
 import { useCallback, useEffect } from 'react'
 
 import { BootGate } from './app/BootGate'
-import { CompatGate } from './app/CompatGate'
-import { ErrorBoundary } from './app/ErrorBoundary'
 import { RouteView } from './app/RouteView'
 import { useRouter, bindHashRoute } from './app/router'
 import { OrientationGate } from './app/viewport'
-import { ComingSoonToast } from './components/ComingSoonToast'
+import { ComingSoonToast } from './components/ComingSoonToast/ComingSoonToast'
 import { bootstrapStores } from './stores'
 import { useSettingsStore, useEconomyStore, useGachaStore } from './stores'
 import { bindAudioUnlock, audio } from './utils/audio'
-import './styles/global.css'
-import '@mathpaws/ui/styles.css'
 
 // dev 调试：注入 window.__mp，便于浏览器控制台造数据（如加贝壳）
 if (import.meta.env.DEV) {
@@ -68,14 +64,12 @@ function Shell() {
   )
 }
 
+// 注：ErrorBoundary / CompatGate 已在 main.tsx 包裹一层，此处不再重复，
+// 避免能力检测与样式被双重执行。
 export default function App() {
   return (
-    <ErrorBoundary>
-      <CompatGate>
-        <BootGate boot={boot}>
-          <Shell />
-        </BootGate>
-      </CompatGate>
-    </ErrorBoundary>
+    <BootGate boot={boot}>
+      <Shell />
+    </BootGate>
   )
 }

@@ -12,6 +12,8 @@ import { defaultCosmetics } from '../db/migration'
 import type { CosmeticsRecord } from '../db/types'
 import { MAIN_KEY } from '../db/types'
 
+import { useEconomyStore } from './useEconomyStore'
+
 export interface DrawOutcome {
   item: GachaItem
   isNew: boolean
@@ -64,22 +66,12 @@ export const useGachaStore = create<GachaState>((set, get) => ({
   has: (id) => get().owned.includes(id),
 }))
 
-/** 抽卡入口统一编排：校验贝壳 → 扣费 → 抽；不足返回 null */
+/** 抽卡入口统一编排：扣费（余额检查与扣减一次原子完成）→ 抽；不足返回 null */
 export function performDraw(times: 1 | 10): DrawOutcome[] | null {
   const cost = times === 10 ? TEN_COST : SINGLE_COST
-  const { shells } = useEconomyShim()
-  if (shells < cost) return null
-  spendShellsShim(cost)
+  // spendShells 余额不足返回 false：直接不发货，不先查后扣
+  if (!useEconomyStore.getState().spendShells(cost)) return null
   return useGachaStore.getState().draw(times)
-}
-
-// 避免与 economy store 形成循环导入：延迟取数
-import { useEconomyStore } from './useEconomyStore'
-function useEconomyShim() {
-  return { shells: useEconomyStore.getState().shells }
-}
-function spendShellsShim(n: number) {
-  useEconomyStore.getState().spendShells(n)
 }
 
 export async function loadGacha(): Promise<void> {

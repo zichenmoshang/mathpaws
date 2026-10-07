@@ -1,8 +1,9 @@
 // 【暂未使用 · 2026-10-06 CR】业务页零引用（hifi 位图路线替代 CSS 绘制组件）；业务代码 CR 后评估删留，暂保留。
 // ---------- RewardBadge / RewardRow ----------
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
-import { C, FONT, R } from '../tokens'
+import { C } from '../tokens'
+import * as s from './RewardBadge.css'
 
 export function RewardBadge({
   icon, value, tone = 'shell',
@@ -18,12 +19,13 @@ export function RewardBadge({
   }[tone]
   return (
     <div
+      className={s.badge}
       style={{
-        ...s.badge,
+        // 动态值：底色/字色随 tone 变化，保留内联
         background: colors.bg, color: colors.fg,
       }}
     >
-      <span style={s.icon}>{icon}</span>
+      <span className={s.icon}>{icon}</span>
       {value}
     </div>
   )
@@ -31,19 +33,8 @@ export function RewardBadge({
 
 export function RewardRow({ children }: { children: ReactNode }) {
   return (
-    <div style={s.row}>
+    <div className={s.row}>
       {children}
     </div>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  badge: {
-    display: 'inline-flex', alignItems: 'center', gap: 8,
-    padding: '8px 18px', borderRadius: R.pill,
-    fontFamily: FONT.family, fontWeight: 900, fontSize: 20,
-  },
-  icon: { fontSize: 24 },
-  row: { display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' },
 }

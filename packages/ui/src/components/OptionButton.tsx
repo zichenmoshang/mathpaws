@@ -1,8 +1,10 @@
 // 【暂未使用 · 2026-10-06 CR】业务页零引用（hifi 位图路线替代 CSS 绘制组件）；业务代码 CR 后评估删留，暂保留。
 // ---------- OptionButton（真题 ABC / 三选一） ----------
-import type { ButtonHTMLAttributes, CSSProperties } from 'react'
+import type { ButtonHTMLAttributes } from 'react'
 
-import { C, FONT, R, VARIANT, edge } from '../tokens'
+import { btn } from '../styles.css'
+import { C, VARIANT, edge } from '../tokens'
+import * as s from './OptionButton.css'
 
 interface OptionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean
@@ -19,10 +21,10 @@ export function OptionButton({
   const fg = state === 'idle' && !active ? C.ink : '#fff'
   return (
     <button
-      className="mp-btn"
+      className={`${btn} ${s.root}`}
       {...rest}
       style={{
-        ...s.root,
+        // 动态值：边框/底色/字色/立体底边随 active 与对错态变化，保留内联
         border: `3px solid ${active || state !== 'idle' ? bg : C.sky}`,
         background: bg, color: fg,
         boxShadow: active || state !== 'idle' ? edge(C.skyDeep, 4) : 'none',
@@ -32,13 +34,4 @@ export function OptionButton({
       {children}
     </button>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: {
-    minWidth: 120, minHeight: 72, padding: '10px 22px',
-    borderRadius: R.md, fontSize: 28, fontWeight: 900,
-    fontFamily: FONT.family, cursor: 'pointer', lineHeight: 1.2,
-  },
 }

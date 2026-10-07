@@ -2,7 +2,7 @@
 // ---------- 卡片 ----------
 import type { CSSProperties, ReactNode } from 'react'
 
-import { C, FONT, R, SHADOW } from '../tokens'
+import * as s from './Card.css'
 
 export function Card({ children, style, padding = 18 }: {
   children: ReactNode
@@ -10,16 +10,6 @@ export function Card({ children, style, padding = 18 }: {
   padding?: number
 }) {
   return (
-    <div style={{
-      ...s.root, padding, ...style,
-    }}>{children}</div>
+    <div className={s.root} style={{ padding, ...style }}>{children}</div>
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: {
-    background: C.white, borderRadius: R.lg,
-    boxShadow: SHADOW.card, fontFamily: FONT.family,
-  },
 }

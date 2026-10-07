@@ -95,8 +95,16 @@ export function roundDistribution(
 
   if (learning.length === 0 && mastered.length === 0) return result
 
-  const learningTarget = Math.round(total * 0.7)
-  const reviewTarget = total - learningTarget
+  // 某一阵营为空时，其配额全部重分配给存在的阵营，保证分配总和 === total
+  let learningTarget = Math.round(total * 0.7)
+  let reviewTarget = total - learningTarget
+  if (learning.length === 0) {
+    learningTarget = 0
+    reviewTarget = total
+  } else if (mastered.length === 0) {
+    learningTarget = total
+    reviewTarget = 0
+  }
 
   if (learning.length > 0) {
     const base = Math.floor(learningTarget / learning.length)

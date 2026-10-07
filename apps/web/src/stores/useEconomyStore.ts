@@ -2,7 +2,7 @@
 // 一期不做体力与水滴。
 import { create } from 'zustand'
 
-import { DAILY_PAID_ROUNDS } from '../config/economy'
+import { DAILY_PAID_ROUNDS, FLOAT } from '../config/economy'
 import { getDB } from '../db'
 import { defaultEconomy } from '../db/migration'
 import type { EconomyRecord } from '../db/types'
@@ -30,10 +30,10 @@ interface EconomyState extends EconomyRecord {
    */
   canPayRound: () => boolean
   /**
-   * 浮题作答计数：当日未满 dailyLimit → +1 且返回 true；
+   * 浮题作答计数：当日未满 FLOAT.dailyLimit → +1 且返回 true；
    * 已满返回 false（不发放奖励）。
    */
-  registerFloat: (limit: number) => boolean
+  registerFloat: () => boolean
 }
 
 export const useEconomyStore = create<EconomyState>((set, get) => ({
@@ -59,13 +59,13 @@ export const useEconomyStore = create<EconomyState>((set, get) => ({
   rolloverIfNewDay: () => {
     const today = dayKey()
     const s = get()
-    if (s.dateKey !== today || s.floatDate !== today) {
-      set({
-        dateKey: today,
-        paidRounds: 0,
-        floatDate: today,
-        floatCount: 0,
-      })
+    // 两组计数（轮次 dateKey 组 / 浮题 floatDate 组）各自独立判断、独立重置，
+    // 与 registerRound / registerFloat 的跨日口径对齐
+    if (s.dateKey !== today) {
+      set({ dateKey: today, paidRounds: 0 })
+    }
+    if (get().floatDate !== today) {
+      set({ floatDate: today, floatCount: 0 })
     }
   },
 
@@ -87,13 +87,13 @@ export const useEconomyStore = create<EconomyState>((set, get) => ({
     return s.paidRounds < DAILY_PAID_ROUNDS
   },
 
-  registerFloat: (limit) => {
+  registerFloat: () => {
     const today = dayKey()
     const s = get()
     if (s.floatDate !== today) {
       set({ floatDate: today, floatCount: 0 })
     }
-    if (get().floatCount >= limit) return false
+    if (get().floatCount >= FLOAT.dailyLimit) return false
     set({ floatCount: get().floatCount + 1 })
     return true
   },

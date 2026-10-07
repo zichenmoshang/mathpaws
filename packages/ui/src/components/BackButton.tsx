@@ -4,6 +4,8 @@
 import type { CSSProperties } from 'react'
 
 import backButton from '../assets/ui-back-button.webp'
+import { btn } from '../styles.css'
+import * as s from './BackButton.css'
 
 // ---------- 标准返回按钮 ----------
 export function BackButton({
@@ -19,21 +21,13 @@ export function BackButton({
       type="button"
       aria-label={label ?? '返回'}
       onClick={onClick}
-      className="mp-btn"
+      className={`${btn} ${s.root}`}
       style={{
-        ...s.root,
+        // 位图资产不进 css.ts，背景与尺寸留在内联
+        background: `url(${backButton}) center / 100% 100% no-repeat`,
         width: size, height: size,
         ...style,
       }}
     />
   )
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: {
-    padding: 0, border: 'none',
-    background: `url(${backButton}) center / 100% 100% no-repeat`,
-    cursor: 'pointer',
-  },
 }

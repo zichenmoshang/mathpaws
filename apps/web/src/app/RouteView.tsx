@@ -62,51 +62,51 @@ export function RouteView({
 }
 
 const LazyPlazaRaw = lazy(() =>
-  import('../scenes/PlazaScene').then(m => ({ default: m.PlazaScene })),
+  import('../scenes/Plaza/PlazaScene').then(m => ({ default: m.PlazaScene })),
 )
 // dev 场景（scenes/dev/）：仅开发构建打包；生产构建 import.meta.env.DEV=false，
 // lazy 动态 import 位于死分支被 tree-shake，dev chunk 完全不进生产产物。
 const LazyPaperDollRaw = import.meta.env.DEV
-  ? lazy(() => import('../scenes/dev/PaperDollLookDev').then(m => ({ default: m.PaperDollLookDev })))
+  ? lazy(() => import('../scenes/dev/PaperDollLook/PaperDollLookDev').then(m => ({ default: m.PaperDollLookDev })))
   : null
 const LazyPaperDollRtRaw = import.meta.env.DEV
-  ? lazy(() => import('../scenes/dev/PaperDollCompositeDev').then(m => ({ default: m.PaperDollCompositeDev })))
+  ? lazy(() => import('../scenes/dev/PaperDollComposite/PaperDollCompositeDev').then(m => ({ default: m.PaperDollCompositeDev })))
   : null
 const LazyDevHomeRaw = import.meta.env.DEV
-  ? lazy(() => import('../scenes/dev/DevHomeScene').then(m => ({ default: m.DevHomeScene })))
+  ? lazy(() => import('../scenes/dev/DevHome/DevHomeScene').then(m => ({ default: m.DevHomeScene })))
   : null
 const LazyHomeRaw = lazy(() =>
-  import('../scenes/HomeScene').then(m => ({ default: m.HomeScene })),
+  import('../scenes/Home/HomeScene').then(m => ({ default: m.HomeScene })),
 )
 const LazyQuizRaw = lazy(() =>
-  import('../scenes/QuizScene').then(m => ({ default: m.QuizScene })),
+  import('../scenes/Quiz/QuizScene').then(m => ({ default: m.QuizScene })),
 )
 const LazyResultRaw = lazy(() =>
-  import('../scenes/ResultScene').then(m => ({ default: m.ResultScene })),
+  import('../scenes/Result/ResultScene').then(m => ({ default: m.ResultScene })),
 )
 const LazyGachaRaw = lazy(() =>
-  import('../scenes/GachaScene').then(m => ({ default: m.GachaScene })),
+  import('../scenes/Gacha/GachaScene').then(m => ({ default: m.GachaScene })),
 )
 const LazyBackpackRaw = lazy(() =>
-  import('../scenes/BackpackScene').then(m => ({ default: m.BackpackScene })),
+  import('../scenes/Backpack/BackpackScene').then(m => ({ default: m.BackpackScene })),
 )
 const LazySplashRaw = lazy(() =>
-  import('../scenes/onboarding/SplashScene').then(m => ({ default: m.SplashScene })),
+  import('../scenes/onboarding/Splash/SplashScene').then(m => ({ default: m.SplashScene })),
 )
 const LazyHeroIntroRaw = lazy(() =>
-  import('../scenes/onboarding/HeroIntroScene').then(m => ({ default: m.HeroIntroScene })),
+  import('../scenes/onboarding/HeroIntro/HeroIntroScene').then(m => ({ default: m.HeroIntroScene })),
 )
 const LazyAdoptRaw = lazy(() =>
-  import('../scenes/onboarding/AdoptScene').then(m => ({ default: m.AdoptScene })),
+  import('../scenes/onboarding/Adopt/AdoptScene').then(m => ({ default: m.AdoptScene })),
 )
 const LazyPetPanelRaw = lazy(() =>
-  import('../scenes/PetPanelScene').then(m => ({ default: m.PetPanelScene })),
+  import('../scenes/PetPanel/PetPanelScene').then(m => ({ default: m.PetPanelScene })),
 )
 const LazyFarmRaw = lazy(() =>
-  import('../scenes/FarmScene').then(m => ({ default: m.FarmScene })),
+  import('../scenes/Farm/FarmScene').then(m => ({ default: m.FarmScene })),
 )
 const LazySettingsRaw = lazy(() =>
-  import('../scenes/SettingsScene').then(m => ({ default: m.SettingsScene })),
+  import('../scenes/Settings/SettingsScene').then(m => ({ default: m.SettingsScene })),
 )
 
 function SplashLazy({ onNavigate }: { onNavigate: (id: RouteId) => void }) {

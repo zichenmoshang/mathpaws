@@ -17,11 +17,10 @@ export const QUIZ_MODE_LABEL: Record<QuizMode, string> = {
   real: '真题大挑战',
 }
 
-/**
- * 正式答题不设超时（仅广场浮题有 5 秒倒计时）。
- * 保留语义常量，禁止在正式答题流程引入倒计时。
- */
-export const FORMAL_HAS_TIMEOUT = false
+// 注意：正式答题不设超时（仅广场浮题有倒计时），禁止在正式答题流程引入倒计时。
+
+/** 错题本容量上限：满员时淘汰最久未错的条目（PRD §11；错题本页面二期开放） */
+export const WRONGBOOK_CAPACITY = 100
 
 /** 开学小测（PRD §7.7）：首次正式答题前、5–10 题覆盖前置、可跳过 */
 export const PLACEMENT_TEST = {

@@ -1,16 +1,16 @@
 // 域 store：错题本（PRD §11）
 // 收录范围：仅正式答题（口算/真题）错题；"知识点+题型"去重。
-// 一期口径：静默预采集——照常写入 wrongbook 表、无展示入口，上限 100 条（淘汰最旧）；
+// 一期口径：静默预采集——照常写入 wrongbook 表、无展示入口，
+// 上限 WRONGBOOK_CAPACITY 条（LRU：重复答错移到队尾，满员淘汰最久未错）；
 // 错题本页面二期开放（PRD §7.4 / §14）。
 import { create } from 'zustand'
 
+import { WRONGBOOK_CAPACITY } from '../config/quiz'
 import type { QuizQuestion } from '../content/types'
 import { getDB } from '../db'
 import { defaultWrongbook } from '../db/migration'
 import type { WrongItem, WrongbookRecord } from '../db/types'
 import { MAIN_KEY } from '../db/types'
-
-const CAPACITY = 100
 
 interface WrongbookState extends WrongbookRecord {
   /** 收录一道错题（已去重；重复则刷新错误次数与题干） */
@@ -35,7 +35,9 @@ export const useWrongbookStore = create<WrongbookState>((set, get) => ({
     const existIdx = items.findIndex(i => i.key === key)
     if (existIdx >= 0) {
       const old = items[existIdx]
-      items[existIdx] = {
+      // LRU：重复答错移到队尾（队首 = 最久未错），并刷新错误次数与题干
+      items.splice(existIdx, 1)
+      items.push({
         ...old,
         prompt: q.prompt,
         wrongAnswer,
@@ -44,7 +46,7 @@ export const useWrongbookStore = create<WrongbookState>((set, get) => ({
         errorCount: old.errorCount + 1,
         // 再次答错重置为隐藏答案，与"默认隐藏"口径一致
         revealed: false,
-      }
+      })
     } else {
       const item: WrongItem = {
         key,
@@ -58,16 +60,18 @@ export const useWrongbookStore = create<WrongbookState>((set, get) => ({
         revealed: false,
       }
       items.push(item)
-      // 容量上限：淘汰最旧
-      if (items.length > CAPACITY) items.splice(0, items.length - CAPACITY)
     }
+    // 容量上限：淘汰队首（最久未错）
+    if (items.length > WRONGBOOK_CAPACITY) items.splice(0, items.length - WRONGBOOK_CAPACITY)
     set({ items })
   },
 
   removeIfCorrect: (key, correct) => {
     if (!correct) return false
-    const items = get().items.filter(i => i.key !== key)
-    set({ items })
+    const items = get().items
+    // key 不存在：未移出任何项，返回 false
+    if (!items.some(i => i.key === key)) return false
+    set({ items: items.filter(i => i.key !== key) })
     return true
   },
 

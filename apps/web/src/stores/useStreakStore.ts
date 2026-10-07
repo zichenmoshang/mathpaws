@@ -16,9 +16,8 @@ interface StreakState extends StreakRecord {
    * totalDays 始终 +1。
    */
   markStudyDone: () => void
-  /** 标记宝箱已领取（日期） */
-  markChestOpened: (dateKey: string) => void
-  isChestAvailable: () => boolean
+  /** 标记今日宝箱已领取（日期由 store 内部自取，无需调用方传参） */
+  markChestOpened: () => void
 }
 
 function yesterdayOf(d: Date): string {
@@ -49,9 +48,7 @@ export const useStreakStore = create<StreakState>((set, get) => ({
     })
   },
 
-  markChestOpened: (dk) => set({ chestLastOpened: dk }),
-
-  isChestAvailable: () => get().chestLastOpened !== dayKey(),
+  markChestOpened: () => set({ chestLastOpened: dayKey() }),
 }))
 
 export async function loadStreak(): Promise<void> {

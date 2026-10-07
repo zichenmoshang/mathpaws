@@ -22,10 +22,6 @@ export const REWARD = {
   roundBonus: 0,
   /** 完成一轮宠物食物 */
   foodPerRound: 5,
-  /** 错题本重做正确：口算单题 */
-  wrongRedoOral: 10,
-  /** 错题本重做正确：真题单题 */
-  wrongRedoReal: 20,
 } as const
 
 /**
@@ -59,8 +55,7 @@ export const FLOAT = {
   shellAmount: 5,
 } as const
 
-/** 新用户冷启动（PRD §10.1、§13.1）：赠 2 份玉米种子，不送花朵币 */
+/** 新用户冷启动（PRD §10.1、§13.1）：赠 2 份玉米种子 */
 export const COLD_START = {
   cornSeeds: 2,
-  flowerCoins: 0,
 } as const

@@ -84,8 +84,10 @@ function loadOne(src: string, retries = 2): Promise<void> {
     img.onerror = () => {
       attempts += 1
       if (attempts <= retries) {
-        // 重新赋 src 触发重试（加查询串规避可能的中间态缓存）
-        img.src = `${src}${src.includes('?') ? '&' : '?'}r=${attempts}`
+        // 重试复用原 src（重新赋值即触发重新加载）：
+        // 保持浏览器缓存键与最终 <img> 使用键一致，
+        // 成功后后续 <img> 命中缓存、不再发请求
+        img.src = src
       } else {
         // 不阻塞：让页面上的 <img> 自行兜底加载
         resolve()

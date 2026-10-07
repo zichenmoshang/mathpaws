@@ -100,7 +100,10 @@ export function getPlotStage(
   now: number,
 ): { stage: PlotStage; remainSeconds: number } {
   if (!plot.seedId || !plot.plantedAt) return { stage: 'empty', remainSeconds: 0 }
-  const growMs = CROP_MAP[plot.seedId].growMinutes * 60 * 1000
+  const def = CROP_MAP[plot.seedId]
+  // 脏数据防护：未知作物 id 按空地处理，不抛 TypeError
+  if (!def) return { stage: 'empty', remainSeconds: 0 }
+  const growMs = def.growMinutes * 60 * 1000
   const elapsed = now - plot.plantedAt
   if (elapsed >= growMs) return { stage: 'ready', remainSeconds: 0 }
   return { stage: 'growing', remainSeconds: Math.ceil((growMs - elapsed) / 1000) }

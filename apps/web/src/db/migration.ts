@@ -1,9 +1,9 @@
 // 存档迁移（M0-DATA-04）：旧 v1 单 state(gameState) → v2 十张表
-// 幂等：已迁移（新表有数据）则跳过；字段缺失按默认兜底。
-// 一期本地单用户，迁移在 openDB 后执行（非原子，可重复执行、失败不破坏旧档）。
+// 幂等：profile 行最后写入、作为"迁移完成"标记——中断后重跑会重新执行迁移；
+// 字段缺失按默认兜底。
 
 import { INITIAL_CURRENCY, COLD_START } from '../config/economy'
-import { emptyPlots } from '../config/farm'
+import { emptyPlots, PLOT_COUNT } from '../config/farm'
 import { initMastery } from '../content/mastery'
 import { uuid, dayKey } from '../utils/id'
 
@@ -49,7 +49,7 @@ export function defaultCosmetics(): CosmeticsRecord {
 export function defaultFarm(): FarmRecord {
   return {
     farmExp: 0,
-    plots: emptyPlots(4),
+    plots: emptyPlots(PLOT_COUNT),
     // 冷启动：2 份玉米种子
     seedInventory: { corn: COLD_START.cornSeeds },
     cropInventory: {},
@@ -131,8 +131,7 @@ export async function migrateIfNeeded(): Promise<{ migrated: boolean }> {
   const legacy = (await readLegacyState('gameState')) as LegacyGameState | undefined
 
   if (!legacy || typeof legacy !== 'object') {
-    // 全新用户：写入全套默认
-    await db.put('profile', defaultProfile(), MAIN_KEY)
+    // 全新用户：写入全套默认（profile 最后写，作为初始化完成标记）
     await db.put('economy', defaultEconomy(today), MAIN_KEY)
     await db.put('pets', defaultPets(), MAIN_KEY)
     await db.put('cosmetics', defaultCosmetics(), MAIN_KEY)
@@ -141,12 +140,13 @@ export async function migrateIfNeeded(): Promise<{ migrated: boolean }> {
     await db.put('wrongbook', defaultWrongbook(), MAIN_KEY)
     await db.put('streak', defaultStreak(), MAIN_KEY)
     await db.put('settings', defaultSettings(), MAIN_KEY)
+    await db.put('profile', defaultProfile(), MAIN_KEY)
     return { migrated: false }
   }
 
   // --- 旧 v1 → 新表映射 ---
+  // 写入顺序：各业务表在前，profile 最后（作为迁移完成标记，中断可安全重跑）
   const profile = defaultProfile()
-  await db.put('profile', profile, MAIN_KEY)
 
   await db.put('economy', {
     shells: num(legacy.shells, 0),
@@ -189,7 +189,12 @@ export async function migrateIfNeeded(): Promise<{ migrated: boolean }> {
     const op = oldPlots[i] as { seedId?: unknown; plantedAt?: unknown } | undefined
     const seedId = str(op?.seedId, '')
     if (op && validCropIds.has(seedId)) {
-      return { seedId: seedId as FarmRecord['plots'][number]['seedId'], plantedAt: num(op.plantedAt, 0) }
+      const plantedAt = num(op.plantedAt, 0)
+      // seedId 合法但 plantedAt 缺失/为 0：该块会"占坑不可种、阶段判空不可收"，
+      // 视为空地块（保证可种可收）
+      if (plantedAt > 0) {
+        return { seedId: seedId as FarmRecord['plots'][number]['seedId'], plantedAt }
+      }
     }
     return p
   })
@@ -228,8 +233,10 @@ export async function migrateIfNeeded(): Promise<{ migrated: boolean }> {
 
   await db.put('settings', defaultSettings(), MAIN_KEY)
 
-  // 迁移完成：删除旧 gameState（旧 store 定义保留，仅清条目）
+  // 迁移收尾：先删除旧 gameState（旧 store 定义保留，仅清条目），
+  // 最后写入 profile 作为"迁移完成"标记——此前中断则下次启动重新迁移
   await deleteLegacyState('gameState')
+  await db.put('profile', profile, MAIN_KEY)
 
   return { migrated: true }
 }

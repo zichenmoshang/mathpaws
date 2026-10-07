@@ -1,4 +1,0 @@
-/* @mathpaws/ui —— 组件级样式（与 app 的全局 reset/字体分离） */
-/* 糖果按钮按下下沉 */
-.mp-btn { transition: transform .08s ease, box-shadow .08s ease; }
-.mp-btn:not(:disabled):active { transform: translateY(4px); }

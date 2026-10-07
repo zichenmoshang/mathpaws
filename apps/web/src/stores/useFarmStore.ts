@@ -85,19 +85,20 @@ export const useFarmStore = create<FarmState>((set, get) => ({
       if (getPlotStage(plot, now).stage !== 'ready') return
       const def = CROP_MAP[plot.seedId]
       cropInventory[plot.seedId] = (cropInventory[plot.seedId] ?? 0) + def.yield
+      // leveled 只标在触发升级的那条结果上（多块同收时 UI 只弹一次升级提示）
+      const prevLevel = farmLevelFromExp(farmExp)
       farmExp += def.xp
-      results.push({ crop: plot.seedId, gained: def.yield, leveled: false })
+      results.push({
+        crop: plot.seedId,
+        gained: def.yield,
+        leveled: farmLevelFromExp(farmExp) > prevLevel,
+      })
       harvestedIdx.push(i)
     })
 
     if (results.length === 0) return results
 
-    const beforeLevel = farmLevelFromExp(s.farmExp)
     const afterLevel = farmLevelFromExp(farmExp)
-    const leveled = afterLevel > beforeLevel
-    results.forEach(r => {
-      r.leveled = leveled
-    })
 
     // 只清空实际产生了收获结果的地块（避免误清未成熟的同作物地块）
     const cleared = new Set(harvestedIdx)

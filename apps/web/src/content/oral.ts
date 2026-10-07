@@ -1,5 +1,5 @@
 // 口算题生成器（M3-P6-01）
-// 按 Gate G2 定稿的知识点 oralParams + 真题校准规则，实时程序生成口算题。
+// 按 Gate G2 定稿的知识点生成规则 + 真题校准口径，实时程序生成口算题。
 // 题目纯内存、不落库；答案代码校验；难度 L1/L2/L3 按权重 3:5:2 抽取。
 import { KNOWLEDGE_PATH, DIFFICULTY_WEIGHT } from './knowledgePath'
 import type { QuizQuestion } from './types'
@@ -218,10 +218,11 @@ function genDecimal(level: DifficultyLevel, unit: string): QuizQuestion {
       [`小数点对齐，相同数位相减`, `${fmt(hi)} - ${fmt(lo)} = ${fmt(hi - lo)}`], level)
   }
   if (level === 2) {
-    // 含进退位
-    const a = rnd(15, 120), b = rnd(15, 90)
+    // 含进退位；节点数域上限 20.0（=200 角）：加法约束 a+b 不超过 200
+    const a = rnd(15, 120)
     const isAdd = Math.random() < 0.5
     if (isAdd) {
+      const b = rnd(15, Math.min(90, 200 - a))
       return make('decimal', unit, `${fmt(a)} + ${fmt(b)}`, fmt(a + b),
         [`十分位相加满十，向个位进 1`, `${fmt(a)} + ${fmt(b)} = ${fmt(a + b)}`], level)
     }
@@ -268,8 +269,9 @@ export function generateOral(knowledgeId: string, forcedLevel?: DifficultyLevel)
     const n = Number(q.answer)
     if (Number.isFinite(n) && n >= 0 && n <= 99) return q
   }
-  // 兜底：表内乘法，答案必在 81 以内
-  return genMixedOps(1, node.unit)
+  // 兜底：表内乘法，答案必在 81 以内；
+  // knowledgeId 改写为请求节点 id（兜底题归属请求节点，不错标为 mixed-ops）
+  return { ...genMixedOps(1, node.unit), knowledgeId }
 }
 
 /** 生成一轮口算题（默认 20 道，可指定知识点集合） */

@@ -21,19 +21,11 @@ export const CHEST_LEVELS: ChestLevel[] = [
 /**
  * 由连续学习天数推导宝箱等级：
  * 第 1 天 Lv.1；连 2 天 Lv.2；连 3 天 Lv.3；连 5 天 Lv.4；连 7 天及以上 Lv.5（不断签保持）。
+ * 断签后 streak 重置为 1（见 useStreakStore.markStudyDone），宝箱等级始终由当前
+ * streak 直接推导、无独立降级规则；累计学习天数（totalDays）不清零。
  */
 export function chestLevelForStreak(streak: number): ChestLevel {
   let picked: ChestLevel = CHEST_LEVELS[0]
   for (const lv of CHEST_LEVELS) if (streak >= lv.streakDays) picked = lv
   return picked
 }
-
-/** 打卡所需当日完成正式答题轮数（PRD §13.9） */
-export const CHECKIN_REQUIRED_ROUNDS = 1
-
-/**
- * 断签规则（PRD §13.9）：
- * 某天未完成 → 连续中断（streak 重置为 0）、宝箱等级降一级；
- * 累计学习天数不清零。
- */
-export const STREAK_RESET_ON_MISS = true

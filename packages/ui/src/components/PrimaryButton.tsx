@@ -1,10 +1,11 @@
 // 位图标准控件（M0-UI）
 // 返回钮 / 底部主按钮 / Tab：背景为 AI 生成的透明位图，文字由前端叠加。
 // 按钮与 Tab 用 border-image 做 9-slice 拉伸，圆角与厚度保持不变。
-import type { ButtonHTMLAttributes, CSSProperties } from 'react'
+import type { ButtonHTMLAttributes } from 'react'
 
 import primaryButton from '../assets/ui-primary-button.webp'
-import { FONT } from '../tokens'
+import { btn } from '../styles.css'
+import * as s from './PrimaryButton.css'
 
 // ---------- 标准底部主按钮 ----------
 interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,10 +23,10 @@ export function PrimaryButton({
     <button
       type="button"
       disabled={disabled}
-      className="mp-btn"
+      className={`${btn} ${s.root}`}
       {...rest}
       style={{
-        ...s.root,
+        // 动态值：高度、9-slice 切图参数、字号、禁用态随 props 变化，保留内联
         height,
         borderWidth: `${cap}px ${end}px`,
         borderImage: `url(${primaryButton}) 150 330 fill / ${cap}px ${end}px / 0 stretch`,
@@ -35,28 +36,7 @@ export function PrimaryButton({
         ...style,
       }}
     >
-      <span style={centerLayer}>{children}</span>
+      <span className={s.centerLayer}>{children}</span>
     </button>
   )
-}
-
-// 文字层：绝对定位铺满整个控件（含 border 区）做水平+垂直居中，
-// 不受 border-image 的 border-width 挤压。
-const centerLayer: CSSProperties = {
-  position: 'absolute', inset: 0,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  lineHeight: 1, pointerEvents: 'none',
-}
-
-// ---------- 样式表（静态部分；随 props/状态变化的值留在 JSX 内联） ----------
-const s: Record<string, CSSProperties> = {
-  root: {
-    position: 'relative',
-    padding: 0,
-    border: 'solid transparent',
-    background: 'transparent',
-    color: '#8a5410',
-    fontFamily: FONT.family, fontWeight: 900,
-    whiteSpace: 'nowrap', boxSizing: 'border-box',
-  },
 }
