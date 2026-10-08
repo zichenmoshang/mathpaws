@@ -4,12 +4,12 @@
 // 层在 1024×768 逻辑舞台内按 bbox×K 定位（K=1024/2364），回贴已与原稿比对验收。
 // 进度条为满格位图，按加载进度用 clipPath 从左揭示；其下垫 CSS 空轨道。
 // 自适应接线：内容置于 1024×768 LogicalStage 随舞台等比缩放；
-// 舞台外留边由 BackgroundBleed 以同一背景图 cover 出血填充。
+// 舞台外留边由 SceneShell 以同一背景图 cover 出血填充。
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import type { RouteId } from '../../../app/router'
-import { BackgroundBleed, LogicalStage } from '../../../app/viewport'
+import { SceneShell } from '../../../app/viewport'
 import bg from '../../../assets/hifi/splash/bg.jpg'
 import bird from '../../../assets/hifi/splash/bird.webp'
 import logo from '../../../assets/hifi/splash/logo.webp'
@@ -109,9 +109,8 @@ export function SplashScene({ onNavigate }: { onNavigate: (id: RouteId) => void 
 
   return (
     <>
-      {/* 舞台外留边：同一背景图 cover 出血铺满 */}
-      <BackgroundBleed background={`url(${bg}) center / cover no-repeat`} />
-      <LogicalStage>
+      {/* SceneShell：留边以同一背景图 cover 出血铺满，内容进 1024×768 舞台 */}
+      <SceneShell bleedImage={bg}>
         <div className={s.scene}>
           {/* z0 重绘背景 */}
           <img src={bg} alt="" draggable={false} className={s.bg} />
@@ -133,7 +132,7 @@ export function SplashScene({ onNavigate }: { onNavigate: (id: RouteId) => void 
             />
           </div>
         </div>
-      </LogicalStage>
+      </SceneShell>
     </>
   )
 }

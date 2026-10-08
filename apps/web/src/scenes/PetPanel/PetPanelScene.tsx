@@ -9,14 +9,14 @@
 //   P9-03：改名（铅笔钮，≤6 字免费）；点立绘 → 蹦跳 + 开心话飘字
 //   P9-04：右侧宠物格（犬猫"即将开放"）；顶部 PK 入口"即将开放"；装备三槽已删除
 // 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
-// 舞台外留边由 BackgroundBleed 以同一背景 cover 出血填充；
+// 舞台外留边由 SceneShell 以同一背景 cover 出血填充；
 // 静态样式已迁移至 PetPanelScene.css.ts，内联仅保留运行时动态值。
 import { BackButton, Modal, CloudInput, Btn, ProgressBar, btn as uiBtn } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import type { RouteId } from '../../app/router'
-import { BackgroundBleed, LogicalStage } from '../../app/viewport'
+import { SceneShell } from '../../app/viewport'
 // 拆层资产（assets/hifi/pet/manifest.json）
 import bg from '../../assets/hifi/pet/bg.jpg'
 import btnFeed from '../../assets/hifi/pet/btn-feed.webp'
@@ -54,8 +54,10 @@ const place = (bbox: [number, number, number, number]): CSSProperties => {
   const [x0, y0, x1, y1] = bbox
   return {
     position: 'absolute',
-    left: x0 * K, top: y0 * K,
-    width: (x1 - x0) * K, height: (y1 - y0) * K,
+    left: x0 * K,
+    top: y0 * K,
+    width: (x1 - x0) * K,
+    height: (y1 - y0) * K,
   }
 }
 
@@ -81,7 +83,11 @@ const GRID_CELLS: Array<{ id: PetTypeId; src: string; bbox: [number, number, num
   { id: 'cat', src: gridCat, bbox: [1602, 1123, 1939, 1448] },
 ]
 
-const CORE_IMG: Record<PetTypeId, string> = { rabbit: RABBIT_STAGE_IMG[3], dog: dogImg, cat: catImg }
+const CORE_IMG: Record<PetTypeId, string> = {
+  rabbit: RABBIT_STAGE_IMG[3],
+  dog: dogImg,
+  cat: catImg,
+}
 
 /** 当前形态主立绘：兔按进化阶段切图；犬猫占位 core */
 function stageImg(petType: PetTypeId, level: 1 | 2 | 3): string {
@@ -92,12 +98,12 @@ function stageImg(petType: PetTypeId, level: 1 | 2 | 3): string {
 const CHEER = ['好开心呀', '摸摸头', '嘿嘿嘿', '我喜欢你', '再点我一下']
 
 export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => void }) {
-  const hasPet = usePetStore(s => s.hasPet)
-  const petType = usePetStore(s => s.petType)
-  const petName = usePetStore(s => s.petName)
-  const petExp = usePetStore(s => s.petExp)
-  const petFood = useEconomyStore(s => s.petFood)
-  const shells = useEconomyStore(s => s.shells)
+  const hasPet = usePetStore((s) => s.hasPet)
+  const petType = usePetStore((s) => s.petType)
+  const petName = usePetStore((s) => s.petName)
+  const petExp = usePetStore((s) => s.petExp)
+  const petFood = useEconomyStore((s) => s.petFood)
+  const shells = useEconomyStore((s) => s.shells)
 
   // 无宠物时（如 dev 直达）回领养页
   useEffect(() => {
@@ -121,10 +127,13 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
   // 飘字定时器：卸载时清理，避免组件销毁后 setState
   const cheerTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const feedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  useEffect(() => () => {
-    if (cheerTimer.current) clearTimeout(cheerTimer.current)
-    if (feedTimer.current) clearTimeout(feedTimer.current)
-  }, [])
+  useEffect(
+    () => () => {
+      if (cheerTimer.current) clearTimeout(cheerTimer.current)
+      if (feedTimer.current) clearTimeout(feedTimer.current)
+    },
+    [],
+  )
 
   const displayName = petName || PET_SPECIES[petType].cnName
 
@@ -176,178 +185,232 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
     audio.playSfx('click')
   }
 
-  const go = (id: RouteId) => { audio.playSfx('click'); onNavigate(id) }
+  const go = (id: RouteId) => {
+    audio.playSfx('click')
+    onNavigate(id)
+  }
 
   return (
-    <BackgroundBleed background="#f2ddc0">
-      {/* 舞台外留边：同一背景 cover 出血填充 */}
-      <img src={bg} alt="" draggable={false} className={s.bleedBg} />
-      <LogicalStage>
-        <div className={s.scene}>
-          {/* z0 重绘背景（儿童房，铺满舞台随缩放） */}
-          <img src={bg} alt="" draggable={false} className={s.bg} />
+    <SceneShell bleed="#f2ddc0" bleedImage={bg}>
+      <div className={s.scene}>
+        {/* z0 重绘背景（儿童房，铺满舞台随缩放） */}
+        <img src={bg} alt="" draggable={false} className={s.bg} />
 
-          {/* 主面板 + 云标题 */}
-          <img src={panel} alt="" draggable={false} style={place(BBOX.panel)} />
-          <img src={titleCloud} alt="我的宠物" draggable={false} style={place(BBOX.title)} />
+        {/* 主面板 + 云标题 */}
+        <img src={panel} alt="" draggable={false} style={place(BBOX.panel)} />
+        <img src={titleCloud} alt="我的宠物" draggable={false} style={place(BBOX.title)} />
 
-          {/* 左上返回 / 右上资源牌 + 前端数字 + PK 入口 */}
-          <BackButton size={58} onClick={() => go('plaza')} style={{ position: 'absolute', left: 14, top: 10 }} />
-          <img src={pillShell} alt="" draggable={false} style={place(BBOX.pillShell)} />
-          <span className={s.pillNum} style={pillNumPlace(BBOX.pillShell)}>{shells}</span>
-          <img src={pillFood} alt="" draggable={false} style={place(BBOX.pillFood)} />
-          <span className={s.pillNum} style={pillNumPlace(BBOX.pillFood)}>{petFood}</span>
-          <button type="button" className={`${uiBtn} ${s.pkBtn}`} onClick={comingSoon}>宠物 PK</button>
+        {/* 左上返回 / 右上资源牌 + 前端数字 + PK 入口 */}
+        <BackButton
+          size={58}
+          onClick={() => go('plaza')}
+          style={{ position: 'absolute', left: 14, top: 10 }}
+        />
+        <img src={pillShell} alt="" draggable={false} style={place(BBOX.pillShell)} />
+        <span className={s.pillNum} style={pillNumPlace(BBOX.pillShell)}>
+          {shells}
+        </span>
+        <img src={pillFood} alt="" draggable={false} style={place(BBOX.pillFood)} />
+        <span className={s.pillNum} style={pillNumPlace(BBOX.pillFood)}>
+          {petFood}
+        </span>
+        <button type="button" className={`${uiBtn} ${s.pkBtn}`} onClick={comingSoon}>
+          宠物 PK
+        </button>
 
-          {/* 中心立绘（z9 位，按进化阶段切图；点击互动） */}
-          <button type="button" className={`${uiBtn} ${s.heroBtn}`} onClick={poke} style={place(BBOX.hero)} aria-label="点我互动">
-            <img
-              src={stageImg(petType, level)} alt={displayName} draggable={false}
-              className={`${s.heroImg} ${s.petBounce}`}
-            />
-            {cheer && <span className={s.cheer}>{cheer}</span>}
-          </button>
+        {/* 中心立绘（z9 位，按进化阶段切图；点击互动） */}
+        <button
+          type="button"
+          className={`${uiBtn} ${s.heroBtn}`}
+          onClick={poke}
+          style={place(BBOX.hero)}
+          aria-label="点我互动"
+        >
+          <img
+            src={stageImg(petType, level)}
+            alt={displayName}
+            draggable={false}
+            className={`${s.heroImg} ${s.petBounce}`}
+          />
+          {cheer && <span className={s.cheer}>{cheer}</span>}
+        </button>
 
-          {/* 名字（立绘与进度条之间） */}
-          <span className={s.name}>{displayName}</span>
+        {/* 名字（立绘与进度条之间） */}
+        <span className={s.name}>{displayName}</span>
 
-          {/* 等级进度条（z5 位，前端 ProgressBar + Lv 徽章 + 数字） */}
-          <span className={s.lvBadge} style={{ left: BBOX.expBar[0] * K - 64, top: BBOX.expBar[1] * K - 4 }}>Lv.{level}</span>
-          <div className={s.expBar} style={place(BBOX.expBar)}>
-            <ProgressBar ratio={expRatio} base="#ffd83d" deep="#e08f00" height={16} />
-          </div>
-          <span className={s.expText} style={{ left: BBOX.expBar[2] * K + 8, top: BBOX.expBar[1] * K, height: (BBOX.expBar[3] - BBOX.expBar[1]) * K }}>
-            {nextStage ? `${expInLevel}/${expSpan}` : '已满级'}
-          </span>
-
-          {/* 进化提示（进度条与相框之间） */}
-          <span className={s.evoHint}>
-            {nextStage
-              ? expRatio >= 0.8
-                ? '快要进化啦！'
-                : `再喂 ${Math.ceil((nextStage.needExp - petExp) / FOOD_EXP_RATE)} 个食物进化到 Lv.${nextStage.level}`
-              : '已是最高形态'}
-          </span>
-
-          {/* 进化轨道：三个相框（内放阶段图，未解锁灰度 + 锁角标） */}
-          {PET_STAGES.map((st, i) => {
-            const frame = EVO_FRAMES[i]
-            const reached = level >= st.level
-            return (
-              <div key={st.level} style={place(frame.bbox)}>
-                {/* 相框缩至 92% 居中：给上方进化提示留出可视间隙 */}
-                <img src={frame.src} alt="" draggable={false} className={s.evoFrame} />
-                <img
-                  src={stageImg(petType, st.level)} alt={st.form} draggable={false}
-                  className={s.evoStageImg}
-                  style={{
-                    filter: reached ? 'none' : 'grayscale(1)',
-                    opacity: reached ? 1 : 0.5,
-                  }}
-                />
-                {!reached && (
-                  <img src={lockIcon} alt="" draggable={false} className={s.evoLock} />
-                )}
-                <span className={s.frameLabel}>Lv.{st.level}</span>
-              </div>
-            )
-          })}
-
-          {/* 喂食钮（z10 骨头）+ 食物数气泡；改名钮（z11 铅笔） */}
-          <div style={place(BBOX.feed)}>
-            {petFood > 0 && <span className={s.foodBubble}>×{petFood}</span>}
-            <button
-              type="button" aria-label="一键喂食" className={`${uiBtn} ${s.roundBtn}`}
-              onClick={feedAll} disabled={feedDisabled}
-              style={{ opacity: feedDisabled ? 0.5 : 1, cursor: feedDisabled ? 'not-allowed' : 'pointer' }}
-            >
-              <img src={btnFeed} alt="" draggable={false} className={s.roundBtnImg} />
-            </button>
-            <span className={s.btnLabel}>喂食</span>
-          </div>
-          <div style={place(BBOX.rename)}>
-            <button type="button" aria-label="改名" className={`${uiBtn} ${s.roundBtn}`} onClick={openRename}>
-              <img src={btnRename} alt="" draggable={false} className={s.roundBtnImg} />
-            </button>
-            <span className={s.btnLabel}>改名</span>
-          </div>
-
-          {/* 右侧宠物格（兔已拥有；犬猫"即将开放"） */}
-          {GRID_CELLS.map(cell => {
-            const spec = PET_SPECIES[cell.id]
-            const owned = hasPet && petType === cell.id
-            return (
-              <button
-                key={cell.id}
-                type="button"
-                className={`${uiBtn} ${s.gridCell}`}
-                aria-label={spec.cnName}
-                onClick={() => (spec.available ? undefined : comingSoon())}
-                style={{ ...place(cell.bbox), cursor: spec.available ? 'pointer' : 'default' }}
-              >
-                <img src={cell.src} alt="" draggable={false} className={s.gridImg} />
-                <img
-                  src={CORE_IMG[cell.id]} alt={spec.cnName} draggable={false}
-                  className={s.gridCore}
-                  style={{
-                    filter: spec.available ? 'none' : 'grayscale(1)',
-                    opacity: spec.available ? 1 : 0.55,
-                  }}
-                />
-                {!spec.available && (
-                  <>
-                    <img src={lockIcon} alt="" draggable={false} className={s.gridLock} />
-                    <span className={s.gridLockLabel}>即将开放</span>
-                  </>
-                )}
-                {owned && <span className={s.gridOwn}>已拥有</span>}
-              </button>
-            )
-          })}
-
-          {/* 喂食飘字 */}
-          {feedFly && <div className={s.feedFly}>{feedFly}</div>}
-
-          {/* 改名弹窗 */}
-          {renameOpen && (
-            <Modal onClose={() => setRenameOpen(false)}>
-              <div className={s.renameBox}>
-                <span className={s.renameTitle}>给宠物起个名字</span>
-                <CloudInput
-                  value={nameDraft} onChange={setNameDraft}
-                  placeholder={PET_SPECIES[petType].cnName} maxLength={6}
-                  onSubmit={confirmRename} style={{ width: 260, textAlign: 'center' }}
-                />
-                <div className={s.renameActions}>
-                  {/* 注意：Btn ghost 变体是白字+近透明白底，白 Modal 上不可见，禁用 */}
-                  <button
-                    type="button" className={`${uiBtn} ${s.renameCancel}`} onClick={() => setRenameOpen(false)}
-                  >
-                    取消
-                  </button>
-                  <Btn variant="grass" onClick={confirmRename}>确定</Btn>
-                </div>
-              </div>
-            </Modal>
-          )}
-
-          {/* 进化仪式（跨多级只播最终形态一次） */}
-          {ceremonyTo && (
-            <EvolutionCeremony
-              to={ceremonyTo}
-              petType={petType}
-              onClose={() => { audio.playSfx('click'); setCeremonyTo(null) }}
-            />
-          )}
+        {/* 等级进度条（z5 位，前端 ProgressBar + Lv 徽章 + 数字） */}
+        <span
+          className={s.lvBadge}
+          style={{ left: BBOX.expBar[0] * K - 64, top: BBOX.expBar[1] * K - 4 }}
+        >
+          Lv.{level}
+        </span>
+        <div className={s.expBar} style={place(BBOX.expBar)}>
+          <ProgressBar ratio={expRatio} base="#ffd83d" deep="#e08f00" height={16} />
         </div>
-      </LogicalStage>
-    </BackgroundBleed>
+        <span
+          className={s.expText}
+          style={{
+            left: BBOX.expBar[2] * K + 8,
+            top: BBOX.expBar[1] * K,
+            height: (BBOX.expBar[3] - BBOX.expBar[1]) * K,
+          }}
+        >
+          {nextStage ? `${expInLevel}/${expSpan}` : '已满级'}
+        </span>
+
+        {/* 进化提示（进度条与相框之间） */}
+        <span className={s.evoHint}>
+          {nextStage
+            ? expRatio >= 0.8
+              ? '快要进化啦！'
+              : `再喂 ${Math.ceil((nextStage.needExp - petExp) / FOOD_EXP_RATE)} 个食物进化到 Lv.${nextStage.level}`
+            : '已是最高形态'}
+        </span>
+
+        {/* 进化轨道：三个相框（内放阶段图，未解锁灰度 + 锁角标） */}
+        {PET_STAGES.map((st, i) => {
+          const frame = EVO_FRAMES[i]
+          const reached = level >= st.level
+          return (
+            <div key={st.level} style={place(frame.bbox)}>
+              {/* 相框缩至 92% 居中：给上方进化提示留出可视间隙 */}
+              <img src={frame.src} alt="" draggable={false} className={s.evoFrame} />
+              <img
+                src={stageImg(petType, st.level)}
+                alt={st.form}
+                draggable={false}
+                className={s.evoStageImg}
+                style={{
+                  filter: reached ? 'none' : 'grayscale(1)',
+                  opacity: reached ? 1 : 0.5,
+                }}
+              />
+              {!reached && <img src={lockIcon} alt="" draggable={false} className={s.evoLock} />}
+              <span className={s.frameLabel}>Lv.{st.level}</span>
+            </div>
+          )
+        })}
+
+        {/* 喂食钮（z10 骨头）+ 食物数气泡；改名钮（z11 铅笔） */}
+        <div style={place(BBOX.feed)}>
+          {petFood > 0 && <span className={s.foodBubble}>×{petFood}</span>}
+          <button
+            type="button"
+            aria-label="一键喂食"
+            className={`${uiBtn} ${s.roundBtn}`}
+            onClick={feedAll}
+            disabled={feedDisabled}
+            style={{
+              opacity: feedDisabled ? 0.5 : 1,
+              cursor: feedDisabled ? 'not-allowed' : 'pointer',
+            }}
+          >
+            <img src={btnFeed} alt="" draggable={false} className={s.roundBtnImg} />
+          </button>
+          <span className={s.btnLabel}>喂食</span>
+        </div>
+        <div style={place(BBOX.rename)}>
+          <button
+            type="button"
+            aria-label="改名"
+            className={`${uiBtn} ${s.roundBtn}`}
+            onClick={openRename}
+          >
+            <img src={btnRename} alt="" draggable={false} className={s.roundBtnImg} />
+          </button>
+          <span className={s.btnLabel}>改名</span>
+        </div>
+
+        {/* 右侧宠物格（兔已拥有；犬猫"即将开放"） */}
+        {GRID_CELLS.map((cell) => {
+          const spec = PET_SPECIES[cell.id]
+          const owned = hasPet && petType === cell.id
+          return (
+            <button
+              key={cell.id}
+              type="button"
+              className={`${uiBtn} ${s.gridCell}`}
+              aria-label={spec.cnName}
+              onClick={() => (spec.available ? undefined : comingSoon())}
+              style={{ ...place(cell.bbox), cursor: spec.available ? 'pointer' : 'default' }}
+            >
+              <img src={cell.src} alt="" draggable={false} className={s.gridImg} />
+              <img
+                src={CORE_IMG[cell.id]}
+                alt={spec.cnName}
+                draggable={false}
+                className={s.gridCore}
+                style={{
+                  filter: spec.available ? 'none' : 'grayscale(1)',
+                  opacity: spec.available ? 1 : 0.55,
+                }}
+              />
+              {!spec.available && (
+                <>
+                  <img src={lockIcon} alt="" draggable={false} className={s.gridLock} />
+                  <span className={s.gridLockLabel}>即将开放</span>
+                </>
+              )}
+              {owned && <span className={s.gridOwn}>已拥有</span>}
+            </button>
+          )
+        })}
+
+        {/* 喂食飘字 */}
+        {feedFly && <div className={s.feedFly}>{feedFly}</div>}
+
+        {/* 改名弹窗 */}
+        {renameOpen && (
+          <Modal onClose={() => setRenameOpen(false)}>
+            <div className={s.renameBox}>
+              <span className={s.renameTitle}>给宠物起个名字</span>
+              <CloudInput
+                value={nameDraft}
+                onChange={setNameDraft}
+                placeholder={PET_SPECIES[petType].cnName}
+                maxLength={6}
+                onSubmit={confirmRename}
+                style={{ width: 260, textAlign: 'center' }}
+              />
+              <div className={s.renameActions}>
+                {/* 注意：Btn ghost 变体是白字+近透明白底，白 Modal 上不可见，禁用 */}
+                <button
+                  type="button"
+                  className={`${uiBtn} ${s.renameCancel}`}
+                  onClick={() => setRenameOpen(false)}
+                >
+                  取消
+                </button>
+                <Btn variant="grass" onClick={confirmRename}>
+                  确定
+                </Btn>
+              </div>
+            </div>
+          </Modal>
+        )}
+
+        {/* 进化仪式（跨多级只播最终形态一次） */}
+        {ceremonyTo && (
+          <EvolutionCeremony
+            to={ceremonyTo}
+            petType={petType}
+            onClose={() => {
+              audio.playSfx('click')
+              setCeremonyTo(null)
+            }}
+          />
+        )}
+      </div>
+    </SceneShell>
   )
 }
 
 /** 进化仪式全屏层：CSS 光柱/彩带 + 星心图标 + "进化成功"文案（不专门出图） */
 function EvolutionCeremony({
-  to, petType, onClose,
+  to,
+  petType,
+  onClose,
 }: {
   to: 1 | 2 | 3
   petType: PetTypeId
@@ -364,18 +427,50 @@ function EvolutionCeremony({
           style={{ left: c.x, background: c.color, [s.confettiDelayVar]: c.delay } as CSSProperties}
         />
       ))}
-      <img src={starIcon} alt="" draggable={false} className={s.orbitIcon} style={{ left: '32%', top: '24%' }} />
-      <img src={heartIcon} alt="" draggable={false} className={s.orbitIcon} style={{ right: '30%', top: '30%', [s.orbitDelayVar]: '.4s' } as CSSProperties} />
-      <img src={starIcon} alt="" draggable={false} className={s.orbitIcon} style={{ left: '38%', bottom: '26%', [s.orbitDelayVar]: '.8s', width: 34, height: 34 } as CSSProperties} />
+      <img
+        src={starIcon}
+        alt=""
+        draggable={false}
+        className={s.orbitIcon}
+        style={{ left: '32%', top: '24%' }}
+      />
+      <img
+        src={heartIcon}
+        alt=""
+        draggable={false}
+        className={s.orbitIcon}
+        style={{ right: '30%', top: '30%', [s.orbitDelayVar]: '.4s' } as CSSProperties}
+      />
+      <img
+        src={starIcon}
+        alt=""
+        draggable={false}
+        className={s.orbitIcon}
+        style={
+          {
+            left: '38%',
+            bottom: '26%',
+            [s.orbitDelayVar]: '.8s',
+            width: 34,
+            height: 34,
+          } as CSSProperties
+        }
+      />
 
       <div className={s.ceremonyCard}>
         <span className={s.ceremonyTitle}>进化成功！</span>
         <img
-          src={stageImg(petType, to)} alt={stage.form} draggable={false}
+          src={stageImg(petType, to)}
+          alt={stage.form}
+          draggable={false}
           className={s.ceremonyImg}
         />
-        <span className={s.ceremonyForm}>Lv.{to} {stage.form}</span>
-        <button type="button" className={`${uiBtn} ${s.ceremonyBtn}`} onClick={onClose}>太棒了</button>
+        <span className={s.ceremonyForm}>
+          Lv.{to} {stage.form}
+        </span>
+        <button type="button" className={`${uiBtn} ${s.ceremonyBtn}`} onClick={onClose}>
+          太棒了
+        </button>
       </div>
     </div>
   )

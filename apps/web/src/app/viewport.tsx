@@ -110,6 +110,36 @@ export function BackgroundBleed({
   )
 }
 
+/**
+ * 场景脚手架（固定像素场景的统一入口）：BackgroundBleed 留边出血 + LogicalStage 内容层二合一。
+ *   - bleed：留边兜底色 / 渐变（位图加载前兜底；无位图场景直接当背景）；
+ *   - bleedImage：留边 cover 出血位图（通常与舞台内 z0 背景同一张）；
+ * 舞台内 z0 背景仍由场景自行放置（随舞台缩放）；全屏弹层放 SceneShell 外。
+ */
+export function SceneShell({ bleed, bleedImage, children }: {
+  bleed?: string
+  bleedImage?: string
+  children: React.ReactNode
+}) {
+  return (
+    <BackgroundBleed background={bleed ?? 'transparent'}>
+      {bleedImage && (
+        <img
+          src={bleedImage}
+          alt=""
+          aria-hidden
+          draggable={false}
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%', objectFit: 'cover',
+          }}
+        />
+      )}
+      <LogicalStage>{children}</LogicalStage>
+    </BackgroundBleed>
+  )
+}
+
 /** 非阻断的顶部轻提示胶囊（竖屏引导 / 小屏横屏建议复用），避让顶部刘海 */
 function HintPill({ children }: { children: React.ReactNode }) {
   return (

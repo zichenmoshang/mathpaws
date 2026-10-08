@@ -1,23 +1,15 @@
 // PlazaScene 样式（P5 2D 广场，1024×768 逻辑舞台；vanilla-extract）
 // 全部几何值为原稿 2364×1773 × K(1024/2364) 折算后的逻辑像素，与迁移前 CSS Modules 数值一致；
 // 各类注释保留原稿 bbox 便于对账（台账：assets/hifi/plaza/manifest.json）。
+import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
-/* 场景根：全视口容器，承载出血背景与 LogicalStage */
+/* 场景根：全视口容器，承载 SceneShell（出血背景 + LogicalStage） */
 export const scene = style({
   position: 'absolute',
   inset: 0,
   overflow: 'hidden',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
-})
-
-/* 舞台外出血背景：同一张背景图 cover 填满整个视口 */
-export const bleedImg = style({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
 })
 
 /* 1024×768 逻辑舞台根（LogicalStage 负责居中与等比缩放） */
@@ -180,7 +172,7 @@ export const pill = style({
   border: '3px solid rgba(255, 255, 255, .85)',
   boxShadow: '0 4px 10px rgba(40, 110, 180, .25)',
   fontWeight: 900,
-  fontSize: '23px',
+  fontSize: FONT.h2,
   color: '#3f4d5c',
 })
 

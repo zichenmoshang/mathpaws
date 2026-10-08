@@ -19,7 +19,7 @@ export const titleRow = style({
   display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14,
 })
 
-export const title = style({ fontSize: 24, fontWeight: 900, color: '#5d4037' })
+export const title = style({ fontSize: FONT.h2, fontWeight: 900, color: '#5d4037' })
 
 export const close = style({
   border: 'none', borderRadius: '50%', width: 34, height: 34,

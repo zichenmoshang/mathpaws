@@ -2,6 +2,7 @@
 // 内容置于 SkyBackdrop 的 1024×768 LogicalStage 内，随舞台等比缩放。
 // 卡片状态（选中 / 未解锁）用叠加变体类表达：基线类在前，
 // cardActive / cardLocked 等同特异度变体靠后定义覆盖对应属性。
+import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
 export const titleWrap = style({
@@ -14,7 +15,7 @@ export const titleWrap = style({
 })
 
 export const title = style({
-  fontSize: '50px',
+  fontSize: FONT.hero,
   fontWeight: 900,
   color: '#ffffff',
   textShadow:
@@ -84,7 +85,7 @@ export const nameBar = style({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '24px',
+  fontSize: FONT.h2,
   fontWeight: 900,
   boxShadow: '0 5px 0 rgba(0, 0, 0, .12)',
   background: '#4aa8f0',
@@ -119,7 +120,7 @@ export const lockTag = style({
   background: 'rgba(84, 110, 122, .92)',
   color: '#ffffff',
   fontWeight: 800,
-  fontSize: '17px',
+  fontSize: FONT.small,
   boxShadow: '0 3px 6px rgba(0, 0, 0, .18)',
 })
 

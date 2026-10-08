@@ -1,15 +1,8 @@
 // PetPanelScene 局部样式（vanilla-extract；1024×768 逻辑像素）
 // 数值与迁移前 CSS Modules 完全一致；5 组动画（宠物蹦跳/光柱旋转/彩带下落/星心跳动/立绘弹入）
 // 为本文件局部 keyframes；彩带与星心的 animationDelay 经 createVar 插槽由 tsx 注入。
+import { FONT } from '@mathpaws/ui'
 import { createVar, fallbackVar, keyframes, style } from '@vanilla-extract/css'
-
-/* 舞台外出血背景：cover 铺满视口留边 */
-export const bleedBg = style({
-  display: 'block',
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-})
 
 /* 场景根：LogicalStage 内的 1024×768 逻辑画布 */
 export const scene = style({
@@ -34,7 +27,7 @@ export const pillNum = style({
   alignItems: 'center',
   justifyContent: 'center',
   fontWeight: 900,
-  fontSize: '24px',
+  fontSize: FONT.h2,
   color: '#9a6a24',
   textShadow: '0 2px 0 rgba(255, 255, 255, .8)',
 })
@@ -50,7 +43,7 @@ export const pkBtn = style({
   background: 'linear-gradient(180deg, #ffb35c, #ff9f33)',
   color: '#fff',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   boxShadow: '0 4px 0 #e07f1a',
   cursor: 'pointer',
 })
@@ -91,7 +84,7 @@ export const cheer = style({
   border: '2px solid #ffb3c8',
   color: '#e0638f',
   fontWeight: 900,
-  fontSize: '16px',
+  fontSize: FONT.small,
   whiteSpace: 'nowrap',
 })
 
@@ -103,7 +96,7 @@ export const name = style({
   width: '418px', /* 面板居中（非舞台居中） */
   textAlign: 'center',
   fontWeight: 900,
-  fontSize: '22px',
+  fontSize: FONT.h2,
   color: '#8a6d3b',
   pointerEvents: 'none',
 })
@@ -115,7 +108,7 @@ export const lvBadge = style({
   background: '#f6b929',
   color: '#fff',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   boxShadow: '0 3px 0 #d4940a',
 })
 
@@ -130,7 +123,7 @@ export const expText = style({
   display: 'flex',
   alignItems: 'center',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   color: '#a08a5a',
 })
 
@@ -142,7 +135,7 @@ export const evoHint = style({
   width: '418px', /* 进度条（底 465）与相框（顶 481）之间 */
   textAlign: 'center',
   fontWeight: 900,
-  fontSize: '13px',
+  fontSize: FONT.micro,
   color: '#e0638f',
   pointerEvents: 'none',
 })
@@ -181,7 +174,7 @@ export const frameLabel = style({
   bottom: '9%',
   textAlign: 'center',
   fontWeight: 900,
-  fontSize: '12px',
+  fontSize: FONT.micro,
   color: '#b08d4a',
   pointerEvents: 'none',
 })
@@ -214,7 +207,7 @@ export const foodBubble = style({
   background: '#fff',
   border: '2px solid #ffd9e6',
   fontWeight: 900,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   color: '#e0638f',
   whiteSpace: 'nowrap',
   boxShadow: '0 3px 6px rgba(200, 100, 140, .18)',
@@ -229,7 +222,7 @@ export const btnLabel = style({
   bottom: 0,
   textAlign: 'center',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   color: '#a08a5a',
   pointerEvents: 'none',
 })
@@ -274,7 +267,7 @@ export const gridLockLabel = style({
   bottom: '4%',
   textAlign: 'center',
   fontWeight: 800,
-  fontSize: '12px',
+  fontSize: FONT.micro,
   color: '#9aa6b0',
 })
 
@@ -287,7 +280,7 @@ export const gridOwn = style({
   background: '#7ed957',
   color: '#fff',
   fontWeight: 800,
-  fontSize: '12px',
+  fontSize: FONT.micro,
 })
 
 export const feedFly = style({
@@ -301,7 +294,7 @@ export const feedFly = style({
   border: '2px solid #7ed957',
   color: '#3e9c4c',
   fontWeight: 900,
-  fontSize: '18px',
+  fontSize: FONT.body,
   whiteSpace: 'nowrap',
   zIndex: 30,
 })
@@ -316,7 +309,7 @@ export const renameBox = style({
 })
 
 export const renameTitle = style({
-  fontSize: '22px',
+  fontSize: FONT.h2,
   fontWeight: 900,
   color: '#3f4d5c',
 })
@@ -335,7 +328,7 @@ export const renameCancel = style({
   background: '#eceff1',
   color: '#546e7a',
   fontWeight: 900,
-  fontSize: '20px',
+  fontSize: FONT.h2,
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
   cursor: 'pointer',
 })
@@ -417,7 +410,7 @@ export const ceremonyCard = style({
 })
 
 export const ceremonyTitle = style({
-  fontSize: '44px',
+  fontSize: FONT.hero,
   fontWeight: 900,
   color: '#ffe98a',
   textShadow: '0 3px 0 rgba(150, 90, 10, .6), 0 8px 18px rgba(0, 0, 0, .4)',
@@ -438,7 +431,7 @@ export const ceremonyImg = style({
 })
 
 export const ceremonyForm = style({
-  fontSize: '24px',
+  fontSize: FONT.h2,
   fontWeight: 900,
   color: '#fff',
 })
@@ -452,7 +445,7 @@ export const ceremonyBtn = style({
   background: 'linear-gradient(180deg, #ffd83d, #ffb020)',
   color: '#7a4a12',
   fontWeight: 900,
-  fontSize: '21px',
+  fontSize: FONT.h2,
   boxShadow: '0 6px 0 #e08f00',
   cursor: 'pointer',
 })

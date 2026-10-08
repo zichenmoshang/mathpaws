@@ -1,5 +1,6 @@
 // P2 主角亮相 / 起名（自 HeroIntroScene.module.css 迁移至 vanilla-extract，数值不变）。
 // 内容置于 SkyBackdrop 的 1024×768 LogicalStage 内，随舞台等比缩放。
+import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
 export const titleWrap = style({
@@ -12,7 +13,7 @@ export const titleWrap = style({
 })
 
 export const title = style({
-  fontSize: '52px',
+  fontSize: FONT.hero,
   fontWeight: 900,
   color: '#ffffff',
   textShadow:
@@ -55,7 +56,7 @@ export const formZone = style({
 })
 
 export const hint = style({
-  fontSize: '18px',
+  fontSize: FONT.body,
   fontWeight: 700,
   color: '#3f8fd0',
 })

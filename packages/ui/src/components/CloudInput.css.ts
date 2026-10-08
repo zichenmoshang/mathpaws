@@ -10,7 +10,7 @@ export const input = style({
   border: `4px solid ${C.sky}`,
   background: '#fff',
   color: C.ink,
-  fontSize: 22,
+  fontSize: FONT.h2,
   fontWeight: 800,
   fontFamily: FONT.family,
   outline: 'none',

@@ -133,13 +133,24 @@ mathpaws/
 
 **方案**：1024×768 逻辑画布（4:3 安全框）contain 等比缩放 + 背景出血铺满，实现在 `app/viewport.tsx`：
 
-- **`LogicalStage`**：1024×768 逻辑画布，`translate(-50%,-50%) scale(s)` 居中，9 个固定像素场景（Home / Plaza / Farm / PetPanel / Settings / Backpack / Splash / HeroIntro / Adopt）全部接入——场景内坐标即设计稿折算的 1024×768 px，视口变化时整体等比缩放，元素不错位；
-- **`BackgroundBleed`**：舞台外留边区域用同一背景 `cover` 出血填充（舞台内背景随舞台缩放，不再用 `objectFit: fill` 拉伸变形）；
+- **`SceneShell`**（BackgroundBleed + LogicalStage 二合一）：固定像素场景的统一入口——`bleed` 留边兜底色/渐变、`bleedImage` 留边 cover 出血位图。8 个固定像素场景（Home / Plaza / Farm / PetPanel / Settings / Splash / HeroIntro / Adopt）全部接入（HeroIntro / Adopt 经 SkyBackdrop 间接使用）——场景内坐标即设计稿折算的 1024×768 px，视口变化时整体等比缩放，元素不错位；
+- **`LogicalStage` / `BackgroundBleed`**：SceneShell 的底层件，场景一般不直接使用；
 - **`OrientationGate`**：竖屏显示轻提示胶囊（不阻断；一期目标设备为平板横屏，不做手机竖屏适配）；
 - **safe-area**：`scaffold.css` 定义 `--sat/--sar/--sab/--sal`（`env(safe-area-inset-*)`），`index.html` 已配 `viewport-fit=cover`；刘海区内容避让按此变量；
-- **三套场景布局策略**：固定像素场景走 LogicalStage；Quiz / Result 用"百分比 + aspectRatio 舞台"（分辨率无关）；Gacha / Backpack / ChestPanel 用 clamp / vmin / 容器查询流式；
+- **三套场景布局策略**：固定像素场景走 SceneShell；Quiz / Result 用"百分比 + aspectRatio 舞台"（分辨率无关）；Gacha / Backpack / ChestPanel 用 clamp / vmin / 容器查询流式；
 - **手写板坐标**：`WritingBoard` 笔迹按 `rect` 实际尺寸与画布逻辑尺寸**比例换算**（`(clientX - rect.left) * (w / rect.width)`），祖先带 CSS scale（LogicalStage）时笔迹仍准确；
+- **字号**：固定像素场景字号一律引用 `FONT` token（packages/ui tokens.ts 9 档：micro 12 / aux 14 / small 16 / body 18 / h2 22 / title 28 / display 36 / hero 48 / question 64），ESLint `no-restricted-syntax` 拦截 css.ts 内 fontSize 字面量；流式场景、舞台外组件与 dev 工具页豁免（eslint.config.mjs 豁免清单）；
 - **DPR 钳制 ≤2**；MatePad 横屏 CSS 视口约 1400×920，缩放比 >1 属预期（高分屏清晰）。
+
+### 6.1 新增场景检查单
+
+1. **布局策略三选一**：固定像素（默认，SceneShell）/ 百分比 + aspectRatio / 流式（clamp·vmin·容器查询）；在 §6 策略清单登记归类。
+2. **固定像素场景**：`SceneShell` 包裹；有位图背景时 `bleed` 给兜底色 + `bleedImage` cover 出血；舞台内 z0 背景 `<img>` 铺满随舞台缩放，禁 `objectFit: fill`；全屏弹层放 SceneShell 外。
+3. **字号**：走 FONT 9 档（css.ts 内字面量会被 ESLint 拦截；孤例用 eslint-disable 注明理由）。
+4. **safe-area**：贴边交互元素用 `var(--sat)` 等变量避让。
+5. **工程约束**：css.ts 不 import 图片（ESLint 拦截）；keyframes 一律 `keyframes()` 或引自 motion.css.ts。
+6. **指针坐标**：拖拽 / 手写等用 clientX/Y 反推逻辑坐标的组件，按 rect 比例换算（参考 WritingBoard），祖先有 CSS scale 仍准确。
+7. **背景生图**：PAGE / BG 类 prompt 必须声明 4:3 安全框 + 横向 bleed 构图（asset-prompts 模板「安全区 / bleed」字段；design-system §10）。
 
 ## 7. 广场 3D 方案（二期；概要，详见 [plaza-3d.md](./design/phase2/plaza-3d.md)）
 

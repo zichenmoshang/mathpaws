@@ -11,18 +11,18 @@ export const root = style({
   padding: '0 14px',
   borderRadius: R.pill,
   fontWeight: 900,
-  fontSize: 18,
+  fontSize: FONT.body,
   fontFamily: FONT.family,
   boxShadow: '0 2px 0 rgba(0,0,0,.12)',
   whiteSpace: 'nowrap',
 })
 
 export const icon = style({
-  fontSize: 21,
+  fontSize: FONT.h2,
   lineHeight: 1,
 })
 
 export const suffix = style({
-  fontSize: 14,
+  fontSize: FONT.aux,
   opacity: 0.8,
 })

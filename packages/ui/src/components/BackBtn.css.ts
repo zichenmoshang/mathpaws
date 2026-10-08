@@ -9,7 +9,7 @@ export const root = style({
   borderRadius: R.sm,
   border: 'none',
   cursor: 'pointer',
-  fontSize: 22,
+  fontSize: FONT.h2,
   fontWeight: 900,
   fontFamily: FONT.family,
 })

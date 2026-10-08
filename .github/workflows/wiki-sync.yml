@@ -27,6 +27,8 @@ jobs:
         run: |
           cp docs/topics/handwriting-recognition.md "wiki/手写数字识别方案.md"
           cp docs/topics/hifi-restoration.md "wiki/高保真还原工作流.md"
+          cp docs/topics/visual-qa.md "wiki/视觉走查体系.md"
+          cp docs/topics/viewport-adaptation.md "wiki/屏幕自适应方案.md"
           cp docs/wiki/Home.md wiki/Home.md
           cp docs/wiki/_Sidebar.md wiki/_Sidebar.md
 
