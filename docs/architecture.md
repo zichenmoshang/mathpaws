@@ -84,7 +84,7 @@ mathpaws/
 │   ├── ui/                      # @mathpaws/ui：tokens + 通用组件（一组件一 css.ts）
 │   └── paperdoll/               # @mathpaws/paperdoll：compose.ts + react.tsx
 ├── ml/mnist/                    # 训练脚本 + README + requirements
-├── design/                      # 美术资产工作区（路由表见 design/README.md）
+├── design/                      # 美术资产工作区（门户与路由表见 docs/design/README.md）
 └── docs/                        # PRD、design-system、architecture、design/*
 ```
 

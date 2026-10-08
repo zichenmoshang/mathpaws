@@ -2,21 +2,7 @@
 
 AI 生图 prompt 存档、高保真原稿、纸娃娃切层管线、拆层与 3D 辅助工具的工作区。本文件只做**导览与环境搭建**；各工具的细节口径见各自文档，不在这里重复维护。
 
-## 设计规范路由（任务 → 必读规范 → 硬门禁）
-
-执行任何"设计 / 美术资产 / 生图 / 切图"类任务前，先在下表定位任务类型，按顺序读对应规范并遵守硬门禁。
-
-| 任务类型 | 必读规范（按序） | 硬门禁 |
-|---|---|---|
-| 写 / 改 AI 生图 prompt、调用生图工具 | [asset-prompts/README.md](asset-prompts/README.md) → [design-system.md](../docs/design-system.md) §10 | prompt 存档状态 = **已确认** 才允许生图；禁止"先出一张看看" |
-| 新增换装角色 body / 新头饰母图 | [character-generation-spec.md](../docs/design/character-generation-spec.md) → [paperdoll-system.md](../docs/design/paperdoll-system.md) | character-generation-spec §6 检查单逐项过；不满足几何契约不生图 |
-| 纸娃娃切层 / QC / 发布 | [paperdoll-spike/README.md](paperdoll-spike/README.md) → [paperdoll-system.md](../docs/design/paperdoll-system.md) | 严格 step1→6 顺序；QC 未验收禁止 step6 发布 |
-| 高保真稿提取拟物 UI 元素（拆层） | [hifi-ui-extraction-spec.md](../docs/design/hifi-ui-extraction-spec.md) | 先查 §7 通道表确认该元素走本通道；按 §6 清单逐层验收 |
-| 角色抠图 / 换装类"从图里取素材" | 同上 §7 通道表 | **禁用 layer_decomposition**；走 rembg / paperdoll 通道 |
-| 改配色 / 字体 / 圆角 / 组件 token | `packages/ui/src/tokens.ts`（代码权威）→ [design-system.md](../docs/design-system.md) 同步 | 先改代码再同步文档，禁止只改文档 |
-| 广场 3D / 图生 3D / GLB 资产 | [docs/design/phase2/](../docs/design/phase2/)（plaza-3d / asset-manifest / gen3d-guide） | **已冻结，一期不执行**；仅二期开工时续用 |
-
-冲突时优先级：`docs/PRD.md`（产品数值 SSOT）> `docs/design-system.md`（视觉 / token / 尺寸）> 专项 spec > 代码常量（文档与代码不一致时以代码为准并回改文档）。
+> **门户与路由表已迁移**：视觉资产端到端流程、文档全景与「设计规范路由」表（任务 → 必读规范 → 硬门禁）统一收在 [docs/design/README.md](../docs/design/README.md)。执行任何"设计 / 美术资产 / 生图 / 切图"类任务前，先按其路由表定位必读规范；本文件只讲工具链与环境搭建。
 
 ## 工具链一览
 
