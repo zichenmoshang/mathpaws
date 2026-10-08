@@ -6,10 +6,10 @@ import { FONT, R } from '../tokens'
 export const badge = style({
   display: 'inline-flex', alignItems: 'center', gap: 8,
   padding: '8px 18px', borderRadius: R.pill,
-  fontFamily: FONT.family, fontWeight: 900, fontSize: 20,
+  fontFamily: FONT.family, fontWeight: 900, fontSize: FONT.h2,
 })
 
-export const icon = style({ fontSize: 24 })
+export const icon = style({ fontSize: FONT.h2 })
 
 export const row = style({
   display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap',

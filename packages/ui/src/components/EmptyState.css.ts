@@ -13,16 +13,17 @@ export const root = style({
 })
 
 export const icon = style({
+  // eslint-disable-next-line no-restricted-syntax -- 装饰性 emoji 尺寸，非排版字号
   fontSize: 84,
 })
 
 export const title = style({
-  fontSize: 22,
+  fontSize: FONT.h2,
   fontWeight: 900,
   color: C.ink,
 })
 
 export const hint = style({
-  fontSize: 16,
+  fontSize: FONT.small,
   color: C.inkSoft,
 })

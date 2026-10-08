@@ -19,5 +19,5 @@ export const lock = style({
   position: 'absolute',
   top: 6,
   right: 8,
-  fontSize: 18,
+  fontSize: FONT.body,
 })

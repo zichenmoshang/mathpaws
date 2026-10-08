@@ -5,14 +5,14 @@
 // 行文字与图标前端排版（图标库）；开关用前端 Switch（状态可变，不用烘焙层）。
 // 清缓存：二次确认，只清 SW/CacheStorage，不删 IndexedDB 存档；无振动/重置/导入导出。
 // 自适应接线：内容置于 1024×768 LogicalStage 随舞台等比缩放；
-// 舞台外留边由 BackgroundBleed 以同一背景图 cover 出血填充。
+// 舞台外留边由 SceneShell 以同一背景图 cover 出血填充。
 import { BackButton, Btn, ConfirmDialog, Modal, Switch, btn as uiBtn } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import { useState } from 'react'
 
 import { version } from '../../../package.json'
 import type { RouteId } from '../../app/router'
-import { BackgroundBleed, LogicalStage } from '../../app/viewport'
+import { SceneShell } from '../../app/viewport'
 import { toastMessage } from '../../components/ComingSoonToast/ComingSoonToast'
 // 拆层资产（assets/hifi/settings/manifest.json）
 import bg from '../../assets/hifi/settings/bg.jpg'
@@ -121,9 +121,8 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
 
   return (
     <>
-      {/* 舞台外留边：同一背景图 cover 出血铺满 */}
-      <BackgroundBleed background={`url(${bg}) center / cover no-repeat`} />
-      <LogicalStage>
+      {/* SceneShell：留边以同一背景图 cover 出血铺满，内容进 1024×768 舞台 */}
+      <SceneShell bleedImage={bg}>
         <div className={s.scene}>
           {/* z0 重绘背景 */}
           <img src={bg} alt="" draggable={false} className={s.bg} />
@@ -176,7 +175,7 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
             </Modal>
           )}
         </div>
-      </LogicalStage>
+      </SceneShell>
     </>
   )
 }

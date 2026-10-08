@@ -1,10 +1,10 @@
 // 启动动线（P1–P3）共享背景：蓝天 + 多圆拼云朵 + 星点 + 底部彩虹，纯 CSS 绘制。
 // 云朵不再用单条胶囊，用中心圆+两侧小圆+底部平垫拼出蓬松感（对齐 design/high-fi/splash/splash.png）。
-// 自适应接线：装饰与 children 放进 1024×768 LogicalStage 随舞台等比缩放；
-// 舞台外留边由 BackgroundBleed 以同一渐变 cover 出血填充。被引用方 API 不变。
+// 自适应接线由 SceneShell 完成：装饰与 children 放进 1024×768 LogicalStage 随舞台等比缩放；
+// 舞台外留边以同一渐变出血填充。被引用方 API 不变。
 import type { ReactNode } from 'react'
 
-import { BackgroundBleed, LogicalStage } from '../../../app/viewport'
+import { SceneShell } from '../../../app/viewport'
 
 import * as s from './SkyBackdrop.css'
 
@@ -14,9 +14,7 @@ const SKY_GRADIENT = 'linear-gradient(180deg,#8fd4ff 0%,#a8defd 46%,#bfe8fc 100%
 export function SkyBackdrop({ children }: { children?: ReactNode }) {
   return (
     <>
-      {/* 舞台外留边：同一渐变出血铺满 */}
-      <BackgroundBleed background={SKY_GRADIENT} />
-      <LogicalStage>
+      <SceneShell bleed={SKY_GRADIENT}>
         <div className={s.root} style={{ background: SKY_GRADIENT }}>
           {CLOUDS.map((c, i) => (
             <Cloud key={i} x={c.x} y={c.y} size={c.s} />
@@ -30,7 +28,7 @@ export function SkyBackdrop({ children }: { children?: ReactNode }) {
           <div className={s.rainbow} />
           {children}
         </div>
-      </LogicalStage>
+      </SceneShell>
     </>
   )
 }

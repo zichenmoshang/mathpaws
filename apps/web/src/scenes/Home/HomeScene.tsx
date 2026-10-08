@@ -18,7 +18,7 @@ import { btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 
 import type { RouteId } from '../../app/router'
-import { BackgroundBleed, LogicalStage } from '../../app/viewport'
+import { SceneShell } from '../../app/viewport'
 import alarmBooks from '../../assets/hifi/home/alarm-books.webp'
 import bg from '../../assets/hifi/home/bg.jpg'
 import btnPlaza from '../../assets/hifi/home/btn-plaza.webp'
@@ -64,12 +64,8 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
 
   return (
     <div className={s.scene}>
-      {/* 舞台外出血背景：同一张背景图 cover 填满视口留边（加载前以天空蓝兜底） */}
-      <BackgroundBleed background="#7dc9f2">
-        <img src={bg} alt="" aria-hidden draggable={false} className={s.bleedImg} />
-      </BackgroundBleed>
-
-      <LogicalStage>
+      {/* SceneShell：留边以同一背景图 cover 出血（加载前天空蓝兜底），内容进 1024×768 舞台 */}
+      <SceneShell bleed="#7dc9f2" bleedImage={bg}>
         <div className={s.stage}>
           {/* z0 舞台内背景：铺满 1024×768 舞台，随舞台等比缩放不变形 */}
           <img src={bg} alt="" draggable={false} className={s.stageBg} />
@@ -96,7 +92,7 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
             onNavigate={onNavigate}
           />
         </div>
-      </LogicalStage>
+      </SceneShell>
 
       {/* 全屏弹层留在舞台外，保持原有覆盖行为 */}
       {chestOpen && <ChestPanel onClose={() => setChestOpen(false)} />}

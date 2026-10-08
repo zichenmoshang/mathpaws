@@ -37,10 +37,16 @@ export const SUBJECT = {
 export const FONT = {
   // 英文/数字用 Baloo 2（可商用），中文回退雅黑；后续美术提供站酷快乐体文件再替换
   family: '"Baloo 2","Comic Sans MS","Microsoft YaHei",system-ui,sans-serif',
-  title: 30,
-  h2: 22,
-  body: 18,
+  // 字号 9 档（逻辑基准 1024×768，单位 px；2026-10-08 由 5 档收敛扩展，design-system §4.2）：
+  // 固定像素场景（LogicalStage 内）一律引用，禁止散值字面量；流式场景与舞台外 UI 不适用
+  micro: 12,
   aux: 14,
+  small: 16,
+  body: 18,
+  h2: 22,
+  title: 28,
+  display: 36,
+  hero: 48,
   question: 64,
 } as const
 

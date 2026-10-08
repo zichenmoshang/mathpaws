@@ -5,6 +5,6 @@ import { FONT, R } from '../tokens'
 
 export const root = style({
   minWidth: 120, minHeight: 72, padding: '10px 22px',
-  borderRadius: R.md, fontSize: 28, fontWeight: 900,
+  borderRadius: R.md, fontSize: FONT.title, fontWeight: 900,
   fontFamily: FONT.family, cursor: 'pointer', lineHeight: 1.2,
 })

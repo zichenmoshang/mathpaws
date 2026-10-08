@@ -1,5 +1,6 @@
 // P13 设置页（自 SettingsScene.module.css 迁移至 vanilla-extract，数值不变）。
 // 场景根铺满 1024×768 LogicalStage，随舞台等比缩放。
+import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
 // 字体栈取自 @mathpaws/ui 的 FONT.family token，token 变更时需同步
@@ -52,7 +53,7 @@ export const rowIcon = style({
 export const rowLabel = style({
   flex: 1,
   fontWeight: 900,
-  fontSize: '27px',
+  fontSize: FONT.title,
   color: '#4a5560',
 })
 
@@ -71,7 +72,7 @@ export const rowBtn = style({
   background: '#fff3e0',
   color: '#ad6800',
   fontWeight: 900,
-  fontSize: '18px',
+  fontSize: FONT.body,
   fontFamily: FONT_FAMILY,
   cursor: 'pointer',
 })
@@ -93,7 +94,7 @@ export const cleared = style({
   background: '#e8f5e9',
   border: '2px solid #7ed957',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   color: '#3e9c4c',
 })
 
@@ -108,13 +109,13 @@ export const about = style({
 })
 
 export const aboutTitle = style({
-  fontSize: '30px',
+  fontSize: FONT.title,
   fontWeight: 900,
   color: '#4a8fc4',
 })
 
 export const aboutText = style({
-  fontSize: '16px',
+  fontSize: FONT.small,
   fontWeight: 800,
   color: '#7a8794',
 })

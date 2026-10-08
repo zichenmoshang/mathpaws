@@ -7,7 +7,7 @@
 import { BackButton, btn as uiBtn } from '@mathpaws/ui'
 
 import type { RouteId } from '../../app/router'
-import { BackgroundBleed, LogicalStage } from '../../app/viewport'
+import { SceneShell } from '../../app/viewport'
 // 资产与 bbox 台账：assets/hifi/plaza/manifest.json（各层原稿 bbox 见 PlazaScene.css.ts 注释）
 import bg from '../../assets/hifi/plaza/bg.jpg'
 import bldFarm from '../../assets/hifi/plaza/bld-farm.webp'
@@ -58,12 +58,8 @@ export function PlazaScene(
 
   return (
     <div className={s.scene}>
-      {/* 舞台外出血背景：同一张背景图 cover 填满视口留边（加载前以天空蓝兜底） */}
-      <BackgroundBleed background="#7cc3ec">
-        <img src={bg} alt="" aria-hidden draggable={false} className={s.bleedImg} />
-      </BackgroundBleed>
-
-      <LogicalStage>
+      {/* SceneShell：留边以同一背景图 cover 出血（加载前天空蓝兜底），内容进 1024×768 舞台 */}
+      <SceneShell bleed="#7cc3ec" bleedImage={bg}>
         <div className={s.stage}>
           {/* z0 舞台内重绘背景：铺满 1024×768 舞台，随舞台等比缩放不变形 */}
           <img src={bg} alt="" draggable={false} className={s.stageBg} />
@@ -110,7 +106,7 @@ export function PlazaScene(
           <button type="button" aria-label="背包入口"
             className={`${uiBtn} ${s.hotspot} ${s.hotBtnBackpack}`} onClick={() => go('backpack')} />
         </div>
-      </LogicalStage>
+      </SceneShell>
     </div>
   )
 }

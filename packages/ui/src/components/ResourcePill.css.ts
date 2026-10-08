@@ -6,7 +6,7 @@ import { FONT, R } from '../tokens'
 export const root = style({
   display: 'inline-flex', alignItems: 'center', gap: 6,
   height: 38, padding: '0 14px', borderRadius: R.pill,
-  fontFamily: FONT.family, fontWeight: 900, fontSize: 18, whiteSpace: 'nowrap',
+  fontFamily: FONT.family, fontWeight: 900, fontSize: FONT.body, whiteSpace: 'nowrap',
 })
 
-export const icon = style({ fontSize: 20 })
+export const icon = style({ fontSize: FONT.h2 })

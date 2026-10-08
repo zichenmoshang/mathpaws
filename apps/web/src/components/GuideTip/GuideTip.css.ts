@@ -1,5 +1,6 @@
 // GuideTip 静态样式（自 GuideTip.module.css 迁移至 vanilla-extract，数值不变）；
 // 字体栈等同 @mathpaws/ui 的 FONT.family
+import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
 export const wrap = style({
@@ -19,7 +20,7 @@ export const wrap = style({
 
 export const text = style({
   fontWeight: 900,
-  fontSize: '17px',
+  fontSize: FONT.small,
   color: '#3f4d5c',
   whiteSpace: 'nowrap',
 })
@@ -37,7 +38,7 @@ export const okBtn = style({
   background: 'linear-gradient(180deg, #ffd83d, #ffb020)',
   color: '#7a4a12',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   boxShadow: '0 4px 0 #e08f00',
   cursor: 'pointer',
 })
@@ -50,6 +51,6 @@ export const skipBtn = style({
   background: '#eceff1',
   color: '#78909c',
   fontWeight: 800,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   cursor: 'pointer',
 })

@@ -1,5 +1,5 @@
 import { Btn } from '@mathpaws/ui'
-import { C } from '@mathpaws/ui'
+import { C, FONT } from '@mathpaws/ui'
 
 import type { RouteId } from './router'
 
@@ -48,14 +48,14 @@ export function Placeholder({
     >
       <div
         style={{
-          fontSize: 34,
+          fontSize: FONT.display,
           fontWeight: 900,
           color: C.ink,
         }}
       >
         {PAGE_CN[route]}
       </div>
-      <div style={{ color: C.inkSoft, fontSize: 16 }}>
+      <div style={{ color: C.inkSoft, fontSize: FONT.small }}>
         该页面将在对应里程碑施工（M0 占位）
       </div>
       {route !== 'plaza' && (

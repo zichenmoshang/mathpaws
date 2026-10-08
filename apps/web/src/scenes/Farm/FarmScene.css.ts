@@ -1,14 +1,7 @@
 // FarmScene 局部样式（vanilla-extract；1024×768 逻辑像素）
 // 数值与迁移前 CSS Modules 完全一致；mp-farm-ready 为本文件局部 keyframes。
+import { FONT } from '@mathpaws/ui'
 import { keyframes, style } from '@vanilla-extract/css'
-
-/* 舞台外出血背景：cover 铺满视口留边 */
-export const bleedBg = style({
-  display: 'block',
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-})
 
 /* 场景根：LogicalStage 内的 1024×768 逻辑画布 */
 export const scene = style({
@@ -33,7 +26,7 @@ export const pillNum = style({
   alignItems: 'center',
   justifyContent: 'center',
   fontWeight: 900,
-  fontSize: '28px',
+  fontSize: FONT.title,
   color: '#9a6a24',
   textShadow: '0 2px 0 rgba(255, 255, 255, .8)',
 })
@@ -60,13 +53,13 @@ export const lv = style({
   background: '#7ed957',
   color: '#fff',
   fontWeight: 900,
-  fontSize: '17px',
+  fontSize: FONT.small,
   boxShadow: '0 3px 0 #4e9c33',
 })
 
 export const xpText = style({
   fontWeight: 900,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   color: '#fff',
   textShadow: '0 1px 2px rgba(60, 110, 180, .6)',
 })
@@ -109,7 +102,7 @@ export const cdBubble = style({
   border: '2px solid #6fb3e8',
   color: '#2b6cb0',
   fontWeight: 900,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   boxShadow: '0 3px 6px rgba(40, 90, 160, .25)',
   whiteSpace: 'nowrap',
 })
@@ -145,7 +138,7 @@ export const readyTag = style({
   background: '#ffec99',
   color: '#8a6d1d',
   fontWeight: 900,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   whiteSpace: 'nowrap',
   boxShadow: '0 3px 6px rgba(60, 30, 10, .25)',
 })
@@ -162,7 +155,7 @@ export const warehouseBtn = style({
   background: 'linear-gradient(180deg, #ffd83d, #ffb020)',
   color: '#7a4a12',
   fontWeight: 900,
-  fontSize: '22px',
+  fontSize: FONT.h2,
   boxShadow: '0 5px 0 #e08f00',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
   cursor: 'pointer',
@@ -179,7 +172,7 @@ export const coldHint = style({
   border: '3px solid #cdeab6',
   color: '#5da23f',
   fontWeight: 900,
-  fontSize: '17px',
+  fontSize: FONT.small,
   boxShadow: '0 6px 12px rgba(90, 150, 80, .2)',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
   whiteSpace: 'nowrap',
@@ -196,7 +189,7 @@ export const fly = style({
   border: '2px solid #7ed957',
   color: '#3e9c4c',
   fontWeight: 900,
-  fontSize: '19px',
+  fontSize: FONT.body,
   whiteSpace: 'nowrap',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
   zIndex: 30,
@@ -213,7 +206,7 @@ export const panel = style({
 })
 
 export const panelTitle = style({
-  fontSize: '24px',
+  fontSize: FONT.h2,
   fontWeight: 900,
   color: '#3f4d5c',
 })
@@ -253,13 +246,13 @@ export const cropMeta = style({
 
 export const cropName = style({
   fontWeight: 900,
-  fontSize: '18px',
+  fontSize: FONT.body,
   color: '#3f4d5c',
 })
 
 export const cropSub = style({
   fontWeight: 800,
-  fontSize: '13px',
+  fontSize: FONT.micro,
   color: '#8a97a3',
 })
 
@@ -276,7 +269,7 @@ export const smallBuyBtn = style({
   background: '#fff3e0',
   color: '#ad6800',
   fontWeight: 900,
-  fontSize: '14px',
+  fontSize: FONT.aux,
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
 })
 
@@ -288,7 +281,7 @@ export const plantBtn = style({
   background: 'linear-gradient(180deg, #9be15d, #6cc24a)',
   color: '#fff',
   fontWeight: 900,
-  fontSize: '15px',
+  fontSize: FONT.small,
   boxShadow: '0 4px 0 #4e9c33',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
 })
@@ -326,12 +319,12 @@ export const whFoot = style({
 
 export const whFlower = style({
   fontWeight: 900,
-  fontSize: '18px',
+  fontSize: FONT.body,
   color: '#ad6800',
 })
 
 export const sellFly = style({
   fontWeight: 900,
-  fontSize: '17px',
+  fontSize: FONT.small,
   color: '#3e9c4c',
 })

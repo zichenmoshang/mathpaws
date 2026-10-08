@@ -24,14 +24,14 @@ export const panel = style({
 })
 
 export const title = style({
-  fontSize: 24,
+  fontSize: FONT.h2,
   fontWeight: 900,
   color: C.ink,
   marginBottom: 12,
 })
 
 export const message = style({
-  fontSize: 18,
+  fontSize: FONT.body,
   color: '#455a64',
   marginBottom: 22,
   lineHeight: 1.5,

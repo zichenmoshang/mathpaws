@@ -51,10 +51,13 @@ describe('设计 tokens 导出完整性', () => {
   })
 
   it('字号/圆角/间距阶梯单调且为正', () => {
-    expect(FONT.aux).toBeLessThan(FONT.body)
-    expect(FONT.body).toBeLessThan(FONT.h2)
-    expect(FONT.h2).toBeLessThan(FONT.title)
-    expect(FONT.question).toBeGreaterThan(FONT.title)
+    const sizes = [
+      FONT.micro, FONT.aux, FONT.small, FONT.body, FONT.h2,
+      FONT.title, FONT.display, FONT.hero, FONT.question,
+    ]
+    for (let i = 1; i < sizes.length; i++) {
+      expect(sizes[i]).toBeGreaterThan(sizes[i - 1])
+    }
     expect(FONT.family).toContain('sans-serif')
 
     expect(R.sm).toBeLessThan(R.md)

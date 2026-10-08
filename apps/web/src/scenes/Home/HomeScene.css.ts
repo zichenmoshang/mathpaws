@@ -1,25 +1,17 @@
 // HomeScene 样式（P4 首页，1024×768 逻辑舞台；vanilla-extract）
 // 全部几何值为原稿 2048×1536 × K(0.5) 折算后的逻辑像素，与迁移前 CSS Modules 数值一致。
 // 动画 keyframes 统一引用 styles/motion.css.ts 共享定义（mpDollBob / mpFloat）。
+import { FONT } from '@mathpaws/ui'
 import { style, styleVariants } from '@vanilla-extract/css'
 
 import { mpDollBob, mpFloat } from '../../styles/motion.css'
 
-/* 场景根：全视口容器，承载出血背景与 LogicalStage */
+/* 场景根：全视口容器，承载 SceneShell（出血背景 + LogicalStage） */
 export const scene = style({
   position: 'absolute',
   inset: 0,
   overflow: 'hidden',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
-})
-
-/* 舞台外出血背景：同一张背景图 cover 填满整个视口 */
-export const bleedImg = style({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
 })
 
 /* 1024×768 逻辑舞台根（LogicalStage 负责居中与等比缩放） */
@@ -83,7 +75,7 @@ export const heroName = style({
   top: '69.5px',
   fontWeight: 900,
   color: '#3d3833',
-  fontSize: '27px',
+  fontSize: FONT.title,
   lineHeight: 1.2,
   maxWidth: '200px',
   whiteSpace: 'nowrap',
@@ -101,7 +93,7 @@ export const topPill = style({
   background: 'rgba(255, 255, 255, .92)',
   color: '#4a5a6a',
   fontWeight: 800,
-  fontSize: '21px',
+  fontSize: FONT.h2,
   boxShadow: '0 2px 6px rgba(60, 110, 160, .12)',
 })
 
@@ -280,7 +272,7 @@ export const tag = style({
   borderRadius: '999px',
   whiteSpace: 'nowrap',
   fontWeight: 900,
-  fontSize: '21px',
+  fontSize: FONT.h2,
   color: '#7a5410',
   boxShadow: '0 4px 8px rgba(150, 110, 20, .25), inset 0 2px 3px rgba(255, 255, 255, .7)',
 })
@@ -304,7 +296,7 @@ export const cta = style({
   cursor: 'pointer',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
   fontWeight: 900,
-  fontSize: '24px',
+  fontSize: FONT.h2,
   color: '#fff',
   textShadow: '0 1px 2px rgba(0, 0, 0, .2)',
   padding: 0,
@@ -361,12 +353,12 @@ export const textBlock = style({
 /* 已打卡标题 / 副文 */
 export const doneTitle = style({
   fontWeight: 900,
-  fontSize: '24px',
+  fontSize: FONT.h2,
   color: '#5a4a3a',
 })
 
 export const doneDesc = style({
-  fontSize: '15px',
+  fontSize: FONT.small,
   color: '#8a98a5',
   marginTop: '6px',
 })
@@ -374,13 +366,13 @@ export const doneDesc = style({
 /* 通用卡标题 / 描述（真题 / 错题本） */
 export const cardTitle = style({
   fontWeight: 900,
-  fontSize: '24px',
+  fontSize: FONT.h2,
   color: '#3d4a57',
   marginBottom: '6px',
 })
 
 export const cardDesc = style({
-  fontSize: '15px',
+  fontSize: FONT.small,
   color: '#7c8b99',
 })
 
@@ -403,7 +395,7 @@ export const streakText = style({
   width: '368.5px',
   textAlign: 'center',
   fontWeight: 900,
-  fontSize: '24px',
+  fontSize: FONT.h2,
   color: '#5a4a3a',
 })
 
@@ -439,7 +431,7 @@ export const quizLetter = style({
   borderRadius: '50%',
   color: '#fff',
   fontWeight: 900,
-  fontSize: '22px',
+  fontSize: FONT.h2,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

@@ -19,6 +19,7 @@ export default tseslint.config(
       '**/_tmp/**',
       '**/ref_assets/**',
       'apps/web/dev-dist/**',
+      'apps/web/.pw-browsers/**',
     ],
   },
   js.configs.recommended,
@@ -69,6 +70,48 @@ export default tseslint.config(
     rules: {
       'react-hooks/rules-of-hooks': 'off',
     },
+  },
+  {
+    // vanilla-extract css.ts 约束（architecture.md §6 检查单）：
+    // 1) 固定像素场景字号必须引用 FONT token（@mathpaws/ui tokens.ts 9 档），禁散值字面量；
+    //    装饰 emoji 等孤例用 eslint-disable 注明理由；
+    // 2) css.ts 禁止 import 图片资产（ve 构建期求值不走资产管线，须在 tsx import 后注入）
+    files: ['apps/web/src/**/*.css.ts', 'packages/ui/src/**/*.css.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "Property[key.name='fontSize'][value.type='Literal']",
+          message:
+            '字号请使用 FONT token（@mathpaws/ui tokens.ts）；确需偏离用 eslint-disable 注明理由',
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.webp', '**/*.gif', '**/*.svg', '**/*.avif'],
+              message:
+                '.css.ts 禁止 import 图片资产（ve 构建期求值不走资产管线）；请在 tsx import 后经内联 / CSS 变量注入',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // 流式场景（clamp / vmin / cqw / 容器查询）、舞台外组件与 dev 工具页不走逻辑 px 字号 token
+    files: [
+      'apps/web/src/scenes/dev/**/*.css.ts',
+      'apps/web/src/scenes/Gacha/**/*.css.ts',
+      'apps/web/src/scenes/Backpack/**/*.css.ts',
+      'apps/web/src/scenes/Quiz/**/*.css.ts',
+      'apps/web/src/scenes/Result/**/*.css.ts',
+      'apps/web/src/components/ChestPanel/**/*.css.ts',
+      'apps/web/src/components/ComingSoonToast/**/*.css.ts',
+    ],
+    rules: { 'no-restricted-syntax': 'off' },
   },
   prettier,
 )

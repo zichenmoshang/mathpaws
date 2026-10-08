@@ -5,6 +5,7 @@
 - **所属批次 / 消费方**：批次 ID（如 M1-AST-03）与消费方页面（如 P10 学盒、P16 背包）
 - **类型**：PAGE / STAND / POSE / ICON / ITEM / BG / TEX / REF / PANEL
 - **比例与像素**：如 1:1 1024×1024
+- **安全区 / bleed**（PAGE / BG 必填）：关键内容限定区域（默认 4:3 安全框）；左右出血区构图要求（可被 cover 裁切、不放关键元素与文字；运行时留边以同一背景 cover 出血铺满，design-system §8.2）
 - **生成方式**：T2I（仅 core-ip） / I2I（衍生，必须带 core-ip）；模型（如 seedream_5.0_pro）
 - **后处理**（无则写"无"）：rembg 抠图 / layer_decomposition 拆层 / 烘焙文字擦除 等
 - **参考图 / core-ip**：按 [img0]、[img1] 编号，编号须与 Prompt 中的引用一一对应

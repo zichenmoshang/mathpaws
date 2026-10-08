@@ -9,4 +9,4 @@ export const root = style({
   fontFamily: FONT.family, userSelect: 'none', lineHeight: 1.1,
 })
 
-export const label = style({ fontSize: 13, fontWeight: 900 })
+export const label = style({ fontSize: FONT.micro, fontWeight: 900 })
