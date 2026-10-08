@@ -5,6 +5,7 @@
 - [[高保真还原工作流]]
 - [[视觉走查体系]]
 - [[屏幕自适应方案]]
+- [[抠图模型选型对比]]
 
 **链接**
 - [README](https://github.com/zichenmoshang/mathpaws#readme)
