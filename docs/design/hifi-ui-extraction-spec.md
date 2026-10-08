@@ -69,20 +69,33 @@ node design/high-fi/decomp.js `
 # 产物：layer_zNN_*.png/jpg + layers.json（名称/描述/bbox/尺寸台账）
 ```
 
-3. **逐元素验收**（§6 清单），不合格的层丢弃重跑或改走代码绘制；
+3. **脚本验收（拆层门禁，visual-qa P0）**：
+   ```powershell
+   design/.venv-art/Scripts/python.exe design/high-fi/recompose_qc.py decomp `
+     design/high-fi/_tmp/decomp-<page> `
+     --source design/high-fi/<page>/<page>.png
+   ```
+   脚本自动完成 §6 的机械项（bbox 回贴对齐、双 bbox 交叉校验、宽高比/偏移/内容差异），
+   产出对照图与 `recompose-qc.json`；**超阈值层修复/重拆前禁止登记台账、禁止发布**。
+   刻意擦除区（烘焙文字、动态内容抠除位置）在 `layers.json` 逐层补 `erasedRegions`
+   （层内相对坐标）后复跑，豁免区不参与比对；
 4. 选中的层导出到正式资产目录：
    - 建议路径 `apps/web/src/assets/hifi/<page>/<element>.webp`（透明保留用 WebP alpha；需要无损边缘时 PNG）；
    - 文件名用语义名（`notebook.webp`），不用 `layer_z03`；
    - **同步在资产台账记录 bbox 与来源稿**（新建 `assets/hifi/manifest.json` 或就近文档），否则下次无人知道它的原始位置与缩放比；
 5. 临时产物留在 `_tmp/`，可整体删除；`response.json` 不入库。
 
-## 6. 验收清单（每个采用的层逐项过）
+## 6. 验收清单（脚本验收为主、人工抽查为辅）
 
-- [ ] 棋盘格背景查看：边缘干净、无白边 / 光晕 / 杂色边；
-- [ ] 与输入稿同区域对比：造型一致，无多 / 缺部件、无文案错字；
-- [ ] 按 bbox 回贴到原稿截图上：位置 / 尺寸对齐，缩放后无糊边；
-- [ ] **absolute 与 normalized 两套 bbox 已交叉校验**（§4 第 3 条，用层原生尺寸验证），
-      修正值已记 `bboxNote`；
+拆层后先跑脚本验收（§5 第 3 步，`recompose_qc.py decomp` 模式），下列前四项已由脚本
+自动覆盖（见 `recompose-qc.json` 逐层结论与 `compare.png` 对照图），人工只做裁定与抽查：
+
+- [ ] （脚本）棋盘格级别边缘比对、按 bbox 回贴对齐、缩放拉伸（宽高比偏差）、bbox 偏移
+      （±3px 搜索）——超阈值层修复/重拆；
+- [ ] （脚本）**absolute 与 normalized 两套 bbox 交叉校验**——脚本报 `bbox_cross_deviation_px`
+      超 2px 时按 §4 第 3 条人工裁定取哪套，修正值记 `bboxNote`，禁止静默采用；
+- [ ] （人工抽查）对照图确认：边缘干净无白边/光晕/杂色边、造型无多/缺部件、无文案错字；
+- [ ] （人工）刻意擦除区已逐层登记 `erasedRegions`（层内相对坐标）并复跑通过；
 - [ ] 无水印；
 - [ ] 确认该元素"重绘可接受"（§2 口诀），文字类已确认前端不重排；
 - [ ] 命名、bbox、来源稿已登记台账。
