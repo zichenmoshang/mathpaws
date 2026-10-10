@@ -13,6 +13,23 @@ export const root = style({
   overflow: 'hidden',
 })
 
+// 2026-10-10 僵尸清理：TopBar/Card 组件删除，dev 页样式本地化（复刻原外观）
+export const topBar = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  background: 'linear-gradient(180deg,#64b5f6,#1e88e5)',
+  borderRadius: '20px',
+  padding: '8px 12px',
+  boxShadow: '0 4px 0 #1565c0, 0 8px 16px rgba(21,101,192,.25)',
+})
+
+export const card = style({
+  background: '#fff',
+  borderRadius: '20px',
+  boxShadow: '0 4px 12px rgba(38,50,56,.12)',
+})
+
 export const topBarLeft = style({
   display: 'flex',
   alignItems: 'center',

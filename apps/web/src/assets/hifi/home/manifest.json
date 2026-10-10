@@ -40,18 +40,6 @@
       "nativeSize": "1125x338"
     },
     {
-      "z": 10,
-      "file": "card-back.webp",
-      "usage": "学习卡右侧蓝色叠底（叠牌 peek 蓝边）",
-      "bbox": [
-        1839,
-        445,
-        1942,
-        1320
-      ],
-      "nativeSize": "153x1294"
-    },
-    {
       "z": 13,
       "file": "alarm-books.webp",
       "usage": "连学打卡卡面：金色闹钟+书本拟物装饰",
@@ -62,32 +50,6 @@
         937
       ],
       "nativeSize": "818x783"
-    },
-    {
-      "z": 1,
-      "file": "topbar.webp",
-      "usage": "【弃用】重绘为不透明灰，顶栏改 CSS 毛玻璃",
-      "archived": true,
-      "bbox": [
-        80,
-        70,
-        1968,
-        261
-      ],
-      "nativeSize": "1888x191"
-    },
-    {
-      "z": 11,
-      "file": "card-panel.webp",
-      "usage": "【弃用】重绘为不透明灰，白卡改 CSS 毛玻璃",
-      "archived": true,
-      "bbox": [
-        1107,
-        364,
-        1844,
-        1373
-      ],
-      "nativeSize": "737x1009"
     },
     {
       "z": 7,
