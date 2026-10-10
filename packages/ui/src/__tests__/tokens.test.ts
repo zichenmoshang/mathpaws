@@ -87,4 +87,23 @@ describe('设计 tokens 导出完整性', () => {
     expect(css).toContain('0 4px 0 rgba(0,0,0,.18)')
     expect(css.match(/#1565C0/g)).toHaveLength(4)
   })
+
+  // 色卡图（design/asset-prompts/anchors/palette.png）由 gen_palette.py 内嵌色值生成；
+  // 此处断言脚本色值与 C 完全一致——改 C 时必须同步脚本并重跑生成（风格锚 A1）。
+  it('色卡脚本色值与 C 色板一致（anchors/gen_palette.py 同步守护）', () => {
+    const PALETTE_SCRIPT: Record<string, string> = {
+      sky: '#4FC3F7', skyDeep: '#1565C0',
+      sun: '#FFD54F', sunDeep: '#F57F17',
+      orange: '#FF8F00', orangeDeep: '#EF6C00',
+      grass: '#66BB6A', grassDeep: '#43A047',
+      red: '#EF5350', redDeep: '#E53935',
+      purple: '#B39DDB', purpleDeep: '#7E57C2',
+      pink: '#F48FB1', pinkDeep: '#D81B60',
+      white: '#FFFFFF', ink: '#263238', inkSoft: '#78909C',
+      skyBg: '#BFE3F5', ground: '#9CCC8A',
+    }
+    for (const [k, v] of Object.entries(PALETTE_SCRIPT)) {
+      expect(C[k as keyof typeof C], `色卡脚本与 tokens 不一致: ${k}`).toBe(v)
+    }
+  })
 })

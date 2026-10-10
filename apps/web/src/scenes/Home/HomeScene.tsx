@@ -14,7 +14,7 @@
 //   已固化到 HomeScene.css.ts）；舞台外留边由 BackgroundBleed 以同背景 cover 填充。
 // ============================================================================
 import { PaperDoll } from '@mathpaws/paperdoll'
-import { btn as uiBtn } from '@mathpaws/ui'
+import { ImageButton, btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 
 import type { RouteId } from '../../app/router'
@@ -179,11 +179,12 @@ function HeroStage({
         className={s.rabbit}
       />
 
-      {/* 益智乐园 z9：位图按钮（固定文案），透明按钮覆盖 */}
-      <img src={btnPlaza} alt="" aria-hidden draggable={false} className={s.plazaBtnImg} />
-      <button
-        type="button" aria-label="进入益智乐园"
-        className={`${uiBtn} ${s.plazaBtn}`}
+      {/* 益智乐园 z9：位图按钮（固定文案）——ImageButton 收编（B2） */}
+      <ImageButton
+        asset={btnPlaza}
+        alt="进入益智乐园"
+        aria-label="进入益智乐园"
+        className={s.plazaBtn}
         onClick={() => { audio.playSfx('click'); onEnterPlaza() }}
       />
     </>

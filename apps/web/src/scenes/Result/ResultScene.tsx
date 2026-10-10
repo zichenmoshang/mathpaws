@@ -5,6 +5,7 @@
 //   - 主按钮「再练一轮」回 quiz（组件重挂载构建新轮），次按钮「回首页」。
 import type { CSSProperties } from 'react'
 
+import { ImageButton } from '@mathpaws/ui'
 import type { RouteId } from '../../app/router'
 import resultBanner from '../../assets/hifi/result/banner.webp'
 import resultBg from '../../assets/hifi/result/bg.webp'
@@ -98,11 +99,15 @@ export function ResultScene(
           className={s.againBtn} style={rbox(598, 1400, 1147, 1608)}>
           再练一轮
         </button>
-        <img src={resultBtnPlaza} alt="回首页" draggable={false}
-          className={s.plazaImg} style={rbox(1217, 1400, 1766, 1608)} />
-        <button
-          type="button" aria-label="回首页" onClick={home}
-          className={s.homeBtn} style={rbox(1217, 1400, 1766, 1608)}
+        {/* 回首页：切图整钮（ImageButton 收编，B2——顺带补上原热点钮缺失的 uiBtn 按压反馈） */}
+        <ImageButton
+          asset={resultBtnPlaza}
+          alt="回首页"
+          aria-label="回首页"
+          className={s.homeBtn}
+          imgClassName={s.plazaImg}
+          onClick={home}
+          style={rbox(1217, 1400, 1766, 1608)}
         />
       </div>
     </div>

@@ -36,6 +36,19 @@
 - **页面 / 面板类高保真左上角一律留空**，prompt 不得要求生成返回按钮；返回按钮是 UI 库的**独立标准组件**（位图），由前端运行时叠加，避免 bake 进成图后无法复用、也便于统一替换。
 - 同理，底部主按钮、Tab 选中/未选中背景等通用控件均以**独立位图资产**登记生成，不要求模型在整页稿里画死；高保真只表达布局与风格意图。
 
+## 页面级双锚与元素圣经（style-anchor，2026-10-10 起）
+
+- **双锚必带**：PAGE / PANEL 类存档的参考图字段必须包含
+  [`anchors/style-tile.png`](./anchors/style-tile.png)（元素语言锚：造型/釉面质感/薄边/标题形态）+
+  [`anchors/palette.png`](./anchors/palette.png)（色调锚，与 `packages/ui/src/tokens.ts` C 同源）；
+  场景页另加当页场景参考图。prompt 一律从 [`_TEMPLATE-page.md`](./_TEMPLATE-page.md) 起笔，
+  固定段落（风格语言/通用规则/禁止词）不得改动。
+- **元素圣经引用**：跨页元素（宝箱/胶囊/进度条/背景/标题艺术字等）的描述必须引自
+  [`elements/`](./elements/) 对应条目并在存档注明条目与版本；条目缺失时先补条目再起草。
+- 锚的变更须用户批准，并在 [anchors 台账](./anchors/README.md) 版本化登记。
+- 验收量化项：色板匹配度抽检（[`anchors/check_palette_match.py`](./anchors/check_palette_match.py)）
+  ≤60 距离 ≥90% 且 >90 ≤1%；中文文字逐字核对。
+
 ## 文件与命名
 
 - 每个资产一个 md 文件：`<资产ID>-<短名>.md`，复制 `_TEMPLATE.md` 填写。

@@ -7,7 +7,7 @@
 // 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
 // 舞台外留边由 BackgroundBleed 以同一背景 cover 出血填充；
 // 静态样式已迁移至 FarmScene.css.ts，内联仅保留运行时动态值。
-import { BackButton, Modal, Tabs, Tag, ProgressBar, btn as uiBtn } from '@mathpaws/ui'
+import { BackButton, Modal, Tabs, Tag, ProgressBar, ImageButton, ResourcePill, btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
@@ -210,15 +210,21 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
           style={{ position: 'absolute', left: 14, top: 10 }}
         />
 
-        {/* 资源牌 + 前端数字 */}
-        <img src={pillFlower} alt="" draggable={false} style={place(PILL_FLOWER_BBOX)} />
-        <span className={s.pillNum} style={pillNumPlace(PILL_FLOWER_BBOX)}>
-          {flowerCoins}
-        </span>
-        <img src={pillShell} alt="" draggable={false} style={place(PILL_SHELL_BBOX)} />
-        <span className={s.pillNum} style={pillNumPlace(PILL_SHELL_BBOX)}>
-          {shells}
-        </span>
+        {/* 资源牌 + 前端数字（ResourcePill asset 模式收编，B2） */}
+        <ResourcePill
+          asset={pillFlower}
+          value={flowerCoins}
+          style={place(PILL_FLOWER_BBOX)}
+          valueClassName={s.pillNum}
+          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+        />
+        <ResourcePill
+          asset={pillShell}
+          value={shells}
+          style={place(PILL_SHELL_BBOX)}
+          valueClassName={s.pillNum}
+          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+        />
 
         {/* 农场等级条（前端，标题横幅下方） */}
         <div className={s.levelWrap}>
@@ -236,7 +242,18 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
           const cell = cellOf(i)
           const plot = plots[i]
           const st = plot ? getPlotStage(plot, now) : { stage: 'empty' as const, remainSeconds: 0 }
-          return (
+          return st.stage === 'empty' ? (
+            // 空地 = 种植位图钮（ImageButton 收编，B2）
+            <ImageButton
+              key={i}
+              asset={btnPlant}
+              alt="种植"
+              className={s.plotBtn}
+              imgClassName={s.plantBtnImg}
+              onClick={() => clickPlot(i)}
+              style={place(cell)}
+            />
+          ) : (
             <button
               key={i}
               type="button"
@@ -244,9 +261,6 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
               onClick={() => clickPlot(i)}
               style={place(cell)}
             >
-              {st.stage === 'empty' && (
-                <img src={btnPlant} alt="种植" draggable={false} className={s.plantBtnImg} />
-              )}
               {st.stage === 'growing' && (
                 <>
                   <img src={sprouts} alt="" draggable={false} className={s.sproutsImg} />
@@ -522,10 +536,3 @@ function WarehousePanel({ onClose }: { onClose: () => void }) {
 
 /* ---------- 动态定位辅助（运行时计算，保留内联） ---------- */
 
-/* 资源牌数字（牌右半区居中） */
-const pillNumPlace = (bbox: [number, number, number, number]): CSSProperties => ({
-  left: (bbox[0] + (bbox[2] - bbox[0]) * 0.45) * K,
-  top: bbox[1] * K,
-  width: (bbox[2] - bbox[0]) * 0.43 * K,
-  height: (bbox[3] - bbox[1]) * K,
-})
