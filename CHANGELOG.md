@@ -3,6 +3,21 @@
 本文件由 [release-please](https://github.com/googleapis/release-please) 依据
 Conventional Commits 自动维护，请勿手工编辑版本段落。
 
+## [1.2.0](https://github.com/zichenmoshang/mathpaws/compare/mathpaws-v1.1.0...mathpaws-v1.2.0) (2026-10-10)
+
+
+### Features
+
+* **design:** 风格锚三件套 A1 + 位图组件收编 B2 ([79ffc1e](https://github.com/zichenmoshang/mathpaws/commit/79ffc1e8e8f7ad14a92c29587f773ca0c8da3ad5))
+* **design:** 风格锚三件套 A1（style tile v1 + 色卡 + 元素圣经/模板） ([00c43b5](https://github.com/zichenmoshang/mathpaws/commit/00c43b544b6bdb747cada06a7b7316b297f11317))
+* **web:** 识别模型与 tfjs wasm 纳入 SW 预缓存，弱网/离线可用 ([42d0a8e](https://github.com/zichenmoshang/mathpaws/commit/42d0a8ec5cf2bf2bc3f68262209380b436190d5b))
+
+
+### Bug Fixes
+
+* **web:** 手写识别模型 URL 改用 BASE_URL 拼接，修复 GitHub Pages 子路径部署 404 ([14bbf65](https://github.com/zichenmoshang/mathpaws/commit/14bbf65f592a856663c042c540dd8093e60009fa))
+* **web:** 手写识别真机不可用修复（模型路径 + SW 预缓存） ([381462a](https://github.com/zichenmoshang/mathpaws/commit/381462a032a9d8397f8f2ccdf70f5de05a2c08d3))
+
 ## [1.1.0](https://github.com/zichenmoshang/mathpaws/compare/mathpaws-v1.0.1...mathpaws-v1.1.0) (2026-10-08)
 
 
