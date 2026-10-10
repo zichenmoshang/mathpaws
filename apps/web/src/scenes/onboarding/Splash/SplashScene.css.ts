@@ -8,14 +8,6 @@ export const scene = style({
   overflow: 'hidden',
 })
 
-// z0 重绘背景：铺满舞台随缩放（object-fit 缺省值即 fill，不再显式声明）
-export const bg = style({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-})
-
 // 拆层位图 / 进度条容器（left/top/width/height 由 bbox×K 运行时给出，保留内联）
 export const layer = style({
   position: 'absolute',

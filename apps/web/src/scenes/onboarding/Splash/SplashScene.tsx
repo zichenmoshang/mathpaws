@@ -3,8 +3,9 @@
 // （z0 背景 + 数字符号 3 组 + 彩虹进度条 + logo + 白雏鸟），
 // 层在 1024×768 逻辑舞台内按 bbox×K 定位（K=1024/2364），回贴已与原稿比对验收。
 // 进度条为满格位图，按加载进度用 clipPath 从左揭示；其下垫 CSS 空轨道。
-// 自适应接线：内容置于 1024×768 LogicalStage 随舞台等比缩放；
-// 舞台外留边由 SceneShell 以同一背景图 cover 出血填充。
+// 自适应（2026-10-10 长期方案首验）：z0 为纯氛围远景，由 SceneShell bleedImage
+// **cover 全屏清晰铺满**（bleedBlur={false}），舞台内不再叠 z0——无"两张图"结构；
+// 内容层（数字符号/logo/雏鸟/进度条）与背景无对位绑定，置于 1024×768 安全区随舞台缩放。
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
@@ -25,7 +26,8 @@ import { preloadCritical } from '../../../utils/preload'
 import * as s from './SplashScene.css'
 
 const K = 1024 / 2364
-const MIN_VISIBLE_MS = 1400
+// 临时（2026-10-10 真机走查）：最短可见时长 60s，便于观察背景/ bleed 效果；走查完恢复 1400
+const MIN_VISIBLE_MS = 60_000
 
 interface LayerDef { z: number; src: string; bbox: [number, number, number, number] }
 
@@ -109,12 +111,10 @@ export function SplashScene({ onNavigate }: { onNavigate: (id: RouteId) => void 
 
   return (
     <>
-      {/* SceneShell：留边以同一背景图 cover 出血铺满，内容进 1024×768 舞台 */}
-      <SceneShell bleedImage={bg}>
+      {/* SceneShell：z0 纯氛围远景 cover 全屏（长期方案，bleedBlur={false} 清晰铺满）；
+          舞台透明，只放内容层（数字符号/logo/雏鸟/进度条） */}
+      <SceneShell bleedImage={bg} bleedBlur={false}>
         <div className={s.scene}>
-          {/* z0 重绘背景 */}
-          <img src={bg} alt="" draggable={false} className={s.bg} />
-
           {/* 数字符号组 → logo → 雏鸟（z 序） */}
           {LAYERS.map(l => (
             <img key={l.z} src={l.src} alt="" draggable={false} className={s.layer} style={place(l.bbox)} />
