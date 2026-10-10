@@ -5,7 +5,8 @@ import wasmSimdUrl from '@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-si
 import wasmThreadedUrl from '@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm-threaded-simd.wasm?url'
 import wasmBaseUrl from '@tensorflow/tfjs-backend-wasm/dist/tfjs-backend-wasm.wasm?url'
 
-const MODEL_URL = '/models/mnist/model.json'
+// 用 BASE_URL 拼接：GitHub Pages 子路径部署（/mathpaws/）下绝对路径会 404
+const MODEL_URL = `${import.meta.env.BASE_URL}models/mnist/model.json`
 const INK_THRESHOLD = 200
 
 let model: tf.LayersModel | null = null
