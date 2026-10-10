@@ -39,8 +39,8 @@ export default defineConfig({
       includeAssets: ['icons/icon-192.png'],
       manifest: pwaManifest as Record<string, unknown>,
       workbox: {
-        // App Shell + 静态资源 precache
-        globPatterns: ['**/*.{js,css,html,svg,webp,woff2}'],
+        // App Shell + 静态资源 precache；json/bin/wasm 含手写识别模型与 tfjs wasm（离线可用）
+        globPatterns: ['**/*.{js,css,html,svg,webp,woff2,json,bin,wasm}'],
         // GLB / 音频按需运行时缓存，不进 precache
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
