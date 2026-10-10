@@ -23,8 +23,8 @@ export const C = {
   inkSoft: '#78909C',
 
   // 场景
-  skyBg: '#bfe3f5',
-  ground: '#9ccc8a',
+  skyBg: '#BFE3F5',
+  ground: '#9CCC8A',
 } as const
 
 // 学科颜色编码
