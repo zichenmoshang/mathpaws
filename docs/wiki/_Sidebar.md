@@ -6,6 +6,7 @@
 - [[视觉走查体系]]
 - [[屏幕自适应方案]]
 - [[抠图模型选型对比]]
+- [[鸿蒙PWA安装踩坑记]]
 
 **链接**
 - [README](https://github.com/zichenmoshang/mathpaws#readme)
