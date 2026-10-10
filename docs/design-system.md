@@ -122,8 +122,9 @@ micro 12（超小标注）/ aux 14（辅助）/ small 16（次级正文）/ body
 
 ### 7.1 通用组件层 —— `packages/ui`（`@mathpaws/ui`）
 与业务 / store / 路由 / 图片解耦、全内联样式、可跨应用复用。
-- **已有 10 个**：`Btn`（糖果立体按钮）、`RoundBtn`（圆形功能键）、`Chip`（资源胶囊）、`TopBar`、`BackBtn`、`Card`、`Sheet`（底部弹层）、`Modal`（居中弹窗）、`ProgressBar`、`Title`（描边标题）。
-- **一期待补**：`Switch`、`Tabs·Segmented`（**不做 TabBar**）、`CloudInput`（起名 / 云朵输入框）、`ConfirmDialog`（答题返回二次确认等）、`OptionButton`（真题 ABC / 浮题三选一）、`ItemGrid·ItemCell`（宠物图鉴 / 装扮 / 种子 / 错题网格）、`RewardBadge·RewardRow`（贝壳 / 花朵币 / 食物图标 + 数量）、`Tag·LockTag`（锁 / 即将开放）、`Toast·Tip`、`EmptyState`、`StarTrack`（宠物进化轨道 / 连学）、`CountdownRing`（浮题 5 秒环）、`Carousel`（**手动滑动、不自动轮播**，首页 3 卡）、`ResourcePill`、`LoadingBar·LoadingOverlay·SceneTransition`（P0 加载过渡）、`Icon`（SVG 图标体系）。
+- **功能组件（纯 CSS，生产在用）**：`Btn`、`Modal`、`ProgressBar`、`Switch`、`Tabs`、`Tag`、`ConfirmDialog`、`CloudInput`。
+- **位图组件（9-slice / 切图底，生产在用）**：`BackButton`、`PrimaryButton`、`BitmapTabs`、`ImageButton`（2026-10-10 新增，页面切图按钮的统一交互包装）；`ResourcePill`（资源胶囊，CSS + asset 位图底双模式）。
+- **2026-10-10 僵尸清理**：删除 15 个零引用/重复组件（Chip、Sheet、Title、OptionButton、ItemGrid、RewardBadge、EmptyState、StarTrack、CountdownRing、LoadingBar、RoundBtn、BackBtn、TopBar、Card、Carousel；LockTag 附带导出随删）——生产零引用或职能重复（BackBtn vs BackButton），git 历史可找回；后续新需求按"功能组件 CSS / 位图组件切图底"二分新增，避免再造轮子。
 
 ### 7.2 业务组件层 —— `apps/web/src/components`（或 scenes 内）
 强业务耦合、可在 app 内多页复用：
@@ -137,21 +138,16 @@ micro 12（超小标注）/ aux 14（辅助）/ small 16（次级正文）/ body
 
 | 组件 | 用到的位图 / SVG / 纹理 | 备注 |
 |---|---|---|
-| Btn / RoundBtn / Chip | — | 纯 CSS（渐变 + 描边 + 软阴影） |
-| Switch / ProgressBar / CountdownRing / StarTrack | — | 纯 CSS / SVG |
-| Tabs / OptionButton / Toast | — | 纯 CSS + 文字 |
-| Modal / Sheet / ConfirmDialog | 可选 deco-star | 底板纯 CSS 9-slice |
+| Btn | — | 纯 CSS（渐变 + 描边 + 软阴影） |
+| Switch / ProgressBar | — | 纯 CSS / SVG |
+| Tabs / Toast | — | 纯 CSS + 文字 |
+| Modal / ConfirmDialog | 可选 deco-star | 底板纯 CSS 9-slice |
 | Icon | G1 全套 SVG（含 gacha/backpack/pet） | 颜色 CSS 可控 |
-| TopBar / ResourcePill | i-shell、i-flower、avatar-frame、gear、streak | 食物不进顶部、无教材切换 |
-| BackBtn | i-back | SVG |
+| ResourcePill | i-shell、i-flower、页面切图 pill（asset 模式） | 食物不进顶部、无教材切换 |
+| 位图组件（BackButton / PrimaryButton / BitmapTabs / ImageButton） | ui-back-button、ui-primary-button、ui-tab-active/inactive、页面切图按钮 | 9-slice `border-image`（BackButton 为整图拉伸；ImageButton 为页面资产整图） |
 | TopNavEntries | icon-gacha、icon-backpack、icon-pet | 顶部居中三入口 |
 | PetBubble | i-food、icon-pet、pet-rabbit 小图 | 一键喂食 / 进面板 |
-| ItemGrid / ItemCell | seed-* / fruit-* / dress-* / pet 缩略、i-lock、frame 三色 | 按场景传 |
-| RewardBadge / RewardRow | i-shell、i-flower、i-food | — |
-| Tag / LockTag | i-lock、稀有度 frame | — |
-| Carousel | card-streak / card-challenge / card-wrongbook + 题型 icon | 首页 3 卡、手动滑动 |
-| EmptyState | mascot-bird-pose（待机 / 难过） | — |
-| LoadingBar / LoadingOverlay / SceneTransition | bg-loading、mascot-bird-pose / hero-pose | 新增 |
+| Tag | i-lock、稀有度 frame | — |
 | CloudInput | deco-cloud（优先 CSS） | 起名 |
 | PaperDoll / DressUpPanel | paperdoll-body + paperdoll-default + dress-* | 透明 WebP 图层叠加、无 hair/face/skin 多选 |
 | PlacementTest | 复用 QuizHud / 答题页位图 | 不单独出整页 |

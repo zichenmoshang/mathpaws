@@ -1,4 +1,4 @@
-// ---------- Tag / LockTag ----------
+// ---------- Tag ----------
 import type { ReactNode } from 'react'
 
 import { C } from '../tokens'
@@ -26,15 +26,6 @@ export function Tag({
       }}
     >
       {children}
-    </span>
-  )
-}
-
-// 【暂未使用】LockTag 业务页零引用，待评估。
-export function LockTag({ label = '即将开放' }: { label?: string }) {
-  return (
-    <span className={s.lockTag}>
-      🔒 {label}
     </span>
   )
 }

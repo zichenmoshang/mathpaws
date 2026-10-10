@@ -1,8 +1,6 @@
 import { PaperDoll, type PaperDollBackground } from '@mathpaws/paperdoll'
 import {
-  TopBar,
-  BackBtn,
-  Card,
+  BackButton,
   Btn,
   btn as uiBtn,
 } from '@mathpaws/ui'
@@ -101,10 +99,10 @@ export function PaperDollLookDev() {
 
   return (
     <div className={s.root}>
-      <TopBar tone="sky">
+      <div className={s.topBar}>
         <div className={s.topBarLeft}>
           {/* 返回广场：走正式路由（原 dispatchEvent('go-plaza') 无监听方，是死事件） */}
-          <BackBtn onClick={() => { useRouter.getState().go('plaza'); useRouter.getState().clearHash() }} />
+          <BackButton size={44} onClick={() => { useRouter.getState().go('plaza'); useRouter.getState().clearHash() }} />
           <span className={s.topBarTitle}>
             PaperDoll LookDev · 换装运行时验证
           </span>
@@ -112,7 +110,7 @@ export function PaperDollLookDev() {
         <span className={s.topBarHash}>
           #paperdoll
         </span>
-      </TopBar>
+      </div>
 
       <div className={s.main}>
         {/* 左：娃娃舞台 */}
@@ -124,7 +122,7 @@ export function PaperDollLookDev() {
 
         {/* 右：调试控件 */}
         <div className={s.sideCol}>
-          <Card padding={18}>
+          <div className={s.card} style={{ padding: 18 }}>
             {SLOT_ORDER.map(slot => (
               <div key={slot}>
                 <div className={s.sectionTitle}>{SLOT_LABEL[slot]}（{slot}）</div>
@@ -162,9 +160,9 @@ export function PaperDollLookDev() {
                 重置默认
               </Btn>
             </div>
-          </Card>
+          </div>
 
-          <Card padding={16} style={{ marginTop: 14 }}>
+          <div className={s.card} style={{ padding: 16, marginTop: 14 }}>
             <div className={s.comboTitle}>
               当前组合
             </div>
@@ -176,7 +174,7 @@ export function PaperDollLookDev() {
               <br />
               图层为 2048 全画布透明 WebP（@2x），离屏 canvas 按 整身→鞋→帽 合成单图后整体缩放
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
