@@ -11,7 +11,7 @@
 // 样式：静态部分已迁移至 ChestPanel.css.ts（vanilla-extract，含 cqw 容器查询），
 //       内联仅保留 bbox / props 驱动的动态值。
 // ============================================================================
-import { btn as uiBtn } from '@mathpaws/ui'
+import { ImageButton, btn as uiBtn } from '@mathpaws/ui'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 import bg from '../../assets/hifi/daily-chest/bg.jpg'
@@ -129,21 +129,21 @@ export function ChestPanel({ onClose }: { onClose: () => void }) {
           </svg>
         </button>
 
-        {/* 领取按钮：用图层底板，未满足条件时置灰并盖提示 */}
-        <button
-          type="button"
-          className={`${uiBtn} ${s.claimBtn}`}
+        {/* 领取按钮：用图层底板，未满足条件时置灰并盖提示（ImageButton 收编，B2） */}
+        <ImageButton
+          asset={buttonImg}
+          alt="领取奖励"
+          className={s.claimBtn}
+          imgClassName={s.fill}
           disabled={!canClaim}
           onClick={claim}
-          style={{ cursor: canClaim ? 'pointer' : 'not-allowed' }}
         >
-          <img src={buttonImg} alt="" draggable={false} className={s.fill} />
           {!canClaim && !justOpened && (
             <span className={s.btnHint}>
               {claimedToday ? '已领取，明日再来' : '完成 1 轮答题后领取'}
             </span>
           )}
-        </button>
+        </ImageButton>
 
         {/* 领取成功短暂提示（随后弹框自动关闭） */}
         {justOpened && (

@@ -168,16 +168,6 @@ export const rabbit = style({
 })
 
 /* 益智乐园位图与透明按钮（z9；原 bbox [178,1163,941,1393]） */
-export const plazaBtnImg = style({
-  position: 'absolute',
-  left: '89px',
-  top: '581.5px',
-  width: '381.5px',
-  height: '115px',
-  zIndex: 4,
-  pointerEvents: 'none',
-})
-
 export const plazaBtn = style({
   position: 'absolute',
   left: '89px',

@@ -11,7 +11,7 @@
 // 自适应：场景内容运行在 1024×768 LogicalStage 内（坐标数值不变），
 // 舞台外留边由 SceneShell 以同一背景 cover 出血填充；
 // 静态样式已迁移至 PetPanelScene.css.ts，内联仅保留运行时动态值。
-import { BackButton, Modal, CloudInput, Btn, ProgressBar, btn as uiBtn } from '@mathpaws/ui'
+import { BackButton, Modal, CloudInput, Btn, ProgressBar, ImageButton, ResourcePill, btn as uiBtn } from '@mathpaws/ui'
 import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -206,14 +206,20 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
           onClick={() => go('plaza')}
           style={{ position: 'absolute', left: 14, top: 10 }}
         />
-        <img src={pillShell} alt="" draggable={false} style={place(BBOX.pillShell)} />
-        <span className={s.pillNum} style={pillNumPlace(BBOX.pillShell)}>
-          {shells}
-        </span>
-        <img src={pillFood} alt="" draggable={false} style={place(BBOX.pillFood)} />
-        <span className={s.pillNum} style={pillNumPlace(BBOX.pillFood)}>
-          {petFood}
-        </span>
+        <ResourcePill
+          asset={pillShell}
+          value={shells}
+          style={place(BBOX.pillShell)}
+          valueClassName={s.pillNum}
+          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+        />
+        <ResourcePill
+          asset={pillFood}
+          value={petFood}
+          style={place(BBOX.pillFood)}
+          valueClassName={s.pillNum}
+          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+        />
         <button type="button" className={`${uiBtn} ${s.pkBtn}`} onClick={comingSoon}>
           宠物 PK
         </button>
@@ -292,33 +298,29 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
           )
         })}
 
-        {/* 喂食钮（z10 骨头）+ 食物数气泡；改名钮（z11 铅笔） */}
+        {/* 喂食钮（z10 骨头）+ 食物数气泡；改名钮（z11 铅笔）——ImageButton 收编（B2） */}
         <div style={place(BBOX.feed)}>
           {petFood > 0 && <span className={s.foodBubble}>×{petFood}</span>}
-          <button
-            type="button"
+          <ImageButton
+            asset={btnFeed}
+            alt="一键喂食"
             aria-label="一键喂食"
-            className={`${uiBtn} ${s.roundBtn}`}
+            className={s.roundBtn}
+            imgClassName={s.roundBtnImg}
             onClick={feedAll}
             disabled={feedDisabled}
-            style={{
-              opacity: feedDisabled ? 0.5 : 1,
-              cursor: feedDisabled ? 'not-allowed' : 'pointer',
-            }}
-          >
-            <img src={btnFeed} alt="" draggable={false} className={s.roundBtnImg} />
-          </button>
+          />
           <span className={s.btnLabel}>喂食</span>
         </div>
         <div style={place(BBOX.rename)}>
-          <button
-            type="button"
+          <ImageButton
+            asset={btnRename}
+            alt="改名"
             aria-label="改名"
-            className={`${uiBtn} ${s.roundBtn}`}
+            className={s.roundBtn}
+            imgClassName={s.roundBtnImg}
             onClick={openRename}
-          >
-            <img src={btnRename} alt="" draggable={false} className={s.roundBtnImg} />
-          </button>
+          />
           <span className={s.btnLabel}>改名</span>
         </div>
 
@@ -487,10 +489,3 @@ const CONFETTI = [
 
 /* ---------- 动态定位辅助（运行时计算，保留内联） ---------- */
 
-/* 资源牌数字（牌右半区居中） */
-const pillNumPlace = (bbox: [number, number, number, number]): CSSProperties => ({
-  left: (bbox[0] + (bbox[2] - bbox[0]) * 0.45) * K,
-  top: bbox[1] * K,
-  width: (bbox[2] - bbox[0]) * 0.43 * K,
-  height: (bbox[3] - bbox[1]) * K,
-})
