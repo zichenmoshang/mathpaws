@@ -10,6 +10,8 @@ export const overlay = style({
 
 export const panel = style({
   maxHeight: '86vh', overflowY: 'auto',
-  background: C.white, borderRadius: 26, padding: 24,
+  background: C.white, borderRadius: 26,
+  // 内边距随舞台缩放（弹层自适应规范，2026-10-11；宽度由 tsx 内联同步换算）
+  padding: 'calc(24px * var(--stage-scale, 1))',
   boxShadow: SHADOW.panel, fontFamily: FONT.family,
 })

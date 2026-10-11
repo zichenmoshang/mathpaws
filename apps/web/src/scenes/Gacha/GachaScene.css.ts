@@ -37,15 +37,12 @@ export const root = style({
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
 })
 
+/* 贝壳胶囊（chrome 右槽内；恢复原渲染尺寸 23×1.875≈43） */
 export const shellPill = style({
-  position: 'absolute',
-  top: '14px',
-  right: '14px',
-  zIndex: 10,
   display: 'inline-flex',
   alignItems: 'center',
   gap: '8px',
-  height: '44px',
+  height: 'calc(23px * var(--stage-scale, 1))',
   padding: '0 16px',
   borderRadius: '999px',
   background: 'rgba(0, 0, 0, .28)',
@@ -55,7 +52,7 @@ export const shellPill = style({
 export const shellCount = style({
   color: '#fff',
   fontWeight: 900,
-  fontSize: '22px',
+  fontSize: 'calc(12px * var(--stage-scale, 1))',
 })
 
 export const pityRow = style({

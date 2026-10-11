@@ -24,6 +24,8 @@ import {
 import {
   SINGLE_COST, TEN_COST, RARE_PITY, LEGEND_PITY, GACHA_ITEM_MAP, GACHA_POOL,
 } from '../../config/gachaPool'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
+import { useViewport } from '../../app/viewport'
 import { performDraw, type DrawOutcome } from '../../stores'
 import { useEconomyStore } from '../../stores/useEconomyStore'
 import { useGachaStore } from '../../stores/useGachaStore'
@@ -414,18 +416,21 @@ export function GachaScene({ onBack, onGoBackpack }: { onBack: () => void; onGoB
       // 星空背景图为打包资产 URL，保留内联注入
       style={{ background: `url(${gachaBg}) center / cover no-repeat, #12276B` }}
     >
-      {/* 左上返回：与全站统一的标准返回钮 */}
-      <BackButton
-        size={58}
-        onClick={() => { audio.playSfx('click'); onBack() }}
-        style={{ position: 'absolute', top: 14, left: 14, zIndex: 10 }}
+      {/* 顶栏 chrome 层（2026-10-11 迁移）：左返回 / 右贝壳（保底进度留原位居中） */}
+      <ChromeTopBar
+        left={
+          <BackButton
+            size={Math.round(58 * useViewport().scale)}
+            onClick={() => { audio.playSfx('click'); onBack() }}
+          />
+        }
+        right={
+          <div className={s.shellPill}>
+            <ShellIcon size={26} />
+            <span className={s.shellCount}>{shells}</span>
+          </div>
+        }
       />
-
-      {/* 右上贝壳 */}
-      <div className={s.shellPill}>
-        <ShellIcon size={26} />
-        <span className={s.shellCount}>{shells}</span>
-      </div>
 
       {/* 顶部保底进度 */}
       <div className={s.pityRow}>

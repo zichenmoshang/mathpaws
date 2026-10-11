@@ -21,7 +21,8 @@ export const backdrop = style({
 
 export const frame = style({
   position: 'relative',
-  width: 'min(760px, 92vw)',
+  // 逻辑宽 × --stage-scale（弹层自适应规范，2026-10-11；内部 cqw 随之等比）
+  width: 'min(calc(760px * var(--stage-scale, 1)), 92vw)',
   aspectRatio: '2364 / 1773',
   borderRadius: '24px',
   overflow: 'hidden',

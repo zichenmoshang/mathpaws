@@ -12,7 +12,8 @@ import { useState } from 'react'
 
 import { version } from '../../../package.json'
 import type { RouteId } from '../../app/router'
-import { SceneShell } from '../../app/viewport'
+import { SceneShell, useViewport } from '../../app/viewport'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
 import { toastMessage } from '../../components/ComingSoonToast/ComingSoonToast'
 // 拆层资产（assets/hifi/settings/manifest.json）
 import bg from '../../assets/hifi/settings/bg.jpg'
@@ -132,11 +133,6 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
             <img key={l.z} src={l.src} alt="" draggable={false} className={s.layer} style={place(l.bbox)} />
           ))}
 
-          {/* 左上返回（原稿顶部干净区） */}
-          <div className={s.backBtn}>
-            <BackButton size={58} onClick={() => go('home')} />
-          </div>
-
           {/* 4 行设置项（行位置按拆层行 bbox，top 逐行内联） */}
           {rows.map((r, i) => (
             <div key={r.label} className={s.row} style={{ top: ROWS_Y[i] * K - 34 }}>
@@ -176,6 +172,9 @@ export function SettingsScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
           )}
         </div>
       </SceneShell>
+
+      {/* 顶栏 chrome 层（2026-10-11 迁移）：左上返回 */}
+      <ChromeTopBar left={<BackButton size={Math.round(58 * useViewport().scale)} onClick={() => go('home')} />} />
     </>
   )
 }

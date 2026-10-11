@@ -7,7 +7,8 @@
 import { BackButton, btn as uiBtn } from '@mathpaws/ui'
 
 import type { RouteId } from '../../app/router'
-import { SceneShell } from '../../app/viewport'
+import { SceneShell, useViewport } from '../../app/viewport'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
 // 资产与 bbox 台账：assets/hifi/plaza/manifest.json（各层原稿 bbox 见 PlazaScene.css.ts 注释）
 import bg from '../../assets/hifi/plaza/bg.jpg'
 import bldFarm from '../../assets/hifi/plaza/bld-farm.webp'
@@ -69,25 +70,6 @@ export function PlazaScene(
             <img key={l.z} src={l.src} alt="" draggable={false} className={`${s.layer} ${l.cls}`} />
           ))}
 
-          {/* 左上：返回首页（新稿顶部干净，无重叠）
-              BackButton 仅接受 style prop，静态定位保留内联 */}
-          <BackButton size={58} onClick={() => go('home')} style={{ position: 'absolute', left: 16, top: 14 }} />
-
-          {/* 顶部中央：学盒入口（仅图标，不带文字） */}
-          <button
-            type="button" aria-label="学盒"
-            className={`${uiBtn} ${s.gachaEntry}`}
-            onClick={() => go('gacha')}
-          >
-            <img src={iconGacha} alt="" draggable={false} className={s.gachaIcon} />
-          </button>
-
-          {/* 右上：真实资源条（贝壳/花朵币，无体力） */}
-          <div className={s.resourcePlate}>
-            <Pill icon={shellIcon} value={shells} />
-            <Pill icon={flowerIcon} value={flowerCoins} />
-          </div>
-
           {/* 交互热点（透明覆盖在展示层之上） */}
           {/* 答题小屋 → quiz */}
           <button type="button" aria-label="答题小屋"
@@ -107,6 +89,26 @@ export function PlazaScene(
             className={`${uiBtn} ${s.hotspot} ${s.hotBtnBackpack}`} onClick={() => go('backpack')} />
         </div>
       </SceneShell>
+
+      {/* 顶栏 chrome 层（2026-10-11 迁移）：左返回 / 中央学盒 / 右资源条 */}
+      <ChromeTopBar
+        left={<BackButton size={Math.round(58 * useViewport().scale)} onClick={() => go('home')} />}
+        center={
+          <button
+            type="button" aria-label="学盒"
+            className={`${uiBtn} ${s.gachaEntry}`}
+            onClick={() => go('gacha')}
+          >
+            <img src={iconGacha} alt="" draggable={false} className={s.gachaIcon} />
+          </button>
+        }
+        right={
+          <div className={s.resourcePlate}>
+            <Pill icon={shellIcon} value={shells} />
+            <Pill icon={flowerIcon} value={flowerCoins} />
+          </div>
+        }
+      />
     </div>
   )
 }

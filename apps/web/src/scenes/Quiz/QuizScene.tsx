@@ -1,6 +1,10 @@
 // 答题场景 P6（M3-P6-01/02）：按高保真切图层还原（见 assets/hifi/quiz/manifest.json）。
-// 背景为 CSS 渐变；顶部栏（返回 / 标题切图 / 代码进度条+宝箱）固定在视口顶部；
-// 笔记本切图层在独立舞台中等比缩放；左页题目前端排版（字号自适应不换行），
+// 2026-10-11 布局迁移长期方案：CSS 渐变背景移交 SceneShell bleed（无位图背景页），
+// 内容进 1024×768 LogicalStage（safe-area 居中、等比缩放），vh/vw/clamp 换算为
+// 逻辑像素；顶栏为**视口 chrome 层**（SceneShell 外）：贴视口边缘、safe-area 内缩、
+// 尺寸恒定 CSS px、无底色，舞台内保留 84px 逻辑让位带；
+// 笔记本切图层在舞台内子舞台按 ORIG 坐标 % 对位（该体系不变）；
+// 左页题目前端排版（字号自适应不换行），
 // 右页手写框底板为切图，其上覆盖透明手写板；抬笔停顿自动 MNIST 识别：
 //   正确 → 绿字回写、音效发奖（仅正式轮）、自动进下一题；
 //   错误 → 红字回写、停留本题、清板可重写。
@@ -14,9 +18,11 @@ import {
 } from 'react'
 
 import type { RouteId } from '../../app/router'
+import { SceneShell, useViewport } from '../../app/viewport'
 import { useStreakStore } from '../../stores/useStreakStore'
 import { WritingBoard } from '../../components/WritingBoard/WritingBoard'
 import type { WritingBoardHandle } from '../../components/WritingBoard/WritingBoard'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
 import { GuideTip } from '../../components/GuideTip/GuideTip'
 import { useRouter } from '../../app/router'
 import pageLeftImg from '../../assets/hifi/quiz/page-left.webp'
@@ -47,6 +53,11 @@ import * as s from './QuizScene.css'
 type Verdict = 'none' | 'correct' | 'wrong'
 
 const NEXT_DELAY = 900
+
+// 渐变背景（迁移自 s.scene，2026-10-11；顶部中心偏亮、中部偏深、向底部变浅）
+const QUIZ_BG =
+  'radial-gradient(130% 72% at 50% -12%, rgba(133, 205, 252, .9) 0%, rgba(63, 150, 247, 0) 55%),' +
+  'linear-gradient(180deg, #57a6f6 0%, #3796f6 36%, #43acf9 66%, #60d0fb 100%)'
 
 // 笔记本舞台在原 2364×1773 稿中的包围区域（含上凸标签）
 const ORIG = { x: 170, y: 315, w: 2030, h: 1350 }
@@ -104,6 +115,8 @@ export function QuizScene(
   const [hasInput, setHasInput] = useState(false)
   const [confirmExit, setConfirmExit] = useState(false)
   const [fontPx, setFontPx] = useState(64)
+  // chrome 层尺寸随舞台缩放（逻辑 px × scale）
+  const chromeScale = useViewport().scale
   // 识别服务不可用（模型/后端加载失败）：在书写区附近提示
   const [recogError, setRecogError] = useState(false)
 
@@ -269,20 +282,9 @@ export function QuizScene(
 
   return (
     <div className={s.scene}>
-      {/* 顶部栏：返回 / 标题 / 进度+宝箱，同一层级 */}
-      <div className={s.topBar}>
-        <BackButton onClick={() => { audio.playSfx('click'); setConfirmExit(true) }} />
-        <img
-          src={titleImg} alt="计算正确答案" draggable={false}
-          className={s.titleImg}
-        />
-        <div className={s.progressWrap}>
-          <ProgressBar ratio={progress} base="#ffffff" deep="rgba(255,255,255,.95)" height={16} />
-          <img src={chestIcon} alt="" draggable={false} className={s.chestInBar} />
-        </div>
-      </div>
-
-      {/* 笔记本舞台 */}
+      {/* SceneShell：CSS 渐变经 bleed 铺满全视口；内容进 1024×768 安全区舞台 */}
+      <SceneShell bleed={QUIZ_BG}>
+      {/* 笔记本舞台（舞台内顶栏 84px 逻辑让位带之下） */}
       <div className={s.bookArea}>
         <div ref={stageRef} className={s.stage}>
           <img src={pageLeftImg} alt="" draggable={false}
@@ -394,6 +396,29 @@ export function QuizScene(
         </div>
       </div>
 
+      {/* 新手引导 B：手写区提示（可跳过、不重播；% 相对 1024×768 舞台） */}
+      <GuideTip id="quiz-writing" text="在右侧手写区写出答案，抬笔自动识别" style={{ right: '6%', bottom: '8%' }} />
+      </SceneShell>
+
+      {/* 顶栏：通用视口 chrome 层（ChromeTopBar）——返回 / 标题 | 进度+宝箱 */}
+      <ChromeTopBar
+        left={
+          <>
+            <BackButton size={Math.round(58 * chromeScale)} onClick={() => { audio.playSfx('click'); setConfirmExit(true) }} />
+            <img
+              src={titleImg} alt="计算正确答案" draggable={false}
+              className={s.titleImg}
+            />
+          </>
+        }
+        right={
+          <div className={s.progressWrap}>
+            <ProgressBar ratio={progress} base="#ffffff" deep="rgba(255,255,255,.95)" height={Math.round(22 * chromeScale)} />
+            <img src={chestIcon} alt="" draggable={false} className={s.chestInBar} />
+          </div>
+        }
+      />
+
       {confirmExit && (
         <ConfirmDialog
           title="退出答题？"
@@ -405,9 +430,6 @@ export function QuizScene(
           onCancel={() => setConfirmExit(false)}
         />
       )}
-
-      {/* 新手引导 B：手写区提示（可跳过、不重播） */}
-      <GuideTip id="quiz-writing" text="在右侧手写区写出答案，抬笔自动识别" style={{ right: '6%', bottom: '8%' }} />
     </div>
   )
 }

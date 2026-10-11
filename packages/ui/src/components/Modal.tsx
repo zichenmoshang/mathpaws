@@ -11,8 +11,8 @@ export function Modal({ children, onClose, width = 480 }: {
   return (
     <div onClick={onClose} className={s.overlay}>
       <div onClick={(e) => e.stopPropagation()} className={s.panel} style={{
-        // 动态值：宽度随 props 变化，保留内联
-        width: 'min(92vw,' + width + 'px)',
+        // 动态值：宽度随 props 变化（逻辑 px × --stage-scale，弹层自适应规范），保留内联
+        width: 'min(92vw, calc(' + width + 'px * var(--stage-scale, 1)))',
       }}>{children}</div>
     </div>
   )
