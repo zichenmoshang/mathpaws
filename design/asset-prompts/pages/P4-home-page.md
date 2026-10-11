@@ -11,7 +11,7 @@
   - UI 风格参考：`design/high-fi/backpack/backpack.png`（天空/云/半透明白面板/胶囊按钮语言）、`design/high-fi/gacha/gacha.png`（釉面立体质感）
   - 旧稿 home-v1-deprecated.png（原名 home-panel.png，整体作废，2026-10-06 已清理）；仅留存"闹钟+书本+星星"元素语言的记录，布局/标题/Tab 一律不沿用
 - **确认人 / 确认时间**：用户 / 2026-10-01（第 1 稿直接批准）
-- **采用结果**：[`design/high-fi/home/home.png`](../high-fi/home/home.png)（doubao-seedream-5.0-pro I2I 双参考，2048×1536 PNG，2026-10-01，无水印，95s）；旧稿 v1 已于 2026-10-06 清理（历史见 git）
+- **采用结果**：[`design/high-fi/home/home-p4v2.png`](../high-fi/home/home-p4v2.png)（doubao-seedream-5.0-pro I2I 双参考，2048×1536 PNG，2026-10-01，无水印，95s）；旧稿 v1 已于 2026-10-06 清理（历史见 git）；**2026-10-10 由 P18 接替，`home.png` 现为 P18 终版（2338×1536），本稿更名 `home-p4v2.png` 存档**
 
 ---
 
