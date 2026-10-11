@@ -19,17 +19,18 @@ export const backdrop = style({
 })
 
 // 提示气泡本身可点击提前关闭
+// 提示气泡尺寸 = 逻辑值 × var(--stage-scale)（弹层自适应规范，2026-10-11）
 export const toast = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '10px',
-  padding: '18px 34px',
+  gap: 'calc(10px * var(--stage-scale, 1))',
+  padding: 'calc(18px * var(--stage-scale, 1)) calc(34px * var(--stage-scale, 1))',
   borderRadius: '999px',
   background: 'linear-gradient(180deg, #ffffff, #eef6ff)',
   border: '4px solid rgba(255, 255, 255, .9)',
   boxShadow: '0 14px 34px rgba(30, 70, 130, .3)',
   fontWeight: 900,
-  fontSize: 'clamp(18px, 2.6vh, 26px)',
+  fontSize: 'calc(18px * var(--stage-scale, 1))',
   color: '#3f6ea3',
   pointerEvents: 'auto',
   cursor: 'pointer',
