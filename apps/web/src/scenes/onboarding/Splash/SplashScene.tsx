@@ -26,8 +26,7 @@ import { preloadCritical } from '../../../utils/preload'
 import * as s from './SplashScene.css'
 
 const K = 1024 / 2364
-// 临时（2026-10-10 真机走查）：最短可见时长 60s，便于观察背景/ bleed 效果；走查完恢复 1400
-const MIN_VISIBLE_MS = 60_000
+const MIN_VISIBLE_MS = 1400
 
 interface LayerDef { z: number; src: string; bbox: [number, number, number, number] }
 

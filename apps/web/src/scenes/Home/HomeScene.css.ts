@@ -1,5 +1,6 @@
-// HomeScene 样式（P4 首页，1024×768 逻辑舞台；vanilla-extract）
-// 全部几何值为原稿 2048×1536 × K(0.5) 折算后的逻辑像素，与迁移前 CSS Modules 数值一致。
+// HomeScene 样式（P18 首页，1024×768 逻辑舞台；vanilla-extract）
+// 几何值为 P18 原稿 2338×1536 安全框映射：逻辑坐标 = ((x−145)×0.5, y×0.5)
+// （原稿中央 2048×1536 为 4:3 安全框 x∈[145,2193]，见 HomeScene.tsx 头注）。
 // 动画 keyframes 统一引用 styles/motion.css.ts 共享定义（mpDollBob / mpFloat）。
 import { FONT } from '@mathpaws/ui'
 import { style, styleVariants } from '@vanilla-extract/css'
@@ -21,21 +22,13 @@ export const stage = style({
   height: '768px',
 })
 
-/* z0 舞台内背景：铺满舞台，随舞台等比缩放不变形 */
-export const stageBg = style({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-})
-
-/* 顶栏毛玻璃底板（z1；原 bbox [80,70,1968,261]） */
+/* 顶栏毛玻璃底板（z8；原稿 bbox [112,72,2229,264]——两端伸入出血带，4:3 屏贴边通栏） */
 export const glassTopBar = style({
   position: 'absolute',
-  left: '40px',
-  top: '35px',
-  width: '944px',
-  height: '95.5px',
+  left: '-16.5px',
+  top: '36px',
+  width: '1057px',
+  height: '96px',
   borderRadius: '999px',
   background: 'linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(232, 246, 255, .55))',
   border: '3px solid rgba(255, 255, 255, .75)',
@@ -44,13 +37,13 @@ export const glassTopBar = style({
   pointerEvents: 'none',
 })
 
-/* 头像圆形容器（z2；原 bbox [113,98,247,232]） */
+/* 头像圆形容器（z12；原稿 bbox [156,107,289,229]，取正圆微调） */
 export const avatar = style({
   position: 'absolute',
-  left: '56.5px',
-  top: '49px',
-  width: '67px',
-  height: '67px',
+  left: '5.5px',
+  top: '52px',
+  width: '66px',
+  height: '66px',
   borderRadius: '50%',
   overflow: 'hidden',
   background: '#eaf6ff',
@@ -59,20 +52,20 @@ export const avatar = style({
   pointerEvents: 'none',
 })
 
-/* 头像内裁出纸娃娃头肩 */
+/* 头像内裁出纸娃娃头肩（240%：锚图头顶 y≈8%、肩 y≈50%，42%×240%≈容器高） */
 export const avatarDoll = style({
   position: 'relative',
-  width: '300%',
+  width: '240%',
   aspectRatio: '1 / 1',
-  top: '-48%',
-  left: '-100%',
+  top: '-19%',
+  left: '-70%',
 })
 
-/* 用户名（z3 位） */
+/* 用户名（z13 位；原稿 bbox [327,140,529,198]） */
 export const heroName = style({
   position: 'absolute',
-  left: '136.5px',
-  top: '69.5px',
+  left: '91px',
+  top: '70px',
   fontWeight: 900,
   color: '#3d3833',
   fontSize: FONT.title,
@@ -83,43 +76,45 @@ export const heroName = style({
   textOverflow: 'ellipsis',
 })
 
-/* 连学 / 累计胶囊（z4/z5） */
+/* 连学 / 累计胶囊（z14/z15）——顶栏同语言毛玻璃 + 底部浅薄边（无投影） */
 export const topPill = style({
   position: 'absolute',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '999px',
-  background: 'rgba(255, 255, 255, .92)',
+  background: 'rgba(255, 255, 255, .55)',
+  border: '2px solid rgba(255, 255, 255, .75)',
+  backdropFilter: 'blur(4px)',
   color: '#4a5a6a',
   fontWeight: 800,
   fontSize: FONT.h2,
-  boxShadow: '0 2px 6px rgba(60, 110, 160, .12)',
+  boxShadow: 'inset 0 -3px 0 rgba(70, 140, 200, .15)',
 })
 
-/* 连学胶囊几何（原 bbox [1236,123,1474,210]） */
+/* 连学胶囊几何（z14；原稿 bbox [1406,124,1676,215]） */
 export const topPillStreak = style({
-  left: '618px',
-  top: '61.5px',
-  width: '119px',
-  height: '43.5px',
+  left: '630.5px',
+  top: '62px',
+  width: '135px',
+  height: '45.5px',
 })
 
-/* 累计胶囊几何（原 bbox [1516,123,1770,210]） */
+/* 累计胶囊几何（z15；原稿 bbox [1721,124,2007,215]） */
 export const topPillTotal = style({
-  left: '758px',
-  top: '61.5px',
-  width: '127px',
-  height: '43.5px',
+  left: '788px',
+  top: '62px',
+  width: '143px',
+  height: '45.5px',
 })
 
-/* 齿轮按钮（z6；原 bbox [1828,119,1918,212]） */
+/* 齿轮按钮（z16；原稿 bbox [2072,120,2172,216]） */
 export const gearBtn = style({
   position: 'absolute',
-  left: '914px',
-  top: '59.5px',
-  width: '45px',
-  height: '46.5px',
+  left: '963.5px',
+  top: '60px',
+  width: '50px',
+  height: '48px',
   border: 'none',
   background: 'transparent',
   padding: 0,
@@ -132,48 +127,49 @@ export const gearIcon = style({
   objectFit: 'contain',
 })
 
-/* 圆台（旧资产 p16-platform） */
+/* 圆台（z4；原稿 bbox [423,1059,920,1182]） */
 export const platform = style({
   position: 'absolute',
-  left: '164.25px',
-  top: '518px',
-  width: '238px',
-  height: 'auto',
+  left: '139px',
+  top: '529.5px',
+  width: '248.5px',
+  height: '61.5px',
   zIndex: 1,
   pointerEvents: 'none',
 })
 
-/* PaperDoll 主角容器（覆盖原 z7 bbox 居中正方形） */
+/* PaperDoll 主角容器（z6 bbox [432,346,859,1088] 中心/底对齐居中正方形；
+   top +10 走查微调：脚底贴近圆台顶面中心） */
 export const dollWrap = style({
   position: 'absolute',
-  left: '78.25px',
-  top: '168px',
-  width: '410px',
-  height: '410px',
+  left: '64.75px',
+  top: '183px',
+  width: '371px',
+  height: '371px',
   zIndex: 2,
   pointerEvents: 'none',
   animation: `${mpDollBob} 3.4s ease-in-out infinite`,
 })
 
-/* 趴兔（z8；原 bbox [127,863,410,1173]） */
+/* 趴兔（z5；原稿 bbox [163,866,482,1179]） */
 export const rabbit = style({
   position: 'absolute',
-  left: '63.5px',
-  top: '431.5px',
-  width: '141.5px',
-  height: '155px',
+  left: '9px',
+  top: '433px',
+  width: '159.5px',
+  height: '156.5px',
   zIndex: 3,
   pointerEvents: 'none',
   animation: `${mpFloat} 3.8s ease-in-out infinite`,
 })
 
-/* 益智乐园位图与透明按钮（z9；原 bbox [178,1163,941,1393]） */
+/* 益智乐园位图与透明按钮（z3；原稿 bbox [221,1167,1077,1396]） */
 export const plazaBtn = style({
   position: 'absolute',
-  left: '89px',
-  top: '581.5px',
-  width: '381.5px',
-  height: '115px',
+  left: '38px',
+  top: '583.5px',
+  width: '428px',
+  height: '114.5px',
   zIndex: 5,
   border: 'none',
   background: 'transparent',
@@ -181,13 +177,14 @@ export const plazaBtn = style({
   cursor: 'pointer',
 })
 
-/* 轮播视窗（对齐白卡 z11 + 蓝底 z10 并集，右缘留 peek） */
+/* 轮播视窗（对齐大卡 z7 bbox [1264,352,2090,1373] 视窗区，右缘留 peek；
+   卡容器维持 CSS 毛玻璃已验收几何 368.5×504.5，仅视窗平移对齐） */
 export const carousel = style({
   position: 'absolute',
-  left: '553.5px',
-  top: '166px',
+  left: '559.5px',
+  top: '160px',
   width: '417.5px',
-  height: '592px',
+  height: '530px',
   overflow: 'hidden',
   touchAction: 'pan-y',
   userSelect: 'none',
@@ -204,10 +201,10 @@ export const cardFrame = style({
   transformOrigin: 'left center',
 })
 
-/* 圆点指示器（z16 位） */
+/* 圆点指示器（卡区正下方居中） */
 export const dots = style({
   position: 'absolute',
-  left: '688px',
+  left: '722.5px',
   top: '712px',
   width: '91.5px',
   display: 'flex',
@@ -241,10 +238,24 @@ export const card = style({
   height: '504.5px',
   boxSizing: 'border-box',
   borderRadius: '30px',
-  background: 'linear-gradient(180deg, rgba(255, 255, 255, .82), rgba(240, 249, 255, .66))',
+  background: 'linear-gradient(180deg, #ffffff, #eef6fc)',
   border: '4px solid rgba(255, 255, 255, .85)',
   boxShadow: '0 18px 36px rgba(50, 100, 160, .22), inset 0 2px 10px rgba(255, 255, 255, .8)',
-  backdropFilter: 'blur(3px)',
+})
+
+/* 卡体色调枚举（不透明，2026-10-10 走查裁定"尽量不透"）：连学卡白卡；
+   真题卡蓝色（原稿卡2 窄边即其卡体色）、错题本橙色——后方卡露出的窄边
+   是它自己的卡体色，滑到前台颜色一致不突变 */
+export const cardTone = styleVariants({
+  grass: {
+    background: 'linear-gradient(180deg, #ffffff, #eef6fc)',
+  },
+  sky: {
+    background: 'linear-gradient(180deg, #a5d3f8, #7fc0f0)',
+  },
+  orange: {
+    background: 'linear-gradient(180deg, #ffdcb0, #f9ba75)',
+  },
 })
 
 /* 仅连学卡可点 */
@@ -252,24 +263,26 @@ export const cardClickable = style({
   cursor: 'pointer',
 })
 
-/* 顶部外凸标签（z12 位） */
+/* 顶部外凸标签（z9 位）——对齐拆层 z09：奶油黄底、金棕立体字（上亮下暗）、
+   上角小圆下角全圆；无外投影，底部深色薄边 */
 export const tag = style({
   position: 'absolute',
   top: '-10.5px',
   left: '50%',
   transform: 'translateX(-50%)',
-  padding: '7px 24px',
-  borderRadius: '999px',
+  padding: '6px 20px',
+  borderRadius: '10px 10px 999px 999px',
   whiteSpace: 'nowrap',
   fontWeight: 900,
   fontSize: FONT.h2,
-  color: '#7a5410',
-  boxShadow: '0 4px 8px rgba(150, 110, 20, .25), inset 0 2px 3px rgba(255, 255, 255, .7)',
+  color: '#b06a12',
+  textShadow: '0 1px 0 rgba(255, 240, 200, .9), 0 -1px 1px rgba(140, 80, 0, .3)',
+  boxShadow: 'inset 0 -3px 0 rgba(180, 120, 20, .35), inset 0 2px 3px rgba(255, 255, 255, .7)',
 })
 
-/* 标签色调枚举（grass / sky / orange） */
+/* 标签色调枚举（grass / sky / orange）；grass 对齐 z09 奶油黄 */
 export const tagTone = styleVariants({
-  grass: { background: 'linear-gradient(180deg, #ffe9a8, #ffd35e 60%, #f0b23a)' },
+  grass: { background: 'linear-gradient(180deg, #fff3d6 0%, #ffe3a1 55%, #f7cd7a 100%)' },
   sky: { background: 'linear-gradient(180deg, #bfe8ff, #7cc4f2 60%, #4ea9e8)' },
   orange: { background: 'linear-gradient(180deg, #ffd8a6, #ffa84d 60%, #f08a1e)' },
 })
@@ -292,19 +305,19 @@ export const cta = style({
   padding: 0,
 })
 
-/* CTA 色调枚举（grass / sky / orange） */
+/* CTA 色调枚举（grass / sky / orange）——tile v2 语言：无外投影，底部深色薄边 */
 export const ctaTone = styleVariants({
   grass: {
     background: 'linear-gradient(180deg, #9be37c 0%, #70cc52 42%, #4cb838 72%, #3ba02c 100%)',
-    boxShadow: '0 7px 16px rgba(45, 130, 35, .34), inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 10px rgba(30, 110, 20, .26)',
+    boxShadow: 'inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 0 rgba(30, 110, 20, .3)',
   },
   sky: {
     background: 'linear-gradient(180deg, #8ed7fb 0%, #5cb6ee 42%, #40a2e4 72%, #3190d2 100%)',
-    boxShadow: '0 7px 16px rgba(40, 120, 180, .34), inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 10px rgba(20, 85, 140, .26)',
+    boxShadow: 'inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 0 rgba(20, 85, 140, .3)',
   },
   orange: {
     background: 'linear-gradient(180deg, #ffc890 0%, #ff9f55 42%, #fb8328 72%, #ec7017 100%)',
-    boxShadow: '0 7px 16px rgba(200, 110, 25, .34), inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 10px rgba(150, 70, 10, .26)',
+    boxShadow: 'inset 0 3px 6px rgba(255, 255, 255, .65), inset 0 -6px 0 rgba(150, 70, 10, .3)',
   },
 })
 

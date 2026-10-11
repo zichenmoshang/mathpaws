@@ -1,110 +1,135 @@
 {
-  "source": "design/high-fi/home/home.png",
-  "via": "seedream-5.0-pro layer_decomposition (no prompt, watermark:false)",
+  "source": "design/high-fi/home/home.png（P18 终版，2026-10-10 adopted；P4 v2 更名 home-p4v2.png 存档）",
+  "via": "seedream-5.0-pro layer_decomposition（design/high-fi/home/decomp/，17 层）",
   "stage": [
-    2048,
+    2338,
     1536
   ],
-  "K": "1024/2048 = 0.5（逻辑舞台 1024x768）",
-  "bboxChecked": "absolute 与 normalized(×2.048/1.536) 逐层交叉校验，maxdiff≤2px，无异常",
+  "K": "安全框映射：逻辑坐标 = ((x−145)×0.5, y×0.5)（原稿中央 2048×1536 为 4:3 安全框 x∈[145,2193]，逻辑舞台 1024×768）",
+  "bboxChecked": "recompose_qc 模式 A：脚本 11/17 过，6 层差异三分类豁免后人工通过（2026-10-10，spec §6 场景页路径）；z7 bbox 交叉 2.2px 取 absolute",
+  "longTermScheme": "2026-10-10 长期方案：z0 纯氛围远景 SceneShell bleedImage cover 全屏（bleedBlur={false}），舞台内不叠 z0",
   "layers": [
     {
       "z": 0,
       "file": "bg.jpg",
-      "usage": "草地天空重绘背景",
+      "usage": "纯氛围远景（浅蓝天空+体积云+缓坡草地），SceneShell bleedImage cover 全屏",
       "bbox": null,
-      "nativeSize": "2048x1536"
+      "nativeSize": "2338x1536"
     },
     {
-      "z": 8,
-      "file": "rabbit-lie.webp",
-      "usage": "雪球兔趴姿（首页静态装饰，不换装）",
-      "bbox": [
-        127,
-        863,
-        410,
-        1173
-      ],
-      "nativeSize": "682x749"
-    },
-    {
-      "z": 9,
+      "z": 3,
       "file": "btn-plaza.webp",
-      "usage": "益智乐园绿色按钮（含固定文案整钮）",
+      "usage": "益智乐园绿色大按钮（含固定文案整钮，ImageButton）",
       "bbox": [
-        178,
-        1163,
-        941,
-        1393
+        221,
+        1167,
+        1077,
+        1396
       ],
-      "nativeSize": "1125x338"
+      "nativeSize": "1108x297"
     },
     {
-      "z": 13,
+      "z": 4,
+      "file": "platform.webp",
+      "usage": "主角脚下白/浅灰椭圆圆台",
+      "bbox": [
+        423,
+        1059,
+        920,
+        1182
+      ],
+      "nativeSize": "1147x283"
+    },
+    {
+      "z": 5,
+      "file": "rabbit-lie.webp",
+      "usage": "雪球兔幼崽趴姿（首页静态装饰，不换装）",
+      "bbox": [
+        163,
+        866,
+        482,
+        1179
+      ],
+      "nativeSize": "823x807"
+    },
+    {
+      "z": 10,
       "file": "alarm-books.webp",
       "usage": "连学打卡卡面：金色闹钟+书本拟物装饰",
       "bbox": [
-        1250,
-        497,
-        1712,
-        937
+        1454,
+        501,
+        1919,
+        942
       ],
-      "nativeSize": "818x783"
+      "nativeSize": "765x724"
     },
     {
-      "z": 7,
+      "z": 16,
+      "file": "gear.webp",
+      "usage": "设置齿轮圆形小钮（灰蓝釉面+深色薄边）",
+      "bbox": [
+        2072,
+        120,
+        2172,
+        216
+      ],
+      "nativeSize": "401x384"
+    },
+    {
+      "z": 6,
       "file": null,
       "usage": "人物 bbox：PaperDoll 合成立绘定位锚点（图层丢弃）",
       "bbox": [
-        329,
-        343,
-        804,
-        1163
+        432,
+        346,
+        859,
+        1088
       ],
-      "nativeSize": "621x1073",
+      "nativeSize": "536x930",
       "discarded": true
     }
   ],
   "discarded": [
     {
+      "z": 1,
+      "why": "decomp 冗余前景氛围带（AI 再生纹理，与 z0 语义重复）——z0 优先，弃用（spec §6 三分类①）"
+    },
+    {
       "z": 2,
-      "why": "头像 → PaperDoll 圆形裁切，随装扮变"
-    },
-    {
-      "z": 3,
-      "why": "用户名 → 前端排版（可起名）"
-    },
-    {
-      "z": 4,
-      "why": "连学N天胶囊 → 前端排版（动态）"
-    },
-    {
-      "z": 5,
-      "why": "累计N天胶囊 → 前端排版（动态）"
-    },
-    {
-      "z": 6,
-      "why": "齿轮 → 图标库 gear@2x"
+      "why": "剩余 UI 与漂浮装饰混杂层（练口算/卡2蓝边/圆点/星星符号）：练口算维持 CSS 渐变钮（3 卡复用）、卡2 蓝边为轮播堆叠天然产物、圆点维持 CSS（可点击）；漂浮装饰本期未接入"
     },
     {
       "z": 7,
-      "why": "人物+底座 → PaperDoll N+M 合成（换装依赖）；底座另用 p16-platform"
+      "why": "大卡容器 → 维持 CSS 毛玻璃（重绘半透明位图效果不及 CSS，P18 接入说明评估结论），仅取 bbox 对齐轮播视窗"
     },
     {
-      "z": 12,
+      "z": 8,
+      "why": "顶栏面板 → 维持 CSS 毛玻璃（同上），仅取 bbox 对齐"
+    },
+    {
+      "z": 9,
       "why": "连学打卡标签 → CSS（3 卡标签可换文案）"
     },
     {
-      "z": 14,
+      "z": 11,
       "why": "已连续学习N天+五星 → 前端排版（动态）"
     },
     {
-      "z": 15,
-      "why": "练口算 CTA → CSS 渐变钮（3 卡 CTA 文案不同）"
+      "z": 12,
+      "why": "头像 → PaperDoll 圆形裁切，随装扮变"
     },
     {
-      "z": 16,
-      "why": "分页圆点 → CSS（可点击切换）"
+      "z": 13,
+      "why": "用户名 → 前端排版（可起名）"
+    },
+    {
+      "z": 14,
+      "why": "连学N天胶囊 → 前端排版（动态）"
+    },
+    {
+      "z": 15,
+      "why": "累计N天胶囊 → 前端排版（动态）"
     }
   ]
 }

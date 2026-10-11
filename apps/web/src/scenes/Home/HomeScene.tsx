@@ -1,17 +1,20 @@
 // ============================================================================
-// HomeScene —— P4 首页（纯学习枢纽，M2 样板页 / 高保真拆层重建）
+// HomeScene —— P18 首页（纯学习枢纽，风格锚全管线试点首接页）
 //
-// 视觉按 design/high-fi/home/home.png 经 layer_decomposition 拆层重建：
-//   z0 草地天空背景 / z1 顶栏玻璃底板 / z8 趴兔 / z9 益智乐园钮 /
-//   z10 卡蓝底 / z11 玻璃白卡 / z13 闹钟书 —— 见 assets/hifi/home/manifest.json
-// 主角仍为 PaperDoll 运行时合成（换装依赖，拆层人物 z7 丢弃，仅取其 bbox 定位）；
+// 视觉按 design/high-fi/home/home.png（P18 终版，2338×1536）经 layer_decomposition
+// 拆层重建——长期方案（2026-10-10）：z0 纯氛围远景由 SceneShell bleedImage
+// **cover 全屏清晰铺满**（bleedBlur={false}），舞台内不再叠 z0；
+// 内容层按"安全框映射"定位：逻辑坐标 = ((x−145)×0.5, y×0.5)（原稿中央 2048×1536
+// 为 4:3 安全框 x∈[145,2193]）——见 assets/hifi/home/manifest.json。
+// 位图层：z3 益智乐园钮 / z4 圆台 / z5 趴兔 / z10 闹钟书 / z16 齿轮；
+// 容器层评估结论（P18 接入说明）：顶栏 z8、大卡 z7 维持 CSS 毛玻璃
+// （重绘半透明位图效果不及 CSS），仅取 bbox 对齐视窗；装饰层 z2 混杂未接入。
+// 主角仍为 PaperDoll 运行时合成（换装依赖，拆层人物 z6 丢弃，仅取其 bbox 定位）；
 // 用户名/天数/卡文等动态内容前端排版；标签/CTA/圆点 CSS（3 卡复用）。
 //
 // 功能（不变）：顶栏（头像/名/连学/累计/齿轮→P13）；左列主角+兔+益智乐园→P5；
 //   右侧 3 卡手动轮播（练口算可进；真题/错题本"即将开放"）；连学卡弹 ChestPanel；
 //   已打卡不置灰练口算；滑动与点击不冲突。
-// 内容包在 1024×768 LogicalStage 内（原稿 2048×1536，坐标 ×K(0.5) 折算的逻辑像素
-//   已固化到 HomeScene.css.ts）；舞台外留边由 BackgroundBleed 以同背景 cover 填充。
 // ============================================================================
 import { PaperDoll } from '@mathpaws/paperdoll'
 import { ImageButton, btn as uiBtn } from '@mathpaws/ui'
@@ -22,11 +25,11 @@ import { SceneShell } from '../../app/viewport'
 import alarmBooks from '../../assets/hifi/home/alarm-books.webp'
 import bg from '../../assets/hifi/home/bg.jpg'
 import btnPlaza from '../../assets/hifi/home/btn-plaza.webp'
+import gearIcon from '../../assets/hifi/home/gear.webp'
+import platform from '../../assets/hifi/home/platform.webp'
 import rabbitLie from '../../assets/hifi/home/rabbit-lie.webp'
-import gearIcon from '../../assets/img/icons/gear@2x.webp'
 import chestIcon from '../../assets/img/icons/i-chest@2x.webp'
 import notebookIcon from '../../assets/img/icons/i-notebook@2x.webp'
-import platform from '../../assets/ui/p16-platform.webp'
 import { ChestPanel } from '../../components/ChestPanel/ChestPanel'
 import { comingSoon, toastMessage } from '../../components/ComingSoonToast/ComingSoonToast'
 import { buildLayers, equippedToSelection } from '../../paperdoll/catalog'
@@ -64,13 +67,11 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
 
   return (
     <div className={s.scene}>
-      {/* SceneShell：留边以同一背景图 cover 出血（加载前天空蓝兜底），内容进 1024×768 舞台 */}
-      <SceneShell bleed="#7dc9f2" bleedImage={bg}>
+      {/* SceneShell：z0 纯氛围远景 cover 全屏清晰铺满（长期方案，bleedBlur={false}），
+          舞台透明、不再叠 z0——无"两张图"零接缝；内容进 1024×768 安全区 */}
+      <SceneShell bleed="#7dc9f2" bleedImage={bg} bleedBlur={false}>
         <div className={s.stage}>
-          {/* z0 舞台内背景：铺满 1024×768 舞台，随舞台等比缩放不变形 */}
-          <img src={bg} alt="" draggable={false} className={s.stageBg} />
-
-          {/* 顶栏：z1 玻璃底板（CSS 毛玻璃，重绘灰位图弃用）+ 前端排版内容 */}
+          {/* 顶栏：z8 玻璃底板（CSS 毛玻璃，重绘灰位图弃用）+ 前端排版内容 */}
           <div aria-hidden className={s.glassTopBar} />
           <HomeTopBar
             layers={layers}
@@ -101,7 +102,7 @@ export function HomeScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
 }
 
 // ---------------------------------------------------------------------------
-// 顶栏：头像 / 昵称 / 连学 / 累计 / 齿轮（坐标取自拆层 bbox z2-z6）
+// 顶栏：头像 / 昵称 / 连学 / 累计 / 齿轮（坐标取自 P18 拆层 bbox z12-z16）
 // ---------------------------------------------------------------------------
 function HomeTopBar({
   layers, heroName, streak, totalDays, onSettings,
@@ -151,8 +152,8 @@ function TopPill({ text, className }: { text: string; className: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// 左列：圆台 + PaperDoll 立绘 + 趴兔 + 益智乐园位图大按钮（z9）
-// 人物定位锚点取拆层 z7 bbox [329,343,804,1163]（图层丢弃）。
+// 左列：圆台（z4）+ PaperDoll 立绘 + 趴兔（z5）+ 益智乐园位图大按钮（z3）
+// 人物定位锚点取拆层 z6 bbox [432,346,859,1088]（2338 稿，图层丢弃）。
 // ---------------------------------------------------------------------------
 function HeroStage({
   layers, onEnterPlaza,
@@ -162,7 +163,7 @@ function HeroStage({
 }) {
   return (
     <>
-      {/* 圆台（旧资产 p16-platform，原稿 z7 底座形态近似） */}
+      {/* 圆台 z4（P18 拆层资产） */}
       <img
         src={platform} alt="" aria-hidden draggable={false}
         className={s.platform}
@@ -173,13 +174,13 @@ function HeroStage({
         <PaperDoll layers={layers} background="transparent" />
       </div>
 
-      {/* 趴兔 z8 */}
+      {/* 趴兔 z5 */}
       <img
         src={rabbitLie} alt="雪球兔" draggable={false}
         className={s.rabbit}
       />
 
-      {/* 益智乐园 z9：位图按钮（固定文案）——ImageButton 收编（B2） */}
+      {/* 益智乐园 z3：位图按钮（固定文案）——ImageButton 收编（B2） */}
       <ImageButton
         asset={btnPlaza}
         alt="进入益智乐园"
@@ -212,11 +213,11 @@ const STUDY_CARDS: StudyCardDef[] = [
   { id: 'wrong', tag: '错题本', tone: 'orange', cta: '去复习', target: null },
 ]
 
-// 各色调的标签 / CTA 样式类（静态渐变，原 TONE 常量迁入 CSS）
-const TONE_CLASS: Record<CardTone, { tag: string; cta: string }> = {
-  grass: { tag: s.tagTone.grass, cta: s.ctaTone.grass },
-  sky: { tag: s.tagTone.sky, cta: s.ctaTone.sky },
-  orange: { tag: s.tagTone.orange, cta: s.ctaTone.orange },
+// 各色调的卡体 / 标签 / CTA 样式类（静态渐变，原 TONE 常量迁入 CSS）
+const TONE_CLASS: Record<CardTone, { card: string; tag: string; cta: string }> = {
+  grass: { card: s.cardTone.grass, tag: s.tagTone.grass, cta: s.ctaTone.grass },
+  sky: { card: s.cardTone.sky, tag: s.tagTone.sky, cta: s.ctaTone.sky },
+  orange: { card: s.cardTone.orange, tag: s.tagTone.orange, cta: s.ctaTone.orange },
 }
 
 // 横向卡牌堆叠轮播（horizontal card stack/deck，coverflow 式）：
@@ -363,7 +364,7 @@ function StudyCardCarousel({
         })}
       </div>
 
-      {/* 圆点指示器（z16 位） */}
+      {/* 圆点指示器（卡区正下方） */}
       <div className={s.dots}>
         {STUDY_CARDS.map((c, i) => (
           <button
@@ -418,7 +419,7 @@ function StudyCard({
     <div
       onClick={bodyClick}
       role={card.id === 'streak' ? 'button' : undefined}
-      className={`${s.card} ${card.id === 'streak' ? s.cardClickable : ''}`}
+      className={`${s.card} ${tone.card} ${card.id === 'streak' ? s.cardClickable : ''}`}
     >
       {/* 顶部标签（z12 位） */}
       <div className={`${s.tag} ${tone.tag}`}>
@@ -473,7 +474,7 @@ function CardStreakBody({ claimedToday, studiedToday, streak }: { claimedToday: 
   }
   return (
     <>
-      {/* 闹钟+书 z13（页内 left 71.5 top 66.5 231×220；未学习时半透明） */}
+      {/* 闹钟+书 z10（页内 left 71.5 top 66.5 231×220；未学习时半透明） */}
       <img src={alarmBooks} alt="" draggable={false}
         className={s.alarmArt} style={{ opacity: studiedToday ? 1 : 0.7 }} />
       <div className={s.streakText}>
