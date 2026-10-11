@@ -129,12 +129,10 @@ export const lyrBtnBackpack = style({
 })
 
 /* 顶部中央：学盒入口 */
+/* 学盒入口（chrome 居中槽内；恢复原舞台渲染尺寸 58×1.875≈109） */
 export const gachaEntry = style({
-  position: 'absolute',
-  left: '483px',
-  top: '6px',
-  width: '58px',
-  height: '58px',
+  width: 'calc(58px * var(--stage-scale, 1))',
+  height: 'calc(58px * var(--stage-scale, 1))',
   border: 'none',
   background: 'transparent',
   padding: 0,
@@ -151,22 +149,19 @@ export const gachaIcon = style({
   objectFit: 'contain',
 })
 
-/* 右上资源条 */
+/* 右上资源条（chrome 右槽内；去舞台定位） */
 export const resourcePlate = style({
-  position: 'absolute',
-  right: '14px',
-  top: '10px',
   display: 'flex',
   alignItems: 'center',
-  gap: '10px',
+  gap: '16px',
 })
 
 export const pill = style({
   display: 'inline-flex',
   alignItems: 'center',
   gap: '7px',
-  height: '40px',
-  padding: '0 16px',
+  height: 'calc(40px * var(--stage-scale, 1))',
+  padding: '0 18px',
   borderRadius: '999px',
   background: 'rgba(255, 255, 255, .96)',
   border: '3px solid rgba(255, 255, 255, .85)',
@@ -177,8 +172,8 @@ export const pill = style({
 })
 
 export const pillIcon = style({
-  width: '26px',
-  height: '26px',
+  width: 'calc(26px * var(--stage-scale, 1))',
+  height: 'calc(26px * var(--stage-scale, 1))',
   objectFit: 'contain',
 })
 

@@ -5,64 +5,43 @@ import { style } from '@vanilla-extract/css'
 
 import { mpPopIn } from '../../styles/motion.css'
 
-/* 贴合高保真蓝底：顶部中心偏亮、中部偏深、向底部变浅 */
+/* 场景根：承载 SceneShell（渐变背景已移交 tsx 的 QUIZ_BG 经 bleed 铺满） */
 export const scene = style({
   position: 'absolute',
   inset: 0,
   overflow: 'hidden',
-  background:
-    'radial-gradient(130% 72% at 50% -12%, rgba(133, 205, 252, .9) 0%, rgba(63, 150, 247, 0) 55%),' +
-    'linear-gradient(180deg, #57a6f6 0%, #3796f6 36%, #43acf9 66%, #60d0fb 100%)',
   fontFamily: '"Baloo 2", "Comic Sans MS", "Microsoft YaHei", system-ui, sans-serif',
 })
 
-/* 顶部栏：返回 / 标题 / 进度+宝箱，同一层级 */
-export const topBar = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  height: '11vh',
-  minHeight: '64px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '18px',
-  padding: '0 22px',
-  boxSizing: 'border-box',
-  zIndex: 10,
-})
-
+/* 顶栏容器已抽通用组件 ChromeTopBar（components/ChromeTopBar）；
+   此处仅保留本页内容件样式——尺寸 = 逻辑 px × var(--stage-scale)（随舞台缩放，
+   2026-10-11 规范修订；TGR-W10 渲染 ≈ 标题 54 / 进度 320×22 / 宝箱 64） */
 export const titleImg = style({
-  height: '46%',
-  maxHeight: '54px',
-  minHeight: '34px',
+  height: 'calc(48px * var(--stage-scale, 1))',
   width: 'auto',
   objectFit: 'contain',
   filter: 'drop-shadow(0 2px 6px rgba(20, 80, 150, .3))',
 })
 
 export const progressWrap = style({
-  marginLeft: 'auto',
   display: 'flex',
   alignItems: 'center',
-  width: 'min(280px, 30vw)',
+  width: 'calc(190px * var(--stage-scale, 1))',
   flexShrink: 0,
 })
 
 export const chestInBar = style({
-  height: '5.4vh',
-  maxHeight: '56px',
-  minHeight: '38px',
+  height: 'calc(57px * var(--stage-scale, 1))',
   width: 'auto',
-  marginLeft: '-8px',
+  marginLeft: 'calc(-8px * var(--stage-scale, 1))',
   objectFit: 'contain',
 })
 
-/* 书本区顶部与顶栏同口径：顶栏 height:11vh + min-height:64px，
-   极小高度屏按 64px 让位，避免与顶栏互相挤压 */
+/* 书本区：视口 chrome 层（57 逻辑内容高=宝箱 + 32 CSS 间距余量）之下——
+   让位带随内容同步缩放，任何屏幕精确对齐，书本在剩余空间居中 */
 export const bookArea = style({
   position: 'absolute',
-  top: 'max(11vh, 64px)',
+  top: 'calc(57px + 32px / var(--stage-scale, 1))',
   left: 0,
   right: 0,
   bottom: 0,
@@ -71,11 +50,12 @@ export const bookArea = style({
   justifyContent: 'center',
 })
 
-/* 笔记本舞台：等比缩放 */
+/* 笔记本舞台：宽满 1024 舞台、按 ORIG 纵横比等比（2030:1350 → 高 680.7，
+   书本区可用高 684，TGR-W10 实测与迁移前渲染尺寸一致） */
 export const stage = style({
   position: 'relative',
   aspectRatio: '2030 / 1350',
-  height: 'min(97%, calc(96vw * 1350 / 2030))',
+  width: '1024px',
 })
 
 /* 书页切图按舞台拉伸填充 */
@@ -135,7 +115,7 @@ export const correctRow = style({
 })
 
 export const correctPlus = style({
-  fontSize: 'clamp(22px, 3.4vh, 40px)',
+  fontSize: '28px',
   fontWeight: 900,
   color: '#ff6d1f',
   textShadow: '0 2px 0 #fff',
@@ -148,7 +128,7 @@ export const correctShell = style({
 })
 
 export const cheerText = style({
-  fontSize: 'clamp(20px, 3vh, 36px)',
+  fontSize: '24px',
   fontWeight: 900,
   lineHeight: 1.1,
   marginTop: '4px',
@@ -170,7 +150,7 @@ export const floatHintTag = style({
   padding: '.5em 1.1em',
   borderRadius: '999px',
   background: 'rgba(255, 255, 255, .92)',
-  fontSize: 'clamp(13px, 1.7vh, 20px)',
+  fontSize: '14px',
   fontWeight: 800,
   color: '#e53935', // 等同 C.redDeep
   boxShadow: '0 4px 12px rgba(200, 60, 60, .2)',

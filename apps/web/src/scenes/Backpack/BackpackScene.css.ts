@@ -15,13 +15,10 @@ export const root = style({
 })
 
 /* 右上「去学盒」金色入口 */
+/* 去学盒入口（chrome 右槽内；恢复原渲染尺寸 25×1.875≈47） */
 export const gachaEntry = style({
-  position: 'absolute',
-  top: '16px',
-  right: '18px',
-  zIndex: 10,
-  height: '46px',
-  padding: '0 18px',
+  height: 'calc(25px * var(--stage-scale, 1))',
+  padding: '0 20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -44,14 +41,9 @@ export const gachaEntryIcon = style({
   lineHeight: 1,
 })
 
-/* 顶部「换装书房」位图艺术字 */
+/* 顶部「换装书房」位图艺术字（chrome 居中槽内；恢复原渲染尺寸 42×1.875≈79） */
 export const title = style({
-  position: 'absolute',
-  top: '14px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  height: 'clamp(48px, 9vh, 78px)',
-  zIndex: 9,
+  height: 'calc(42px * var(--stage-scale, 1))',
 })
 
 export const layout = style({

@@ -12,7 +12,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 
 import type { RouteId } from '../../app/router'
-import { SceneShell } from '../../app/viewport'
+import { SceneShell, useViewport } from '../../app/viewport'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
 import bg from '../../assets/hifi/farm/bg.jpg'
 import btnPlant from '../../assets/hifi/farm/btn-plant.webp'
 import bushLeft from '../../assets/hifi/farm/bush-left.webp'
@@ -91,8 +92,7 @@ const LAYERS: LayerDef[] = [
 ]
 
 // 资源牌（烘焙数字已擦除，数字前端排版）
-const PILL_FLOWER_BBOX: [number, number, number, number] = [1539, 70, 1898, 230]
-const PILL_SHELL_BBOX: [number, number, number, number] = [1939, 70, 2298, 231]
+// 资源牌已迁顶栏 chrome 层（2026-10-11），原 PILL_*_BBOX 舞台坐标停用
 
 // z9 中心农田：4 块土壤实测矩形（_tmp/measure_farm_soil.py，原稿坐标；
 // 直接四等分 z9 bbox 会把外框/中栏算入导致内容偏移）
@@ -193,6 +193,7 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
   )
 
   return (
+    <>
     <SceneShell bleed="#8ecdf2" bleedImage={bg}>
       <div className={s.scene}>
         {/* z0 重绘背景（铺满舞台随缩放） */}
@@ -202,29 +203,6 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
         {LAYERS.map((l) => (
           <img key={l.z} src={l.src} alt="" draggable={false} style={place(l.bbox)} />
         ))}
-
-        {/* 左上返回（原稿顶部干净区） */}
-        <BackButton
-          size={58}
-          onClick={() => go('plaza')}
-          style={{ position: 'absolute', left: 14, top: 10 }}
-        />
-
-        {/* 资源牌 + 前端数字（ResourcePill asset 模式收编，B2） */}
-        <ResourcePill
-          asset={pillFlower}
-          value={flowerCoins}
-          style={place(PILL_FLOWER_BBOX)}
-          valueClassName={s.pillNum}
-          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
-        />
-        <ResourcePill
-          asset={pillShell}
-          value={shells}
-          style={place(PILL_SHELL_BBOX)}
-          valueClassName={s.pillNum}
-          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
-        />
 
         {/* 农场等级条（前端，标题横幅下方） */}
         <div className={s.levelWrap}>
@@ -321,6 +299,30 @@ export function FarmScene({ onNavigate }: { onNavigate: (id: RouteId) => void })
         {warehouseOpen && <WarehousePanel onClose={() => setWarehouseOpen(false)} />}
       </div>
     </SceneShell>
+
+    {/* 顶栏 chrome 层（2026-10-11 迁移）：左返回 / 右资源牌（花朵币/贝壳） */}
+    <ChromeTopBar
+      left={<BackButton size={Math.round(58 * useViewport().scale)} onClick={() => go('plaza')} />}
+      right={
+        <>
+          <ResourcePill
+            asset={pillFlower}
+            value={flowerCoins}
+            style={{ position: 'relative', width: Math.round(155 * useViewport().scale), height: Math.round(69 * useViewport().scale) }}
+            valueClassName={s.pillNum}
+            valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+          />
+          <ResourcePill
+            asset={pillShell}
+            value={shells}
+            style={{ position: 'relative', width: Math.round(155 * useViewport().scale), height: Math.round(70 * useViewport().scale) }}
+            valueClassName={s.pillNum}
+            valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+          />
+        </>
+      }
+    />
+    </>
   )
 }
 

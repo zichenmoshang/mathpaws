@@ -10,6 +10,7 @@
 //   - bleed 过渡为 blur 藏拙（bleedBlur 默认开）；2338×1536（1.5217）宽图资产
 //     页传 bleedBlur={false}，bleed 区显示真实扩展带（同图同倍率零接缝）。
 import { useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
 import './scaffold.css'
 
 export const LOGICAL_WIDTH = 1024
@@ -69,7 +70,14 @@ export function useViewport(): ViewportInfo {
       : compute(),
   )
   useEffect(() => {
-    const on = () => setVp(compute())
+    const on = () => {
+      const v = compute()
+      // 同步到 :root：视口 chrome 层（LogicalStage 外）用 var(--stage-scale)
+      // 做"尺寸随舞台缩放"的 calc 换算（2026-10-11 chrome 规范修订）
+      document.documentElement.style.setProperty('--stage-scale', String(v.scale))
+      setVp(v)
+    }
+    on()
     window.addEventListener('resize', on)
     window.addEventListener('orientationchange', on)
     return () => {
@@ -98,7 +106,10 @@ export function LogicalStage({ children }: { children: React.ReactNode }) {
         height: LOGICAL_HEIGHT,
         transform: `translate(-50%,-50%) scale(${vp.scale})`,
         transformOrigin: 'center center',
-      }}
+        // 暴露缩放比给舞台内样式：视口 chrome 层（恒定 CSS px）的让位带
+        // 可用 calc(Npx / var(--stage-scale)) 换算成逻辑 px，任何屏幕精确对齐
+        '--stage-scale': vp.scale,
+      } as CSSProperties}
     >
       {children}
     </div>

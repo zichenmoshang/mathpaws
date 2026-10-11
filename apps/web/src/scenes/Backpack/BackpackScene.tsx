@@ -1,5 +1,7 @@
 import { PaperDoll } from '@mathpaws/paperdoll'
 import { BackButton, PrimaryButton, BitmapTabs, btn as uiBtn } from '@mathpaws/ui'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
+import { useViewport } from '../../app/viewport'
 import { useMemo, useState, type ReactNode } from 'react'
 
 import dressingTitle from '../../assets/ui/p16-dressing-title.webp'
@@ -107,27 +109,26 @@ export function BackpackScene({
       <Clouds />
       <Decorations />
 
-      {/* 左上标准返回 */}
-      <BackButton
-        onClick={() => { audio.playSfx('click'); onBack() }}
-        style={{ position: 'absolute', top: 16, left: 18, zIndex: 10 }}
-      />
-
-      {/* 右上 去学盒 */}
-      <button
-        onClick={() => { audio.playSfx('click'); onGoGacha() }}
-        className={`${uiBtn} ${s.gachaEntry}`}
-      >
-        <span className={s.gachaEntryIcon}>📖</span>
-        去学盒
-      </button>
-
-      {/* 顶部标题艺术字 */}
-      <img
-        src={dressingTitle}
-        alt="换装书房"
-        draggable={false}
-        className={s.title}
+      {/* 顶栏 chrome 层（2026-10-11 迁移）：左返回 / 中央标题 / 右去学盒 */}
+      <ChromeTopBar
+        left={<BackButton size={Math.round(58 * useViewport().scale)} onClick={() => { audio.playSfx('click'); onBack() }} />}
+        center={
+          <img
+            src={dressingTitle}
+            alt="换装书房"
+            draggable={false}
+            className={s.title}
+          />
+        }
+        right={
+          <button
+            onClick={() => { audio.playSfx('click'); onGoGacha() }}
+            className={`${uiBtn} ${s.gachaEntry}`}
+          >
+            <span className={s.gachaEntryIcon}>📖</span>
+            去学盒
+          </button>
+        }
       />
 
       <div className={s.layout}>

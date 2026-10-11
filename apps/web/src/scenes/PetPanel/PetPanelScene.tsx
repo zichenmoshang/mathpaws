@@ -16,7 +16,8 @@ import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import type { RouteId } from '../../app/router'
-import { SceneShell } from '../../app/viewport'
+import { SceneShell, useViewport } from '../../app/viewport'
+import { ChromeTopBar } from '../../components/ChromeTopBar/ChromeTopBar'
 // 拆层资产（assets/hifi/pet/manifest.json）
 import bg from '../../assets/hifi/pet/bg.jpg'
 import btnFeed from '../../assets/hifi/pet/btn-feed.webp'
@@ -67,8 +68,7 @@ const BBOX = {
   title: [660, 120, 1332, 434] as [number, number, number, number],
   hero: [836, 454, 1145, 976] as [number, number, number, number], // z9 中心立绘位
   expBar: [731, 1017, 1257, 1073] as [number, number, number, number], // z5 进度条位
-  pillShell: [1602, 64, 1915, 183] as [number, number, number, number],
-  pillFood: [1953, 64, 2280, 182] as [number, number, number, number],
+  // pillShell/pillFood 已迁顶栏 chrome 层（2026-10-11），舞台坐标停用
   feed: [690, 1371, 939, 1619] as [number, number, number, number],
   rename: [1053, 1371, 1303, 1620] as [number, number, number, number],
 }
@@ -191,6 +191,7 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
   }
 
   return (
+    <>
     <SceneShell bleed="#f2ddc0" bleedImage={bg}>
       <div className={s.scene}>
         {/* z0 重绘背景（儿童房，铺满舞台随缩放） */}
@@ -200,26 +201,7 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
         <img src={panel} alt="" draggable={false} style={place(BBOX.panel)} />
         <img src={titleCloud} alt="我的宠物" draggable={false} style={place(BBOX.title)} />
 
-        {/* 左上返回 / 右上资源牌 + 前端数字 + PK 入口 */}
-        <BackButton
-          size={58}
-          onClick={() => go('plaza')}
-          style={{ position: 'absolute', left: 14, top: 10 }}
-        />
-        <ResourcePill
-          asset={pillShell}
-          value={shells}
-          style={place(BBOX.pillShell)}
-          valueClassName={s.pillNum}
-          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
-        />
-        <ResourcePill
-          asset={pillFood}
-          value={petFood}
-          style={place(BBOX.pillFood)}
-          valueClassName={s.pillNum}
-          valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
-        />
+        {/* PK 入口（留舞台原位；返回与资源牌已迁 chrome 层） */}
         <button type="button" className={`${uiBtn} ${s.pkBtn}`} onClick={comingSoon}>
           宠物 PK
         </button>
@@ -405,6 +387,30 @@ export function PetPanelScene({ onNavigate }: { onNavigate: (id: RouteId) => voi
         )}
       </div>
     </SceneShell>
+
+    {/* 顶栏 chrome 层（2026-10-11 迁移）：左返回 / 右资源牌（贝壳/食物） */}
+    <ChromeTopBar
+      left={<BackButton size={Math.round(58 * useViewport().scale)} onClick={() => go('plaza')} />}
+      right={
+        <>
+          <ResourcePill
+            asset={pillShell}
+            value={shells}
+            style={{ position: 'relative', width: Math.round(136 * useViewport().scale), height: Math.round(52 * useViewport().scale) }}
+            valueClassName={s.pillNum}
+            valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+          />
+          <ResourcePill
+            asset={pillFood}
+            value={petFood}
+            style={{ position: 'relative', width: Math.round(142 * useViewport().scale), height: Math.round(51 * useViewport().scale) }}
+            valueClassName={s.pillNum}
+            valueStyle={{ left: '45%', width: '43%', right: 'auto' }}
+          />
+        </>
+      }
+    />
+    </>
   )
 }
 

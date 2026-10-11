@@ -27,12 +27,6 @@ export const layer = style({
 })
 
 // 左上返回（原稿顶部干净区）
-export const backBtn = style({
-  position: 'absolute',
-  left: '14px',
-  top: '10px',
-})
-
 // 行：图标 x213 / 标签 x301 / 控件区 x725-811（原稿 bbox ×K）；top 逐行内联
 export const row = style({
   position: 'absolute',
