@@ -1,6 +1,6 @@
-// PlazaScene 样式（P5 2D 广场，1024×768 逻辑舞台；vanilla-extract）
-// 全部几何值为原稿 2364×1773 × K(1024/2364) 折算后的逻辑像素，与迁移前 CSS Modules 数值一致；
-// 各类注释保留原稿 bbox 便于对账（台账：assets/hifi/plaza/manifest.json）。
+// PlazaScene 样式（P19 2D 广场，1024×768 逻辑舞台；vanilla-extract）
+// 原稿 2338×1536，逻辑坐标 = (x−145)×0.5, y×0.5（中央 2048×1536 为 4:3 安全框
+// x∈[145,2193]）；各类注释保留原稿 bbox 便于对账（台账：assets/hifi/plaza/manifest.json）。
 import { FONT } from '@mathpaws/ui'
 import { style } from '@vanilla-extract/css'
 
@@ -19,120 +19,123 @@ export const stage = style({
   height: '768px',
 })
 
-/* z0 舞台内重绘背景：铺满舞台，随舞台等比缩放不变形 */
-export const stageBg = style({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-})
-
 /* 语义展示层公共定位 */
 export const layer = style({
   position: 'absolute',
 })
 
-/* z1 农场建筑（原 bbox [863,221,1419,866]） */
-export const lyrFarm = style({
-  left: '373.8206px',
-  top: '95.7293px',
-  width: '240.8393px',
-  height: '279.3909px',
+/* z1 种植菜田（原 bbox [778,654,1245,806]） */
+export const lyrGarden = style({
+  left: '316.5px',
+  top: '327px',
+  width: '233.5px',
+  height: '76px',
 })
 
-/* z2 答题小屋（原 bbox [30,232,977,1233]） */
+/* z2 答题小屋（原 bbox [145,204,826,1039]，x0 由 129 裁至安全框边界） */
 export const lyrQuiz = style({
-  left: '12.9949px',
-  top: '100.4941px',
-  width: '410.2064px',
-  height: '433.5973px',
+  left: '0px',
+  top: '102px',
+  width: '340.5px',
+  height: '417.5px',
 })
 
-/* z3 稻草人（原 bbox [1047,748,1160,920]） */
-export const lyrScarecrow = style({
-  left: '453.5228px',
-  top: '324.0068px',
-  width: '48.9475px',
-  height: '74.5042px',
+/* z3 农场小屋（原 bbox [858,194,1401,754]） */
+export const lyrFarm = style({
+  left: '356.5px',
+  top: '97px',
+  width: '271.5px',
+  height: '280px',
 })
 
-/* z4 答题招牌（原 bbox [475,652,719,800]） */
-export const lyrSignQuiz = style({
-  left: '205.753px',
-  top: '282.423px',
-  width: '105.692px',
-  height: '64.1083px',
-})
-
-/* z5 农场招牌（原 bbox [1182,442,1339,546]） */
-export const lyrSignFarm = style({
-  left: '512px',
-  top: '191.4585px',
-  width: '68.0068px',
-  height: '45.0491px',
-})
-
-/* z6 宠物商店（原 bbox [1533,360,2213,1163]） */
+/* z4 宠物商店小屋（原 bbox [1512,305,2179,1010]） */
 export const lyrPetshop = style({
-  left: '664.0406px',
-  top: '155.9391px',
-  width: '294.5516px',
-  height: '347.8308px',
+  left: '683.5px',
+  top: '152.5px',
+  width: '333.5px',
+  height: '352.5px',
 })
 
-/* z7 宠物店招牌（原 bbox [1686,533,1847,705]） */
-export const lyrSignPetshop = style({
-  left: '730.3147px',
-  top: '230.8765px',
-  width: '69.7394px',
-  height: '74.5042px',
+/* z5 答题小屋外围栏（原 bbox [145,824,686,1195]，x0 由 36 裁至安全框边界） */
+export const lyrFenceQuiz = style({
+  left: '0px',
+  top: '412px',
+  width: '270.5px',
+  height: '185.5px',
 })
 
-/* z8 屋顶小鸟（原 bbox [1735,350,1847,462]） */
-export const lyrRoofBird = style({
-  left: '751.5398px',
-  top: '151.6074px',
-  width: '48.5144px',
-  height: '48.5144px',
+/* z6 农场稻草人（原 bbox [1038,653,1148,800]） */
+export const lyrScarecrow = style({
+  left: '446.5px',
+  top: '326.5px',
+  width: '55px',
+  height: '73.5px',
 })
 
-/* z9 橱窗宠物（原 bbox [1864,849,2046,1055]） */
-export const lyrPetshopPets = style({
-  left: '807.4179px',
-  top: '367.7563px',
-  width: '78.8359px',
-  height: '89.2318px',
+/* z7 答题小屋旁路灯（原 bbox [793,720,861,939]） */
+export const lyrLampQuiz = style({
+  left: '324px',
+  top: '360px',
+  width: '34px',
+  height: '109.5px',
 })
 
-/* z11 农场圆钮（原 bbox [1527,1485,1745,1706]） */
+/* z8 宠物商店外围栏（原 bbox [1660,850,2193,1188]，x1 由 2301 裁至安全框边界） */
+export const lyrFencePetshop = style({
+  left: '757.5px',
+  top: '425px',
+  width: '266.5px',
+  height: '169px',
+})
+
+/* z9 宠物商店左侧路灯（原 bbox [1476,691,1539,947]） */
+export const lyrLampPetshopLeft = style({
+  left: '665.5px',
+  top: '345.5px',
+  width: '31.5px',
+  height: '128px',
+})
+
+/* z10 宠物商店右侧路灯（原 bbox [2118,786,2178,1005]） */
+export const lyrLampPetshopRight = style({
+  left: '986.5px',
+  top: '393px',
+  width: '30px',
+  height: '109.5px',
+})
+
+/* z11 底部小花坛：2026-10-12 走查修复——撤销独立层，回归 z0 背景（母图原样恢复） */
+
+/* z12 农场圆钮+标签牌（原 bbox [1508,1286,1721,1502]；三钮整体左移 23px 逻辑） */
 export const lyrBtnFarm = style({
-  left: '661.4416px',
-  top: '643.2487px',
-  width: '94.4298px',
-  height: '95.7293px',
+  left: '658.5px',
+  top: '643px',
+  width: '106.5px',
+  height: '108px',
 })
 
-/* z12 宠物圆钮（原 bbox [1792,1485,2007,1706]） */
+/* z13 宠物圆钮+标签牌（原 bbox [1767,1285,1979,1501]；左移 23px） */
 export const lyrBtnPet = style({
-  left: '776.2301px',
-  top: '643.2487px',
-  width: '93.1303px',
-  height: '95.7293px',
+  left: '788px',
+  top: '642.5px',
+  width: '106px',
+  height: '108px',
 })
 
-/* z13 背包圆钮（原 bbox [2053,1487,2270,1707]） */
+/* z14 背包圆钮+标签牌（原 bbox [2025,1286,2235,1501]；左移 23px 后右缘 1022 入框） */
 export const lyrBtnBackpack = style({
-  left: '889.286px',
-  top: '644.1151px',
-  width: '93.9966px',
-  height: '95.2961px',
+  left: '917px',
+  top: '643px',
+  width: '105px',
+  height: '107.5px',
 })
 
-/* 顶部中央：学盒入口 */
-/* 学盒入口（chrome 居中槽内；恢复原舞台渲染尺寸 58×1.875≈109） */
+/* 顶栏右侧：学盒入口 */
+/* 学盒入口（chrome 右槽内、资源条左侧，2026-10-11 由居中槽改置；
+   2026-10-12 走查"右上图标过小"：58→72） */
 export const gachaEntry = style({
-  width: 'calc(58px * var(--stage-scale, 1))',
-  height: 'calc(58px * var(--stage-scale, 1))',
+  width: 'calc(72px * var(--stage-scale, 1))',
+  height: 'calc(72px * var(--stage-scale, 1))',
   border: 'none',
   background: 'transparent',
   padding: 0,
@@ -156,24 +159,25 @@ export const resourcePlate = style({
   gap: '16px',
 })
 
+/* 资源胶囊（2026-10-12 走查"右上图标过小"：高 40→48、icon 26→30、字号 h2→title） */
 export const pill = style({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '7px',
-  height: 'calc(40px * var(--stage-scale, 1))',
-  padding: '0 18px',
+  gap: '8px',
+  height: 'calc(48px * var(--stage-scale, 1))',
+  padding: '0 20px',
   borderRadius: '999px',
   background: 'rgba(255, 255, 255, .96)',
   border: '3px solid rgba(255, 255, 255, .85)',
   boxShadow: '0 4px 10px rgba(40, 110, 180, .25)',
   fontWeight: 900,
-  fontSize: FONT.h2,
+  fontSize: FONT.title,
   color: '#3f4d5c',
 })
 
 export const pillIcon = style({
-  width: 'calc(26px * var(--stage-scale, 1))',
-  height: 'calc(26px * var(--stage-scale, 1))',
+  width: 'calc(30px * var(--stage-scale, 1))',
+  height: 'calc(30px * var(--stage-scale, 1))',
   objectFit: 'contain',
 })
 
@@ -186,50 +190,50 @@ export const hotspot = style({
   cursor: 'pointer',
 })
 
-/* 答题小屋热点（原 bbox [30,232,977,1233]） */
+/* 答题小屋热点（同 z2 bbox [145,204,826,1039]） */
 export const hotQuiz = style({
-  left: '12.9949px',
-  top: '100.4941px',
-  width: '410.2064px',
-  height: '433.5973px',
+  left: '0px',
+  top: '102px',
+  width: '340.5px',
+  height: '417.5px',
 })
 
-/* 农场建筑热点（原 bbox [863,221,1419,900]） */
+/* 农场建筑热点（同 z3 bbox [858,194,1401,754]） */
 export const hotFarm = style({
-  left: '373.8206px',
-  top: '95.7293px',
-  width: '240.8393px',
-  height: '294.1184px',
+  left: '356.5px',
+  top: '97px',
+  width: '271.5px',
+  height: '280px',
 })
 
-/* 宠物商店热点（原 bbox [1533,360,2213,1163]） */
+/* 宠物商店热点（同 z4 bbox [1512,305,2179,1010]） */
 export const hotPetshop = style({
-  left: '664.0406px',
-  top: '155.9391px',
-  width: '294.5516px',
-  height: '347.8308px',
+  left: '683.5px',
+  top: '152.5px',
+  width: '333.5px',
+  height: '352.5px',
 })
 
-/* 农场入口圆钮热点（原 bbox [1527,1485,1745,1706]） */
+/* 农场入口圆钮热点（同 z12，含标签牌） */
 export const hotBtnFarm = style({
-  left: '661.4416px',
-  top: '643.2487px',
-  width: '94.4298px',
-  height: '95.7293px',
+  left: '658.5px',
+  top: '643px',
+  width: '106.5px',
+  height: '108px',
 })
 
-/* 宠物入口圆钮热点（原 bbox [1792,1485,2007,1706]） */
+/* 宠物入口圆钮热点（同 z13，含标签牌） */
 export const hotBtnPet = style({
-  left: '776.2301px',
-  top: '643.2487px',
-  width: '93.1303px',
-  height: '95.7293px',
+  left: '788px',
+  top: '642.5px',
+  width: '106px',
+  height: '108px',
 })
 
-/* 背包入口圆钮热点（原 bbox [2053,1487,2270,1707]） */
+/* 背包入口圆钮热点（同 z14，含标签牌） */
 export const hotBtnBackpack = style({
-  left: '889.286px',
-  top: '644.1151px',
-  width: '93.9966px',
-  height: '95.2961px',
+  left: '917px',
+  top: '643px',
+  width: '105px',
+  height: '107.5px',
 })
