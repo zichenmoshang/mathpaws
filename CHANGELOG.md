@@ -3,6 +3,23 @@
 本文件由 [release-please](https://github.com/googleapis/release-please) 依据
 Conventional Commits 自动维护，请勿手工编辑版本段落。
 
+## [1.3.0](https://github.com/zichenmoshang/mathpaws/compare/mathpaws-v1.2.0...mathpaws-v1.3.0) (2026-10-12)
+
+
+### Features
+
+* **design:** P18 home 原稿定稿 + 拆层门禁（风格锚全管线试点首页） ([da523e1](https://github.com/zichenmoshang/mathpaws/commit/da523e1c571ca8e2c3bfe1b1df2c644a57cb6113))
+* **design:** P19 广场原稿定稿 + 拆层门禁（风格锚管线第二页） ([2606ca8](https://github.com/zichenmoshang/mathpaws/commit/2606ca851621f0b2d11d5db8678eba83ce890939))
+* **design:** style tile v2 无投影（T2I 重抽定稿）+ 阴影语言全链统一 ([054fd45](https://github.com/zichenmoshang/mathpaws/commit/054fd458f88513b675c7824ad19b91a20acdcc0b))
+* P19 广场原稿重生成全管线 + 前端接入（风格锚第二页） ([c7eceab](https://github.com/zichenmoshang/mathpaws/commit/c7eceab28ecd335e428c17b2fcf331409f1a4f9b))
+* **ui:** 标准控件 v2 四资产 + 返回钮白圈分离环 + 弹层自适应 ([20b5d76](https://github.com/zichenmoshang/mathpaws/commit/20b5d76a91f1dc4b5576cfdaaf3d6cfc1dfa8221))
+* **web:** Home 接入 P18 长期方案（z0 cover + 安全框映射）+ 走查修复 ([bad3270](https://github.com/zichenmoshang/mathpaws/commit/bad3270b2459343c9c0ad0fadbf17185da536532))
+* **web:** Plaza 接入 P19 长期方案 + 两轮走查修复 ([288ebc1](https://github.com/zichenmoshang/mathpaws/commit/288ebc1f0cf84d886b1d4bc25a2935c86b1eac0e))
+* **web:** quiz 迁移长期方案 + ChromeTopBar 视口顶栏层（7 页落地） ([51095c2](https://github.com/zichenmoshang/mathpaws/commit/51095c235589e32a1f687c0b8fa9b58106e1c46a))
+* **web:** safe-area 舞台适配 + 背景长期方案（z0 氛围 cover）splash 首验 ([2b7cac7](https://github.com/zichenmoshang/mathpaws/commit/2b7cac762ef174ba3001b8ed6dfbde3c3e4be6ad))
+* 标准控件 v2 + 视口 chrome 顶栏层（三层布局模型）+ 弹层自适应 ([a323e6f](https://github.com/zichenmoshang/mathpaws/commit/a323e6f4eb9d328e59e1912748a8d187dd963f4a))
+* 真机适配（safe-area+背景长期方案）与 P18 home 风格锚全管线试点 ([5bef972](https://github.com/zichenmoshang/mathpaws/commit/5bef9728c3476096f31418b01fb7086708884c39))
+
 ## [1.2.0](https://github.com/zichenmoshang/mathpaws/compare/mathpaws-v1.1.0...mathpaws-v1.2.0) (2026-10-10)
 
 
