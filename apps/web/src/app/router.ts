@@ -40,6 +40,7 @@ const HASH_MAP: Record<string, RouteId> = {
   backpack: 'backpack',
   pet: 'pet-panel',
   home: 'home',
+  plaza: 'plaza', // visual-qa P2：L2 截图基线深链
   // dev 场景路由：生产构建完全不含
   ...(import.meta.env.DEV ? DEV_HASH_MAP : {}),
 }
