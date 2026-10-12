@@ -128,8 +128,11 @@
 |---|---|---|---|---|---|---|
 | P16-backpack-page | 人物背包/换装页高保真（无水印） | PAGE | T2I（seedream_5.0_pro） | done | [`P16-backpack-page.md`](./pages/P16-backpack-page.md) | `design/high-fi/backpack/backpack.png` |
 | P4-home-page | 首页整页重出（纯学习枢纽：左列主角+s1兔+益智乐园，右侧 3 卡轮播） | PAGE | I2I 多参考（hero+rabbit 双锚点，seedream_5.0_pro） | **done（2026-10-01 一稿采用）** | [`P4-home-page.md`](./pages/P4-home-page.md) | `design/high-fi/home/home-p4v2.png`（2026-10-10 由 P18 接替并更名存档；旧稿 v1 已于 2026-10-06 清理） |
-| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P5-plaza-page.md`](./pages/P5-plaza-page.md)（事后补登） | `design/high-fi/plaza/plaza.jpg`、`apps/web/src/assets/hifi/plaza/*` |
+| P5-plaza-page | 2D 广场原创稿（旧 plaza.png 拆层被版权拦截，重新文生图；无摇杆/状态栏/爱心） | PAGE | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P5-plaza-page.md`](./pages/P5-plaza-page.md)（事后补登） | `design/high-fi/plaza/plaza-p5.jpg`（2026-10-11 由 P19 接替并更名存档）、`apps/web/src/assets/hifi/plaza/*` |
 | P12-daily-chest | 每日打卡重做（贝壳+食物、7 日星轨；旧稿奖杯/金币/爱心作废） | PANEL | T2I（seedream_5.0_pro）+ layer_decomposition | **done（2026-10-04 拆层落地）** | [`P12-daily-chest.md`](./pages/P12-daily-chest.md) | `design/high-fi/daily-chest/daily-chest.jpg`、`apps/web/src/assets/hifi/daily-chest/*`（旧稿 v1 已于 2026-10-06 清理） |
+| P17-splash-page | 启动页原稿重生成试点（**取消**：旧 splash 稿保留，试点改 home；触发 tile v2 去阴影修订） | PAGE | I2I 多参考（2338×1536 安全框） | **superseded（2026-10-10）** | [`P17-splash-page.md`](./pages/P17-splash-page.md) | 生成稿/拆层产物留存 `_tmp/2026-10-10/`、`_tmp/decomp-splash-v2/` 备查 |
+| P18-home-page | 首页原稿重生成（风格锚全管线试点，接替 P17/P4 v2） | PAGE | I2I 多参考（tile v2+色卡+P4v2+主角/雪球兔 core-ip，2338×1536） | **adopted（2026-10-10）** | [`P18-home-page.md`](./pages/P18-home-page.md) | `design/high-fi/home/home.png`、拆层 `design/high-fi/home/decomp/`、`apps/web/src/assets/hifi/home/*` |
+| P19-plaza-page | 广场原稿重生成（接替 P5；三宠橱窗玩偶 + 招牌/圆钮标签 bake + 白雏鸟 splash 代理锚） | PAGE | I2I 多参考（tile v2+色卡+P5 稿+白雏鸟/三宠 core-ip 锚，2338×1536） | **adopted（2026-10-11）** | [`P19-plaza-page.md`](./pages/P19-plaza-page.md) | `design/high-fi/plaza/plaza.png`（色板偏差豁免终裁） |
 
 ### ui（标准控件与图标）
 
