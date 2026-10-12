@@ -1,10 +1,11 @@
 {
   "stage": [
-    2364,
-    1773
+    2338,
+    1536
   ],
-  "source": "design/high-fi/plaza/plaza.jpg",
-  "decomp": "_tmp/decomp-plaza-new",
+  "source": "design/high-fi/plaza/plaza.png",
+  "decomp": "design/high-fi/plaza/decomp",
+  "note": "P19 原稿（2026-10-11 adopted；2026-10-12 走查修复：招牌「宠物商店」精准编辑+z0 复合修复，母图已更新）。逻辑坐标换算 = (x−145)×0.5, y×0.5（中央 2048×1536 为 4:3 安全框 x∈[145,2193]）；z0 纯氛围由 SceneShell bleedImage cover 全屏（bleedBlur={false}），舞台内不叠 z0。白雏鸟/橱窗玩偶/招牌并入建筑层（P0 门禁裁定）；无独立招牌层（文字 bake 在建筑层内）。2026-10-12：z0 = decomp 重绘（稀疏区/建筑剪影/圆钮原位）与母图复合——真实草地/接地影/干草车/苹果筐恢复；z11 花坛撤销独立层回归 z0；bld-petshop.webp 招牌区域经精准编辑补丁（「宠物商店」错字修复）。",
   "layers": [
     {
       "z": 0,
@@ -13,135 +14,164 @@
     },
     {
       "z": 1,
-      "file": "bld-farm.webp",
-      "name": "农场小屋建筑",
+      "file": "garden.webp",
+      "name": "种植菜田",
       "bbox": [
-        863,
-        221,
-        1419,
-        866
+        778,
+        654,
+        1245,
+        806
       ]
     },
     {
       "z": 2,
       "file": "bld-quiz.webp",
-      "name": "答题小屋建筑",
+      "name": "答题小屋（含招牌答题小屋/彩旗）",
       "bbox": [
-        30,
-        232,
-        977,
-        1233
-      ]
+        145,
+        204,
+        826,
+        1039
+      ],
+      "bboxNote": "原 bbox x0=129 越左延伸带 16px，接入裁至安全框边界 145（P0 门禁登记）"
     },
     {
       "z": 3,
-      "file": "farm-scarecrow.webp",
-      "name": "农场稻草人",
+      "file": "bld-farm.webp",
+      "name": "农场小屋（含招牌农场）",
       "bbox": [
-        1047,
-        748,
-        1160,
-        920
+        858,
+        194,
+        1401,
+        754
       ]
     },
     {
       "z": 4,
-      "file": "sign-quiz.webp",
-      "name": "答题小屋招牌",
+      "file": "bld-petshop.webp",
+      "name": "宠物商店小屋（含招牌宠物商店/橱窗三玩偶/屋顶白雏鸟）",
       "bbox": [
-        475,
-        652,
-        719,
-        800
+        1512,
+        305,
+        2179,
+        1010
       ]
     },
     {
       "z": 5,
-      "file": "sign-farm.webp",
-      "name": "农场小屋招牌",
+      "file": "fence-quiz.webp",
+      "name": "答题小屋外围栏",
       "bbox": [
-        1182,
-        442,
-        1339,
-        546
-      ]
+        145,
+        824,
+        686,
+        1195
+      ],
+      "bboxNote": "原 bbox x0=36 越左延伸带，接入裁至安全框边界 145（P0 门禁登记）"
     },
     {
       "z": 6,
-      "file": "bld-petshop.webp",
-      "name": "宠物商店建筑",
+      "file": "farm-scarecrow.webp",
+      "name": "农场稻草人",
       "bbox": [
-        1533,
-        360,
-        2213,
-        1163
+        1038,
+        653,
+        1148,
+        800
       ]
     },
     {
       "z": 7,
-      "file": "sign-petshop.webp",
-      "name": "宠物商店招牌",
+      "file": "lamp-quiz.webp",
+      "name": "答题小屋旁路灯",
       "bbox": [
-        1686,
-        533,
-        1847,
-        705
+        793,
+        720,
+        861,
+        939
       ]
     },
     {
       "z": 8,
-      "file": "roof-bird.webp",
-      "name": "屋顶白色小鸟",
+      "file": "fence-petshop.webp",
+      "name": "宠物商店外围栏",
       "bbox": [
-        1735,
-        350,
-        1847,
-        462
-      ]
+        1660,
+        850,
+        2193,
+        1188
+      ],
+      "bboxNote": "原 bbox x1=2301 越右延伸带，接入裁至安全框边界 2193（P0 门禁登记）"
     },
     {
       "z": 9,
-      "file": "petshop-pets.webp",
-      "name": "橱窗宠物玩偶组",
+      "file": "lamp-petshop-left.webp",
+      "name": "宠物商店左侧路灯",
       "bbox": [
-        1864,
-        849,
-        2046,
-        1055
+        1476,
+        691,
+        1539,
+        947
+      ]
+    },
+    {
+      "z": 10,
+      "file": "lamp-petshop-right.webp",
+      "name": "宠物商店右侧路灯",
+      "bbox": [
+        2118,
+        786,
+        2178,
+        1005
       ]
     },
     {
       "z": 11,
-      "file": "btn-farm.webp",
-      "name": "胡萝卜图标按钮",
+      "file": null,
+      "name": "底部小花坛围栏（含左侧小路灯）",
       "bbox": [
-        1527,
-        1485,
-        1745,
-        1706
-      ]
+        657,
+        1278,
+        1389,
+        1493
+      ],
+      "bboxNote": "2026-10-12 走查修复：撤销独立层回归 z0 背景（母图原样，无遮挡冲突；消除重绘光晕）"
     },
     {
       "z": 12,
-      "file": "btn-pet.webp",
-      "name": "爪印图标按钮",
+      "file": "btn-farm.webp",
+      "name": "农场功能按钮（含标签牌农场）",
       "bbox": [
-        1792,
-        1485,
-        2007,
-        1706
-      ]
+        1508,
+        1286,
+        1721,
+        1502
+      ],
+      "bboxNote": "三圆钮接入整体左移 46px 原稿（23px 逻辑）：背包钮原 bbox x1=2235 越右界 2193，左移后落入安全框（走查裁定项）"
     },
     {
       "z": 13,
-      "file": "btn-backpack.webp",
-      "name": "书包图标按钮",
+      "file": "btn-pet.webp",
+      "name": "宠物功能按钮（含标签牌宠物）",
       "bbox": [
-        2053,
-        1487,
-        2270,
-        1707
-      ]
+        1767,
+        1285,
+        1979,
+        1501
+      ],
+      "bboxNote": "同 z12：接入整体左移 46px 原稿"
+    },
+    {
+      "z": 14,
+      "file": "btn-backpack.webp",
+      "name": "背包功能按钮（含标签牌背包）",
+      "bbox": [
+        2025,
+        1286,
+        2235,
+        1501
+      ],
+      "bboxNote": "同 z12：原 bbox x1=2235 越右界 2193（42px），接入整体左移 46px 原稿后右缘 2189 落入安全框"
     }
   ]
 }

@@ -14,12 +14,13 @@ import resultBg from '../assets/hifi/result/bg.webp'
 import bldFarm from '../assets/hifi/plaza/bld-farm.webp'
 import bldQuiz from '../assets/hifi/plaza/bld-quiz.webp'
 import scarecrow from '../assets/hifi/plaza/farm-scarecrow.webp'
-import signQuiz from '../assets/hifi/plaza/sign-quiz.webp'
-import signFarm from '../assets/hifi/plaza/sign-farm.webp'
+import garden from '../assets/hifi/plaza/garden.webp'
+import fenceQuiz from '../assets/hifi/plaza/fence-quiz.webp'
+import lampQuiz from '../assets/hifi/plaza/lamp-quiz.webp'
 import bldPetshop from '../assets/hifi/plaza/bld-petshop.webp'
-import signPetshop from '../assets/hifi/plaza/sign-petshop.webp'
-import roofBird from '../assets/hifi/plaza/roof-bird.webp'
-import petshopPets from '../assets/hifi/plaza/petshop-pets.webp'
+import fencePetshop from '../assets/hifi/plaza/fence-petshop.webp'
+import lampPetshopLeft from '../assets/hifi/plaza/lamp-petshop-left.webp'
+import lampPetshopRight from '../assets/hifi/plaza/lamp-petshop-right.webp'
 import btnFarm from '../assets/hifi/plaza/btn-farm.webp'
 import btnPet from '../assets/hifi/plaza/btn-pet.webp'
 import btnBackpack from '../assets/hifi/plaza/btn-backpack.webp'
@@ -55,11 +56,12 @@ export const IDLE_IMAGES: string[] = [
   bldFarm,
   bldPetshop,
   scarecrow,
-  signQuiz,
-  signFarm,
-  signPetshop,
-  roofBird,
-  petshopPets,
+  garden,
+  fenceQuiz,
+  lampQuiz,
+  fencePetshop,
+  lampPetshopLeft,
+  lampPetshopRight,
   btnFarm,
   btnPet,
   btnBackpack,
